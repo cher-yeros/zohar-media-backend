@@ -1,0 +1,102 @@
+
+scalar Date
+scalar JSON
+
+type Query {
+  _ : Boolean
+}
+
+type Mutation {
+  _ : Boolean
+}
+
+type Subscription {
+  _ : Boolean
+}
+
+type Feedback {
+  id: Int!
+  content: String!
+  seen: Boolean!
+  createdAt: Date!
+  updatedAt: Date!
+  from: User ! 
+  to: User ! 
+}
+
+type Message {
+  id: Int!
+  content: String!
+  seen: Boolean
+  createdAt: Date!
+  updatedAt: Date!
+  sender: User ! 
+  receiver: User ! 
+}
+
+type Notification {
+  id: Int!
+  message: String!
+  type: String!
+  seen: Boolean
+  is_read: Boolean
+  link: JSON!
+  createdAt: Date!
+  updatedAt: Date!
+  recipient: User  
+}
+
+type Partnership {
+  id: Int!
+  firstname: String!
+  lastname: String!
+  fullname: String!
+  phone: String
+  email: String!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User  
+  payments: [Payment!]!
+}
+
+type Payment {
+  id: Int!
+  amount: Float!
+  status: String!
+  tx_ref: String!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User  
+  partnership: Partnership  
+}
+
+type Token {
+  id: Int!
+  token: String!
+  expiryDate: Date!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User  
+}
+
+type User {
+  id: Int!
+  avatar: String
+  firstname: String!
+  lastname: String!
+  fullname: String!
+  gender: String
+  password: String!
+  phone: String
+  email: String!
+  address: String
+  dob: Date
+  is_verified: Boolean!
+  banned: Boolean!
+  resetToken: String
+  resetTokenExpires: Date
+  createdAt: Date!
+  updatedAt: Date!
+  partnerships: [Partnership!]!
+  user: [Payment!]!
+}

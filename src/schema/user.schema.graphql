@@ -1,0 +1,56 @@
+# import '../generated/schema.graphql'
+
+input CreateUserInput {
+  firstname: String!
+  lastname: String!
+  email: String!
+  phone: String!
+  gender: String!
+  address: String!
+  password: String!
+  dob: Date!
+}
+
+input EditProfileInput {
+  id: Int!
+  firstname: String!
+  lastname: String!
+  username: String!
+  email: String!
+  phone: String!
+  gender: String!
+  address: String!
+  password: String!
+  dob: Date!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginResponse {
+  token: String!
+  user: User!
+}
+
+type Query {
+  user(id: Int!): User
+  users: [User]
+  verifyEmail(token: String!): Boolean
+}
+
+type Mutation {
+  createUser(input: CreateUserInput): User!
+  loginUser(input: LoginInput): LoginResponse
+  # updateProfile(input: UpdateProfileInput): Boolean!
+  # editProfile(input: EditProfileInput): Boolean!
+  # banUser(user_id: Int!, ban: Boolean!): Boolean!
+  # deleteUser(user_id: Int!): Boolean!
+  # requestResetPassword(email: String!): String!
+  # resetPassword(
+  #   email: String!
+  #   resetToken: String!
+  #   newPassword: String!
+  # ): String!
+}

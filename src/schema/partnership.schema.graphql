@@ -1,0 +1,38 @@
+# import '../generated/schema.graphql'
+
+input CreatePartnershipInput {
+  # user_id: Int!
+  firstname: String!
+  lastname: String!
+  phone: String!
+  email: String!
+  payment_method: String!
+  amount: Float!
+  currency: String!
+  plan: String!
+  message: String!
+}
+
+type ChapaPaymentResponseData {
+  checkout_url: String!
+}
+
+type ChapaPaymentResponse {
+  message: String!
+  status: String!
+  data: ChapaPaymentResponseData!
+}
+
+type Query {
+  partnership(id: Int!): Partnership
+  partnerships: [Partnership]
+}
+
+type Mutation {
+  createPartnership(input: CreatePartnershipInput): ChapaPaymentResponse!
+}
+
+type Subscription {
+  paymentSuccessful(tx_ref: String): Boolean!
+  paymentVerified(tx_ref: String): Boolean!
+}

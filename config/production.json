@@ -1,0 +1,13 @@
+{
+  "db": {
+    "host": "hertz-development-db.c1oss6au8pr0.us-east-1.rds.amazonaws.com",
+    "name": "skill_connect_et",
+    "user": "admin",
+    "password": "hertz-dev-2024&&",
+    "dialect": "mysql",
+    "port": 3306
+  },
+  "port": 5000,
+  "jwt_secret": "accf34a848722979e326cf33847506b1d753fde0c38205e13dac15a195d5faf0",
+  "enc_key": "31362e00db54edbfd79a9693103b9f0da65019cb11f88dd0"
+}
