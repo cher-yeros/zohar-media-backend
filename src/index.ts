@@ -9,32 +9,49 @@ import cors from "cors";
 import http from "http";
 import { Secret } from "jsonwebtoken";
 
-import {} from "@apollo/server";
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { configDotenv } from "dotenv";
 import { Request, Response } from "express";
 import { GraphQLError } from "graphql";
+import { PubSub } from "graphql-subscriptions";
+import { useServer } from "graphql-ws/lib/use/ws";
 import jwt from "jsonwebtoken";
 import { WebSocketServer } from "ws";
 import { CustomJwtPayload } from "./middleware/auth";
 import gatewaySchema from "./resolvers";
 import sequelize from "./utils/db.connection";
-import { useServer } from "graphql-ws/lib/use/ws";
-import { PubSub } from "graphql-subscriptions";
 
-import Payment from "./models/payment.model";
-import { Transaction } from "sequelize";
-import { checkPaymentStatus } from "./services/services";
-import Token from "./models/token.model";
-import User from "./models/user.model";
-import { UserAccount } from "./types";
 import axios from "axios";
-
+import fileUpload from "express-fileupload";
+import { accessSync } from "fs";
+import { constants } from "fs/promises";
+import cron from "node-cron";
+import { join } from "path";
+import { Transaction } from "sequelize";
+import { v4 } from "uuid";
+import BookPurchase from "./models/book_purchase.model";
+import Partnership from "./models/partnership.model";
+import Payment from "./models/payment.model";
+import {
+  sendBookPurchaseEmail,
+  sendDonationConfirmationEmail,
+  sendPartnershipConfirmationEmail,
+  sendReminderEmail,
+} from "./services/sendEmail";
+import { UserAccount } from "./types";
+import { PaymentTypes } from "./services/services";
 // import crypto from "crypto";
 // console.log(crypto.randomBytes(32).toString("hex"));
 configDotenv();
 const app = express();
 const httpServer = http.createServer(app);
+
+const staticFilePath = join(__dirname, "../public");
+
+app.use(express.static(staticFilePath));
+app.use(fileUpload());
+
+// expressfil
 
 export interface MyContext {
   req: Request;
@@ -44,7 +61,7 @@ export interface MyContext {
 }
 
 var corsOptions = {
-  origin: true,
+  origin: ["http://localhost:3000", "https://jpstvethiopia.com"],
   credentials: true,
 };
 
@@ -80,6 +97,7 @@ const serverCleanup = useServer(
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       ApolloServerPluginLandingPageLocalDefault({ footer: false }),
+      // ApolloServerPluginLandingPageDisabled()
       {
         async serverWillStart() {
           return {
@@ -91,6 +109,7 @@ const serverCleanup = useServer(
       },
     ],
     introspection: true,
+    // introspection:  process.env.NODE_ENV === "development" ? true : false,
   });
 
   server.start().then(() => {
@@ -113,7 +132,18 @@ const serverCleanup = useServer(
               req.body.operationName === "VerifyEmail" ||
               req.body.operationName === "RequestResetPassword" ||
               req.body.operationName === "ResetPassword" ||
-              req.body.operationName === "CreateAdminFeedback"
+              req.body.operationName === "CreatePartnership" ||
+              req.body.operationName === "CreateOrder" ||
+              req.body.operationName === "CaptureOrder" ||
+              req.body.operationName === "CreateSubscription" ||
+              req.body.operationName === "CaptureSubscription" ||
+              req.body.operationName === "BibleStudySessionsForUsers" ||
+              req.body.operationName === "GuestHousePrayerScheulesForUsers" ||
+              req.body.operationName === "Blogs" ||
+              req.body.operationName === "ServiceCategoryForUsers" ||
+              req.body.operationName === "GalleriesForUsers" ||
+              req.body.operationName === "GalleryCategoryForUsers" ||
+              req.body.operationName === "CreateFeedback"
             )
           ) {
             user = authentication(token);
@@ -182,7 +212,79 @@ function authentication(token: any) {
   return user;
 }
 
-app.get("/api/verify-payment/:tx_ref", async (req, res) => {
+app.use(cors(corsOptions));
+app.get("/api/verify-payment/:reason/:tx_ref", async (req, res) => {
+  console.log(req.params);
+  const config = {
+    headers: {
+      Authorization: "Bearer " + process.env.CHAPA_TEST_SECRET_KEY,
+    },
+  };
+
+  const VERIFY_URL =
+    "https://api.chapa.co/v1/transaction/verify/" + req.params.tx_ref;
+
+  let t: Transaction = await sequelize.transaction({
+    isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
+  });
+
+  try {
+    const payment = await Payment.findOne({
+      where: { tx_ref: req.params.tx_ref },
+    });
+
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment not found",
+      });
+    }
+
+    const { data } = await axios.get(VERIFY_URL, config);
+
+    console.log("verification ", { ...data, tx_ref: req.params.tx_ref });
+
+    await payment.update(
+      {
+        status:
+          data?.data?.status === "success" ? "COMPLETED" : data?.data?.status,
+      }
+      // {
+      //   where: {
+      //     tx_ref: req.params.tx_ref,
+      //   },
+      //   transaction: t,
+      // }
+    );
+
+    if (req.params.reason === PaymentTypes.Partnership) {
+      await sendPartnershipConfirmationEmail(
+        payment.email!,
+        payment.first_name!,
+        payment.last_name!
+      );
+    } else if (req.params.reason === PaymentTypes.Donation) {
+      await sendDonationConfirmationEmail(
+        payment.email!,
+        payment.first_name!,
+        payment.last_name!
+      );
+    } else if (req.params.reason === PaymentTypes.Visitor) {
+    } else if (req.params.reason === PaymentTypes.BibleStudy) {
+    } else {
+      if (t) {
+        t.rollback;
+      }
+      throw new Error("Invalid reason");
+    }
+
+    t.commit();
+  } catch (error) {
+    t.rollback();
+    res.status(400).json({ error });
+  }
+});
+app.get("/api/verify-book-purchase-payment/:tx_ref", async (req, res) => {
   const config = {
     headers: {
       Authorization: "Bearer " + process.env.CHAPA_TEST_SECRET_KEY,
@@ -200,7 +302,7 @@ app.get("/api/verify-payment/:tx_ref", async (req, res) => {
     const { data } = await axios.get(VERIFY_URL, config);
 
     let payment = await Payment.update(
-      { status: "VERIFIED" },
+      { status: "COMPLETED" },
       {
         where: {
           tx_ref: req.params.tx_ref,
@@ -209,9 +311,109 @@ app.get("/api/verify-payment/:tx_ref", async (req, res) => {
       }
     );
 
+    const order = await BookPurchase.findOne({
+      where: {
+        tx_ref: req.params.tx_ref,
+      },
+      transaction: t,
+    });
+
+    await sendBookPurchaseEmail(
+      order!.email,
+      order!.first_name,
+      order!.last_name
+    );
+
     t.commit();
   } catch (error) {
     t.rollback();
     res.status(400).json({ error });
   }
+});
+
+app.post("/api/upload-file", async (req: any, res: Response) => {
+  try {
+    if (!req?.files?.picture) {
+      return res.status(400).json({ message: "Please Upload Picture" });
+    }
+
+    let fileName =
+      Date.now() + v4() + "." + req.files?.picture.mimetype.split("/")[1];
+
+    req.files?.picture.mv("public/" + fileName, function (err: any) {
+      if (err) {
+        return res.status(400).json({
+          success: false,
+          message: "Unable to upload the Picture",
+        });
+      }
+
+      const address =
+        process.env.NODE_ENV === "production"
+          ? "https://api.jpstvethiopia.com/static/" + fileName
+          : "http://localhost:4000/static/" + fileName;
+
+      return res.json({ fileName: address });
+    });
+  } catch (error) {
+    return res.status(400).json({ message: "Unable to Upload Content" });
+  }
+});
+
+app.get("/static/:fileName", (req: Request, res: Response) => {
+  const { fileName } = req.params;
+
+  const filePath = join(staticFilePath, fileName);
+
+  try {
+    accessSync(filePath, constants.F_OK);
+  } catch (error) {
+    console.log(error);
+  }
+
+  // Send the file
+  res.status(200).sendFile(filePath, (err) => {
+    if (err) {
+      console.log("server error");
+      console.log(err);
+      // Handle errors (e.g., file not found)
+      // res.status(500).send(err.message);
+    }
+  });
+});
+
+const task = cron.schedule("0 0 * * *", async () => {
+  console.log("Running a task day minute");
+
+  // Check for expired subscriptions
+  const partners = await Partnership.findAll({
+    where: {
+      due_date: new Date(),
+    },
+  });
+
+  try {
+    await Promise.all(
+      partners.map(async (partner) => {
+        await sendReminderEmail(
+          partner?.email!,
+          partner?.id.toString()!,
+          partner?.first_name!,
+          partner?.last_name!
+        );
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Start the cron job
+task.start();
+
+// // Optionally, handle the shutdown process
+process.on("SIGINT", () => {
+  task.stop();
+  console.log("Cron job stopped.");
+  process.exit();
 });

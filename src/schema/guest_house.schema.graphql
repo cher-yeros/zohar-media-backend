@@ -1,0 +1,70 @@
+# import '../generated/schema.graphql'
+
+input CreateGuestHousePrayerScheduleInput {
+  start_time: Date!
+  end_time: Date!
+  payment_amount_etb: Float!
+  payment_amount_usd: Float!
+  pickup_extra_payment_etb: Float!
+  pickup_extra_payment_usd: Float!
+}
+
+input UpdateGuestHousePrayerScheduleInput {
+  id: Int!
+  start_time: Date
+  end_time: Date
+  payment_amount_etb: Float
+  payment_amount_usd: Float
+  pickup_extra_payment_etb: Float
+  pickup_extra_payment_usd: Float
+}
+
+input CreateGuestHousePrayerInput {
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  request_detail: String!
+  user_id: Int!
+  schedule_id: Int!
+  payment_method: String!
+  payment_amount: Float!
+  include_pickup_from_airport: Boolean!
+}
+
+type GuestHousePrayerForUser {
+  id: Int!
+  title: String!
+  description: String!
+  date: Date!
+  start_time: Date!
+  end_time: Date!
+  payment_amount: Float!
+  createdAt: Date!
+  schedule: GuestHousePrayerSchedule!
+}
+
+type Query {
+  guestHousePrayerSchedules: [GuestHousePrayerSchedule!]!
+  guestHousePrayers: [GuestHousePrayer!]!
+  guestHousePrayerScheulesForUsers: [GuestHousePrayerSchedule!]!
+  #   bibleStudyApplications: [BibleStudyApplication!]!
+  #   myBibleStudyApplications: [BibleStudyApplication!]!
+}
+
+type Mutation {
+  createGuestHousePrayerSchedule(
+    input: CreateGuestHousePrayerScheduleInput!
+  ): GuestHousePrayerSchedule!
+  createGuestHousePrayer(input: CreateGuestHousePrayerInput!): JSON!
+
+  updateGuestHousePrayerSchedule(
+    input: UpdateGuestHousePrayerScheduleInput!
+  ): Boolean!
+  deleteGuestHousePrayerSchedule(id: Int!): Boolean!
+
+  deleteGuestHousePrayer(id: Int!): Boolean!
+
+  createGuestHouseOrder(input: CreateGuestHousePrayerInput): JSON!
+  captureGuestHouseOrder(orderID: String!): JSON!
+}

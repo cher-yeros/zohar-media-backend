@@ -1,0 +1,51 @@
+
+type Donation {
+  id: Int
+  first_name: String
+  last_name: String
+  full_name: String
+  phone: String
+  email: String
+  amount: String
+  payment_method: String
+  additional_message: String
+  createdAt: String
+  updatedAt: String
+  payment_id: Int
+}
+
+input CreateDonationInput {
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  amount: String!
+  payment_method: String!
+  additional_message: String
+  payment_id: Int
+}
+
+input UpdateDonationInput {
+  id: Int!
+  first_name: String
+  last_name: String
+  full_name: String
+  phone: String
+  email: String
+  amount: String
+  payment_method: String
+  additional_message: String
+  payment_id: Int
+}
+
+type Query {
+  donation(id: ID!): Donation
+  allDonations: [Donation]
+}
+
+type Mutation {
+  createDonation(input: CreateDonationInput): Donation
+  updateDonation(id: ID!, input: UpdateDonationInput): Donation
+  deleteDonation(id: ID!): String
+}

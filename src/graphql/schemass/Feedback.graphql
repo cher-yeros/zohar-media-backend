@@ -1,0 +1,39 @@
+
+type Feedback {
+  id: Int
+  name: String
+  phone: String
+  email: String
+  subject: String
+  message: String
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateFeedbackInput {
+  name: String!
+  phone: String
+  email: String!
+  subject: String
+  message: String!
+}
+
+input UpdateFeedbackInput {
+  id: Int!
+  name: String
+  phone: String
+  email: String
+  subject: String
+  message: String
+}
+
+type Query {
+  feedback(id: ID!): Feedback
+  allFeedbacks: [Feedback]
+}
+
+type Mutation {
+  createFeedback(input: CreateFeedbackInput): Feedback
+  updateFeedback(id: ID!, input: UpdateFeedbackInput): Feedback
+  deleteFeedback(id: ID!): String
+}

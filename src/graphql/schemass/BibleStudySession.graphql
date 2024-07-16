@@ -1,0 +1,60 @@
+
+type BibleStudySession {
+  id: Int
+  title: String
+  description: String
+  date: String
+  start_time: String
+  end_time: String
+  zoom_id: String
+  zoom_link: String
+  zoom_passcode: String
+  payment_amount_usd: String
+  payment_amount_etb: String
+  status: String
+  picture: String
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateBibleStudySessionInput {
+  title: String!
+  description: String!
+  date: String!
+  start_time: String!
+  end_time: String!
+  zoom_id: String!
+  zoom_link: String!
+  zoom_passcode: String!
+  payment_amount_usd: String!
+  payment_amount_etb: String!
+  status: String!
+  picture: String!
+}
+
+input UpdateBibleStudySessionInput {
+  id: Int!
+  title: String
+  description: String
+  date: String
+  start_time: String
+  end_time: String
+  zoom_id: String
+  zoom_link: String
+  zoom_passcode: String
+  payment_amount_usd: String
+  payment_amount_etb: String
+  status: String
+  picture: String
+}
+
+type Query {
+  biblestudysession(id: ID!): BibleStudySession
+  allBibleStudySessions: [BibleStudySession]
+}
+
+type Mutation {
+  createBibleStudySession(input: CreateBibleStudySessionInput): BibleStudySession
+  updateBibleStudySession(id: ID!, input: UpdateBibleStudySessionInput): BibleStudySession
+  deleteBibleStudySession(id: ID!): String
+}

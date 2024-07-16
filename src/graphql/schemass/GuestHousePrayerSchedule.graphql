@@ -1,0 +1,51 @@
+
+type GuestHousePrayerSchedule {
+  id: Int
+  date: String
+  start_time: String
+  end_time: String
+  availabile: Boolean
+  status: String
+  payment_amount_usd: String
+  payment_amount_etb: String
+  pickup_extra_payment_usd: String
+  pickup_extra_payment_etb: String
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateGuestHousePrayerScheduleInput {
+  date: String!
+  start_time: String!
+  end_time: String!
+  availabile: Boolean!
+  status: String!
+  payment_amount_usd: String!
+  payment_amount_etb: String!
+  pickup_extra_payment_usd: String!
+  pickup_extra_payment_etb: String!
+}
+
+input UpdateGuestHousePrayerScheduleInput {
+  id: Int!
+  date: String
+  start_time: String
+  end_time: String
+  availabile: Boolean
+  status: String
+  payment_amount_usd: String
+  payment_amount_etb: String
+  pickup_extra_payment_usd: String
+  pickup_extra_payment_etb: String
+}
+
+type Query {
+  guesthouseprayerschedule(id: ID!): GuestHousePrayerSchedule
+  allGuestHousePrayerSchedules: [GuestHousePrayerSchedule]
+}
+
+type Mutation {
+  createGuestHousePrayerSchedule(input: CreateGuestHousePrayerScheduleInput): GuestHousePrayerSchedule
+  updateGuestHousePrayerSchedule(id: ID!, input: UpdateGuestHousePrayerScheduleInput): GuestHousePrayerSchedule
+  deleteGuestHousePrayerSchedule(id: ID!): String
+}

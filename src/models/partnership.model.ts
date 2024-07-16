@@ -1,15 +1,12 @@
 import {
-  BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
-  ForeignKey,
-  HasMany,
-  HasOne,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import User from "./user.model";
+import PartnershipPayment from "./partners_payment.model";
 import Payment from "./payment.model";
 
 @Table({
@@ -27,22 +24,22 @@ class Partnership extends Model {
   @Column({
     allowNull: false,
   })
-  firstname!: string;
+  first_name!: string;
 
   @Column({
     allowNull: false,
   })
-  lastname!: string;
+  last_name!: string;
 
   @Column({ type: DataType.VIRTUAL })
-  get fullname() {
-    return `${this.getDataValue("firstname")} ${this.getDataValue("lastname")}`;
+  get full_name() {
+    return `${this.getDataValue("first_name")} ${this.getDataValue(
+      "last_name"
+    )}`;
   }
 
-  @Column({
-    allowNull: true,
-  })
-  phone?: string;
+  @Column(DataType.STRING)
+  phone!: string;
 
   @Column({
     allowNull: false,
@@ -50,13 +47,25 @@ class Partnership extends Model {
   })
   email!: string;
 
-  @ForeignKey(() => User)
-  user_id!: number;
+  @Column(DataType.STRING)
+  partnership_type!: string;
 
-  @BelongsTo(() => User)
-  user!: User;
+  @Column({ type: DataType.STRING, allowNull: true })
+  partnership_plan!: string;
 
-  @HasMany(() => Payment)
+  @Column(DataType.DOUBLE)
+  amount!: number;
+
+  @Column(DataType.STRING)
+  payment_method!: string;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  additional_message!: string;
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  due_date!: Date;
+
+  @BelongsToMany(() => Payment, () => PartnershipPayment)
   payments!: Payment[];
 }
 

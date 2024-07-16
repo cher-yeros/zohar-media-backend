@@ -1,0 +1,30 @@
+
+type PaymentAmountLookup {
+  id: Int
+  payment_for: String
+  amount: String
+  createdAt: String
+  updatedAt: String
+}
+
+input CreatePaymentAmountLookupInput {
+  payment_for: String!
+  amount: String!
+}
+
+input UpdatePaymentAmountLookupInput {
+  id: Int!
+  payment_for: String
+  amount: String
+}
+
+type Query {
+  paymentamountlookup(id: ID!): PaymentAmountLookup
+  allPaymentAmountLookups: [PaymentAmountLookup]
+}
+
+type Mutation {
+  createPaymentAmountLookup(input: CreatePaymentAmountLookupInput): PaymentAmountLookup
+  updatePaymentAmountLookup(id: ID!, input: UpdatePaymentAmountLookupInput): PaymentAmountLookup
+  deletePaymentAmountLookup(id: ID!): String
+}

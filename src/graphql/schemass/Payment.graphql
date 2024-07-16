@@ -1,0 +1,39 @@
+
+type Payment {
+  id: Int
+  amount: Float
+  status: String
+  tx_ref: String
+  partnership_id: Int
+  createdAt: String
+  updatedAt: String
+  user_id: Int
+}
+
+input CreatePaymentInput {
+  amount: Float!
+  status: String!
+  tx_ref: String!
+  partnership_id: Int
+  user_id: Int
+}
+
+input UpdatePaymentInput {
+  id: Int!
+  amount: Float
+  status: String
+  tx_ref: String
+  partnership_id: Int
+  user_id: Int
+}
+
+type Query {
+  payment(id: ID!): Payment
+  allPayments: [Payment]
+}
+
+type Mutation {
+  createPayment(input: CreatePaymentInput): Payment
+  updatePayment(id: ID!, input: UpdatePaymentInput): Payment
+  deletePayment(id: ID!): String
+}

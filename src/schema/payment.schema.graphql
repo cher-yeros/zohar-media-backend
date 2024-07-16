@@ -12,3 +12,7 @@ type Mutation {
   createPayment(input: CreatePaymentInput!): Payment!
   confirmPayment(input: ConfirmPaymentInput!): String!
 }
+
+type Query {
+  payments: [Payment!]!
+}

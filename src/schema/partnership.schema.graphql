@@ -1,16 +1,19 @@
 # import '../generated/schema.graphql'
 
 input CreatePartnershipInput {
-  # user_id: Int!
-  firstname: String!
-  lastname: String!
+  first_name: String!
+  last_name: String!
   phone: String!
   email: String!
   payment_method: String!
+  partnership_type: String!
+  partnership_plan: String
+  church_name: String
+  address: String
   amount: Float!
-  currency: String!
-  plan: String!
-  message: String!
+  currency: String
+  plan: String
+  additional_message: String!
 }
 
 type ChapaPaymentResponseData {
@@ -25,11 +28,19 @@ type ChapaPaymentResponse {
 
 type Query {
   partnership(id: Int!): Partnership
-  partnerships: [Partnership]
+  partners: [Partnership]!
 }
 
 type Mutation {
   createPartnership(input: CreatePartnershipInput): ChapaPaymentResponse!
+
+  # for paypal
+  createOrder(input: CreatePartnershipInput): JSON!
+  captureOrder(orderID: String!): JSON!
+  createSubscription(input: CreatePartnershipInput): JSON!
+  captureSubscription(orderID: String!): JSON!
+
+  addNewPartner(input: CreatePartnershipInput): Partnership!
 }
 
 type Subscription {

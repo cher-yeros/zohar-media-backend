@@ -1,0 +1,51 @@
+
+type BookPurchase {
+  id: Int
+  first_name: String
+  last_name: String
+  full_name: String
+  phone: String
+  email: String
+  amount: String
+  payment_method: String
+  tx_ref: String
+  createdAt: String
+  updatedAt: String
+  payment_id: Int
+}
+
+input CreateBookPurchaseInput {
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  amount: String!
+  payment_method: String!
+  tx_ref: String!
+  payment_id: Int
+}
+
+input UpdateBookPurchaseInput {
+  id: Int!
+  first_name: String
+  last_name: String
+  full_name: String
+  phone: String
+  email: String
+  amount: String
+  payment_method: String
+  tx_ref: String
+  payment_id: Int
+}
+
+type Query {
+  bookpurchase(id: ID!): BookPurchase
+  allBookPurchases: [BookPurchase]
+}
+
+type Mutation {
+  createBookPurchase(input: CreateBookPurchaseInput): BookPurchase
+  updateBookPurchase(id: ID!, input: UpdateBookPurchaseInput): BookPurchase
+  deleteBookPurchase(id: ID!): String
+}

@@ -1,0 +1,63 @@
+# import '../generated/schema.graphql'
+
+input CreateBlogInput {
+  title: String!
+  slug: String
+  excerpt: String!
+  body: String!
+  image: String
+  categoryId: Int!
+  tags: [Int!]
+}
+
+input CreateCategoryInput {
+  title: String!
+}
+
+input CreateTagInput {
+  title: String!
+}
+input UpdateBlogInput {
+  id: Int!
+  title: String
+  slug: String
+  excerpt: String
+  body: String
+  image: String
+  categoryId: Int
+  tags: [Int!]
+}
+
+input UpdateCategoryInput {
+  id: Int!
+  title: String
+}
+
+input UpdateTagInput {
+  id: Int!
+  title: String
+}
+
+type Query {
+  blogs: [Blog!]!
+  categories: [Category!]!
+  tags: [Blog!]!
+}
+
+type Mutation {
+  createBlog(input: CreateBlogInput): Blog!
+  createCategory(input: CreateCategoryInput): Category!
+  createTag(input: CreateTagInput): Tag!
+
+  editBlog(input: UpdateBlogInput): Boolean!
+  editCategory(input: UpdateCategoryInput): Boolean!
+  editTag(input: UpdateTagInput): Boolean!
+
+  deleteBlog(id: Int): Boolean!
+  deleteCategory(id: Int): Boolean!
+  deleteTag(id: Int): Boolean!
+}
+
+# type Subscription {
+#   newFeedback: Feedback!
+# }

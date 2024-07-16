@@ -1,0 +1,54 @@
+
+type GuestHousePrayer {
+  id: Int
+  user_id: Int
+  first_name: String
+  last_name: String
+  email: String
+  phone: String
+  request_detail: String
+  include_pickup_from_airport: Boolean
+  status: String
+  schedule_id: Int
+  createdAt: String
+  updatedAt: String
+  payment_id: Int
+}
+
+input CreateGuestHousePrayerInput {
+  user_id: Int
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  request_detail: String!
+  include_pickup_from_airport: Boolean!
+  status: String!
+  schedule_id: Int
+  payment_id: Int
+}
+
+input UpdateGuestHousePrayerInput {
+  id: Int!
+  user_id: Int
+  first_name: String
+  last_name: String
+  email: String
+  phone: String
+  request_detail: String
+  include_pickup_from_airport: Boolean
+  status: String
+  schedule_id: Int
+  payment_id: Int
+}
+
+type Query {
+  guesthouseprayer(id: ID!): GuestHousePrayer
+  allGuestHousePrayers: [GuestHousePrayer]
+}
+
+type Mutation {
+  createGuestHousePrayer(input: CreateGuestHousePrayerInput): GuestHousePrayer
+  updateGuestHousePrayer(id: ID!, input: UpdateGuestHousePrayerInput): GuestHousePrayer
+  deleteGuestHousePrayer(id: ID!): String
+}

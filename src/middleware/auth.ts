@@ -4,7 +4,7 @@ import {
   AuthenticationError,
   AuthorizationError,
 } from "../helpers/error_handler";
-import { UserAccount } from "../types/auth-types";
+import { UserAccount } from "../types";
 
 export interface CustomJwtPayload extends JwtPayload {
   user: UserAccount;
