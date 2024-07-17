@@ -143,6 +143,7 @@ const serverCleanup = useServer(
               req.body.operationName === "ServiceCategoryForUsers" ||
               req.body.operationName === "GalleriesForUsers" ||
               req.body.operationName === "GalleryCategoryForUsers" ||
+              req.body.operationName === "CreateDonation" ||
               req.body.operationName === "CreateFeedback"
             )
           ) {
