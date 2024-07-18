@@ -1,27 +1,26 @@
-
-import { Transaction } from 'sequelize';
+import { Transaction } from "sequelize";
 // import { AuthenticationError, BadRequestError } from 'apollo-server-errors';
-import sequelize from '../../utils/db.connection'; 
-import GuestHousePrayer from '../../models/guest_house_prayer.model';
+import sequelize from "../../utils/db.connection";
+import Visitor from "../../models/visitor.model";
 
-const guesthouseprayerResolvers = {
+const VisitorResolvers = {
   Query: {
-    guesthouseprayer: async (_: any, { id }: { id: number }, ___: any) => {
-      return await GuestHousePrayer.findByPk(id);
+    Visitor: async (_: any, { id }: { id: number }, ___: any) => {
+      return await Visitor.findByPk(id);
     },
-    allGuestHousePrayers: async (_: any, __: any, ___: any) => {
-      return await GuestHousePrayer.findAll();
+    allVisitors: async (_: any, __: any, ___: any) => {
+      return await Visitor.findAll();
     },
   },
 
   Mutation: {
-    createGuestHousePrayer: async (_: any, { input }: { input: any }, ___: any) => {
+    createVisitor: async (_: any, { input }: { input: any }, ___: any) => {
       let t: Transaction = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
       try {
-        const result = await GuestHousePrayer.create(input, { transaction: t });
+        const result = await Visitor.create(input, { transaction: t });
         await t.commit();
         return result;
       } catch (error: any) {
@@ -32,24 +31,28 @@ const guesthouseprayerResolvers = {
       }
     },
 
-    updateGuestHousePrayer: async (_: any, { id, input }: { id: number, input: any }, ___: any) => {
-      const instance = await GuestHousePrayer.findByPk(id);
+    updateVisitor: async (
+      _: any,
+      { id, input }: { id: number; input: any },
+      ___: any
+    ) => {
+      const instance = await Visitor.findByPk(id);
       if (!instance) {
-        throw new Error('GuestHousePrayer not found');
+        throw new Error("Visitor not found");
       }
       await instance.update(input);
       return instance;
     },
 
-    deleteGuestHousePrayer: async (_: any, { id }: { id: number }, ___: any) => {
-      const instance = await GuestHousePrayer.findByPk(id);
+    deleteVisitor: async (_: any, { id }: { id: number }, ___: any) => {
+      const instance = await Visitor.findByPk(id);
       if (!instance) {
-        throw new Error('GuestHousePrayer not found');
+        throw new Error("Visitor not found");
       }
       await instance.destroy();
-      return 'Deleted';
+      return "Deleted";
     },
   },
 };
 
-export default guesthouseprayerResolvers;
+export default VisitorResolvers;

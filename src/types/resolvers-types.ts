@@ -205,28 +205,6 @@ export type CreateGalleryInputType = {
   title: Scalars["String"]["input"];
 };
 
-export type CreateGuestHousePrayerInputType = {
-  email: Scalars["String"]["input"];
-  first_name: Scalars["String"]["input"];
-  include_pickup_from_airport: Scalars["Boolean"]["input"];
-  last_name: Scalars["String"]["input"];
-  payment_amount: Scalars["Float"]["input"];
-  payment_method: Scalars["String"]["input"];
-  phone: Scalars["String"]["input"];
-  request_detail: Scalars["String"]["input"];
-  schedule_id: Scalars["Int"]["input"];
-  user_id: Scalars["Int"]["input"];
-};
-
-export type CreateGuestHousePrayerScheduleInputType = {
-  end_time: Scalars["Date"]["input"];
-  payment_amount_etb: Scalars["Float"]["input"];
-  payment_amount_usd: Scalars["Float"]["input"];
-  pickup_extra_payment_etb: Scalars["Float"]["input"];
-  pickup_extra_payment_usd: Scalars["Float"]["input"];
-  start_time: Scalars["Date"]["input"];
-};
-
 export type CreatePartnershipInputType = {
   additional_message: Scalars["String"]["input"];
   address?: Scalars["String"]["input"];
@@ -274,6 +252,29 @@ export type CreateUserInputType = {
   last_name: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
   phone: Scalars["String"]["input"];
+};
+
+export type CreateVisitorInputType = {
+  address: Scalars["String"]["input"];
+  currency: Scalars["String"]["input"];
+  date: Scalars["Date"]["input"];
+  email: Scalars["String"]["input"];
+  first_name: Scalars["String"]["input"];
+  last_name: Scalars["String"]["input"];
+  payment_amount: Scalars["Float"]["input"];
+  payment_method: Scalars["String"]["input"];
+  phone: Scalars["String"]["input"];
+  request_detail: Scalars["String"]["input"];
+  user_id?: Scalars["Int"]["input"];
+};
+
+export type CreateVisitorScheduleInputType = {
+  end_time: Scalars["Date"]["input"];
+  payment_amount_etb: Scalars["Float"]["input"];
+  payment_amount_usd: Scalars["Float"]["input"];
+  pickup_extra_payment_etb: Scalars["Float"]["input"];
+  pickup_extra_payment_usd: Scalars["Float"]["input"];
+  start_time: Scalars["Date"]["input"];
 };
 
 export interface DonationType {
@@ -335,53 +336,6 @@ export interface GalleryCategoryType {
   galleries: Array<GalleryType>;
   id: Scalars["Int"]["output"];
   title: Scalars["String"]["output"];
-  updatedAt: Scalars["Date"]["output"];
-}
-
-export interface GuestHousePrayerType {
-  __typename?: "GuestHousePrayer";
-  createdAt: Scalars["Date"]["output"];
-  email: Scalars["String"]["output"];
-  first_name: Scalars["String"]["output"];
-  id: Scalars["Int"]["output"];
-  include_pickup_from_airport: Scalars["Boolean"]["output"];
-  last_name: Scalars["String"]["output"];
-  paymnet?: PaymentType;
-  phone: Scalars["String"]["output"];
-  request_detail: Scalars["String"]["output"];
-  schedule?: GuestHousePrayerScheduleType;
-  status: Scalars["String"]["output"];
-  updatedAt: Scalars["Date"]["output"];
-  user?: UserType;
-}
-
-export interface GuestHousePrayerForUserType {
-  __typename?: "GuestHousePrayerForUser";
-  createdAt: Scalars["Date"]["output"];
-  date: Scalars["Date"]["output"];
-  description: Scalars["String"]["output"];
-  end_time: Scalars["Date"]["output"];
-  id: Scalars["Int"]["output"];
-  payment_amount: Scalars["Float"]["output"];
-  schedule: GuestHousePrayerScheduleType;
-  start_time: Scalars["Date"]["output"];
-  title: Scalars["String"]["output"];
-}
-
-export interface GuestHousePrayerScheduleType {
-  __typename?: "GuestHousePrayerSchedule";
-  availabile: Scalars["Boolean"]["output"];
-  createdAt: Scalars["Date"]["output"];
-  date: Scalars["Date"]["output"];
-  end_time: Scalars["Date"]["output"];
-  guest_house_prayers: Array<GuestHousePrayerType>;
-  id: Scalars["Int"]["output"];
-  payment_amount_etb: Scalars["Float"]["output"];
-  payment_amount_usd: Scalars["Float"]["output"];
-  pickup_extra_payment_etb: Scalars["Float"]["output"];
-  pickup_extra_payment_usd: Scalars["Float"]["output"];
-  start_time: Scalars["Date"]["output"];
-  status: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
 }
 
@@ -489,15 +443,7 @@ export interface MutationcreateGalleryCategoryArgsType {
 }
 
 export interface MutationcreateGuestHouseOrderArgsType {
-  input?: CreateGuestHousePrayerInputType;
-}
-
-export interface MutationcreateGuestHousePrayerArgsType {
-  input: CreateGuestHousePrayerInputType;
-}
-
-export interface MutationcreateGuestHousePrayerScheduleArgsType {
-  input: CreateGuestHousePrayerScheduleInputType;
+  input?: CreateVisitorInputType;
 }
 
 export interface MutationcreateOrderArgsType {
@@ -532,6 +478,14 @@ export interface MutationcreateUserArgsType {
   input?: CreateUserInputType;
 }
 
+export interface MutationcreateVisitorArgsType {
+  input: CreateVisitorInputType;
+}
+
+export interface MutationcreateVisitorScheduleArgsType {
+  input: CreateVisitorScheduleInputType;
+}
+
 export interface MutationdeleteBibleStudyApplicationArgsType {
   id: Scalars["Int"]["input"];
 }
@@ -560,14 +514,6 @@ export interface MutationdeleteGalleryCategoryArgsType {
   id: Scalars["Int"]["input"];
 }
 
-export interface MutationdeleteGuestHousePrayerArgsType {
-  id: Scalars["Int"]["input"];
-}
-
-export interface MutationdeleteGuestHousePrayerScheduleArgsType {
-  id: Scalars["Int"]["input"];
-}
-
 export interface MutationdeleteServiceArgsType {
   id: Scalars["Int"]["input"];
 }
@@ -578,6 +524,14 @@ export interface MutationdeleteServiceCategoryArgsType {
 
 export interface MutationdeleteTagArgsType {
   id?: Scalars["Int"]["input"];
+}
+
+export interface MutationdeleteVisitorArgsType {
+  id: Scalars["Int"]["input"];
+}
+
+export interface MutationdeleteVisitorScheduleArgsType {
+  id: Scalars["Int"]["input"];
 }
 
 export interface MutationeditBlogArgsType {
@@ -639,16 +593,16 @@ export interface MutationupdateGalleryCategoryArgsType {
   input?: UpdateGalleryCategoryInputType;
 }
 
-export interface MutationupdateGuestHousePrayerScheduleArgsType {
-  input: UpdateGuestHousePrayerScheduleInputType;
-}
-
 export interface MutationupdateServiceArgsType {
   input?: UpdateServiceInputType;
 }
 
 export interface MutationupdateServiceCategoryArgsType {
   input?: UpdateServiceCategoryInputType;
+}
+
+export interface MutationupdateVisitorScheduleArgsType {
+  input: UpdateVisitorScheduleInputType;
 }
 
 export interface NotificationType {
@@ -700,6 +654,7 @@ export interface PaymentType {
   last_name: Scalars["String"]["output"];
   payment_method: Scalars["String"]["output"];
   phone: Scalars["String"]["output"];
+  reason: Scalars["String"]["output"];
   status: Scalars["String"]["output"];
   tx_ref: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
@@ -838,16 +793,6 @@ export type UpdateGalleryInputType = {
   title?: Scalars["String"]["input"];
 };
 
-export type UpdateGuestHousePrayerScheduleInputType = {
-  end_time?: Scalars["Date"]["input"];
-  id: Scalars["Int"]["input"];
-  payment_amount_etb?: Scalars["Float"]["input"];
-  payment_amount_usd?: Scalars["Float"]["input"];
-  pickup_extra_payment_etb?: Scalars["Float"]["input"];
-  pickup_extra_payment_usd?: Scalars["Float"]["input"];
-  start_time?: Scalars["Date"]["input"];
-};
-
 export type UpdateServiceCategoryInputType = {
   id: Scalars["Int"]["input"];
   playlist_link: Scalars["String"]["input"];
@@ -865,6 +810,16 @@ export type UpdateServiceInputType = {
 export type UpdateTagInputType = {
   id: Scalars["Int"]["input"];
   title?: Scalars["String"]["input"];
+};
+
+export type UpdateVisitorScheduleInputType = {
+  end_time?: Scalars["Date"]["input"];
+  id: Scalars["Int"]["input"];
+  payment_amount_etb?: Scalars["Float"]["input"];
+  payment_amount_usd?: Scalars["Float"]["input"];
+  pickup_extra_payment_etb?: Scalars["Float"]["input"];
+  pickup_extra_payment_usd?: Scalars["Float"]["input"];
+  start_time?: Scalars["Date"]["input"];
 };
 
 export interface UserType {
@@ -888,4 +843,49 @@ export interface UserType {
   role: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
   user: Array<PaymentType>;
+}
+
+export interface VisitorType {
+  __typename?: "Visitor";
+  address: Scalars["String"]["output"];
+  createdAt: Scalars["Date"]["output"];
+  date: Scalars["Date"]["output"];
+  email: Scalars["String"]["output"];
+  first_name: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  last_name: Scalars["String"]["output"];
+  paymnet?: PaymentType;
+  phone: Scalars["String"]["output"];
+  request_detail: Scalars["String"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+  user?: UserType;
+}
+
+export interface VisitorForUserType {
+  __typename?: "VisitorForUser";
+  createdAt: Scalars["Date"]["output"];
+  date: Scalars["Date"]["output"];
+  description: Scalars["String"]["output"];
+  end_time: Scalars["Date"]["output"];
+  id: Scalars["Int"]["output"];
+  payment_amount: Scalars["Float"]["output"];
+  schedule: VisitorScheduleType;
+  start_time: Scalars["Date"]["output"];
+  title: Scalars["String"]["output"];
+}
+
+export interface VisitorScheduleType {
+  __typename?: "VisitorSchedule";
+  availabile: Scalars["Boolean"]["output"];
+  createdAt: Scalars["Date"]["output"];
+  date: Scalars["Date"]["output"];
+  end_time: Scalars["Date"]["output"];
+  id: Scalars["Int"]["output"];
+  payment_amount_etb: Scalars["Float"]["output"];
+  payment_amount_usd: Scalars["Float"]["output"];
+  pickup_extra_payment_etb: Scalars["Float"]["output"];
+  pickup_extra_payment_usd: Scalars["Float"]["output"];
+  start_time: Scalars["Date"]["output"];
+  status: Scalars["String"]["output"];
+  updatedAt: Scalars["Date"]["output"];
 }

@@ -1,4 +1,4 @@
-// src/models/GuestHousePrayer.ts
+// src/models/Visitor.ts
 import {
   BelongsTo,
   Column,
@@ -8,12 +8,11 @@ import {
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import GuestHousePrayerSchedule from "./guest_house_prayer_schedule.model";
-import User from "./user.model";
 import Payment from "./payment.model";
+import User from "./user.model";
 
 @Table
-export default class GuestHousePrayer extends Model {
+export default class Visitor extends Model {
   @PrimaryKey
   @Column({
     type: DataType.INTEGER,
@@ -42,20 +41,16 @@ export default class GuestHousePrayer extends Model {
   phone!: string;
 
   @Column(DataType.TEXT)
+  address!: string;
+
+  @Column(DataType.TEXT)
   request_detail!: string;
 
-  @Column({ type: DataType.BOOLEAN })
-  include_pickup_from_airport!: boolean;
+  // @Column({ type: DataType.BOOLEAN })
+  // include_pickup_from_airport!: boolean;
 
-  @Column(DataType.STRING)
-  status!: string;
-
-  @ForeignKey(() => GuestHousePrayerSchedule)
-  @Column(DataType.INTEGER)
-  schedule_id!: number;
-
-  @BelongsTo(() => GuestHousePrayerSchedule)
-  schedule!: GuestHousePrayerSchedule;
+  @Column(DataType.DATE)
+  date!: Date;
 
   @ForeignKey(() => Payment)
   payment_id!: number;

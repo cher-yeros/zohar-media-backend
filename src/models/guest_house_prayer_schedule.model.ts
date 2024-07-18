@@ -2,15 +2,13 @@
 import {
   Column,
   DataType,
-  HasMany,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import GuestHousePrayer from "./guest_house_prayer.model";
 
 @Table
-export default class GuestHousePrayerSchedule extends Model {
+export default class VisitorSchedule extends Model {
   @PrimaryKey
   @Column({
     type: DataType.INTEGER,
@@ -46,6 +44,6 @@ export default class GuestHousePrayerSchedule extends Model {
   @Column(DataType.DOUBLE)
   pickup_extra_payment_etb!: number;
 
-  @HasMany(() => GuestHousePrayer)
-  guest_house_prayers!: GuestHousePrayer[];
+  // @HasMany(() => Visitor)
+  // guest_house_prayers!: Visitor[];
 }

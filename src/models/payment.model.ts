@@ -51,6 +51,9 @@ class Payment extends Model {
   @Column(DataType.STRING)
   payment_method!: string;
 
+  @Column(DataType.STRING)
+  reason!: string;
+
   @Column({
     type: DataType.FLOAT,
     allowNull: false,
@@ -59,7 +62,7 @@ class Payment extends Model {
 
   @Column({
     type: DataType.STRING,
-    defaultValue: "Pending",
+    defaultValue: "PENDING",
   })
   status!: string;
 

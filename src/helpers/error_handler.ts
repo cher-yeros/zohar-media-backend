@@ -50,7 +50,7 @@ export class AuthenticationError {
     throw new GraphQLError(message, {
       extensions: {
         code: "UNAUTHENTICATED",
-        http: { status: 401 },
+        // http: { status: 401 },
         ...extensions,
       },
     });

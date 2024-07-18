@@ -1,6 +1,6 @@
 import BibleStudySession from "../models/bible_study_session.model";
 import Blog from "../models/blog.model";
-import GuestHousePrayer from "../models/guest_house_prayer.model";
+import Visitor from "../models/visitor.model";
 import Partnership from "../models/partnership.model";
 import Payment from "../models/payment.model";
 import User from "../models/user.model";
@@ -16,7 +16,7 @@ const adminesolvers = {
       const blogs = await Blog.count();
 
       const propheticSchoolSessions = await BibleStudySession.count();
-      const visitors = await GuestHousePrayer.count();
+      const visitors = await Visitor.count();
 
       const foreign_txn = await Payment.sum("amount", {
         where: { payment_method: "Paypal", status: "COMPLETED" },

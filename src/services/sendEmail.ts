@@ -146,7 +146,7 @@ export const sendBibleStudyEmail = async (
   return transporter.sendMail(mailOptions);
 };
 
-export const sendGuestHouseConfirmationEmail = async (
+export const sendVisitorConfirmationEmail = async (
   to: string,
   first_name: string,
   last_name: string
@@ -179,7 +179,7 @@ export const sendGuestHouseConfirmationEmail = async (
   const mailOptions = {
     from: '"JPS TV Visitors " <visitors@jpstvethiopia.com>',
     to,
-    subject: "Visitor / One to One Meeting With One of God Message",
+    subject: "Visitor / One to One Meeting With Man of God Message",
     html: htmlToSend,
   };
 

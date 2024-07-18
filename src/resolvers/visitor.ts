@@ -1,18 +1,18 @@
-import { Op, Transaction } from "sequelize";
-import GuestHousePrayerSchedule from "../models/guest_house_prayer_schedule.model";
+import { Transaction } from "sequelize";
+import VisitorSchedule from "../models/guest_house_prayer_schedule.model";
 import {
-  CreateGuestHousePrayerInputType,
-  CreateGuestHousePrayerScheduleInputType,
-  UpdateGuestHousePrayerScheduleInputType,
+  CreateVisitorInputType,
+  CreateVisitorScheduleInputType,
+  UpdateVisitorScheduleInputType,
   UserType,
 } from "../types/resolvers-types";
 
 import paypal from "@paypal/checkout-server-sdk";
 import { BadRequestError } from "../helpers/error_handler";
-import GuestHousePrayer from "../models/guest_house_prayer.model";
 import Payment from "../models/payment.model";
 import User from "../models/user.model";
-import { sendGuestHouseConfirmationEmail } from "../services/sendEmail";
+import Visitor from "../models/visitor.model";
+import { sendVisitorConfirmationEmail } from "../services/sendEmail";
 import createChapaPayment, { PaymentTypes } from "../services/services";
 import { UserAccount } from "../types";
 import sequelize from "../utils/db.connection";
@@ -26,18 +26,14 @@ let client = new paypal.core.PayPalHttpClient(environment);
 
 const geustHouseResolvers = {
   Query: {
-    guestHousePrayerSchedules: async (
-      _: any,
-      __: any,
-      { user }: { user: UserType }
-    ) => {
-      let result = await GuestHousePrayerSchedule.findAll({
+    VisitorSchedules: async (_: any, __: any, { user }: { user: UserType }) => {
+      let result = await VisitorSchedule.findAll({
         order: [["createdAt", "DESC"]],
       });
 
       return result;
     },
-    //     guestHousePrayers: async (
+    //     Visitors: async (
     //       _: any,
     //       __: any,
     //       { user }: { user: UserType }
@@ -45,9 +41,9 @@ const geustHouseResolvers = {
     //       let result;
 
     //       if (user && user.role === "admin") {
-    //         result = await GuestHousePrayer.findAll({});
+    //         result = await Visitor.findAll({});
     //       } else {
-    //         result = await GuestHousePrayer.findAll({
+    //         result = await Visitor.findAll({
     //           where: {
     //             status: {
     //               [Op.not]: "CLOSED",
@@ -57,12 +53,12 @@ const geustHouseResolvers = {
     //       }
     //       return result;
     //     },
-    guestHousePrayerScheulesForUsers: async (
+    VisitorScheulesForUsers: async (
       _: any,
       __: any,
       { user }: { user: UserType }
     ) => {
-      let result = await GuestHousePrayerSchedule.findAll({
+      let result = await VisitorSchedule.findAll({
         where: {
           status: "OPEN",
 
@@ -75,13 +71,9 @@ const geustHouseResolvers = {
 
       return result;
     },
-    guestHousePrayers: async (
-      _: any,
-      __: any,
-      { user }: { user: UserType }
-    ) => {
-      const result = await GuestHousePrayer.findAll({
-        include: [User, GuestHousePrayerSchedule],
+    Visitors: async (_: any, __: any, { user }: { user: UserType }) => {
+      const result = await Visitor.findAll({
+        include: [User],
         order: [["createdAt", "DESC"]],
       });
       return result;
@@ -91,36 +83,36 @@ const geustHouseResolvers = {
     //   __: any,
     //   { user }: { user: UserType }
     // ) => {
-    //   const result = await GuestHousePrayer.findAll({
+    //   const result = await Visitor.findAll({
     //     where: { user_id: user.id },
-    //     include: [GuestHousePrayerSchedule],
+    //     include: [VisitorSchedule],
     //   });
     //   return result;
     // },
   },
   Mutation: {
-    createGuestHousePrayerSchedule: async (
+    createVisitorSchedule: async (
       _: any,
-      { input }: { input: CreateGuestHousePrayerScheduleInputType },
+      { input }: { input: CreateVisitorScheduleInputType },
       { user, pubsub }: { pubsub: any; user: UserType }
     ) => {
-      const result = await GuestHousePrayerSchedule.create({
+      const result = await VisitorSchedule.create({
         ...input,
         date: input.start_time,
       });
 
       return result;
     },
-    createGuestHousePrayer: async (
+    createVisitor: async (
       _: any,
-      { input }: { input: CreateGuestHousePrayerInputType },
+      { input }: { input: CreateVisitorInputType },
       { user, pubsub }: { pubsub: any; user: UserType }
     ) => {
       let t: Transaction = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
-      const guestHouse = await GuestHousePrayer.create(
+      const visitor = await Visitor.create(
         {
           ...input,
         },
@@ -147,26 +139,21 @@ const geustHouseResolvers = {
             amount: input.payment_amount,
             currency: "ETB",
             tx_ref: paymentInstance.tx_ref,
-            user_id: user.id,
-            reason: "For Guest House Prayer Registraton",
+            user_id: user?.id,
+            reason: "For Visitors Program",
             payment_method: input.payment_method,
           },
           { transaction: t }
         );
 
-        await GuestHousePrayer.update(
-          { status: "PAID" },
+        await Visitor.update(
+          { status: "PENDING", payment_id: payment.id },
           {
             where: {
-              id: guestHouse.id,
+              id: visitor.id,
             },
             transaction: t,
           }
-        );
-        await sendGuestHouseConfirmationEmail(
-          input.email,
-          input.first_name,
-          input.last_name
         );
 
         t.commit();
@@ -178,12 +165,12 @@ const geustHouseResolvers = {
       }
     },
 
-    // closeGuestHousePrayerSchedule: async (
+    // closeVisitorSchedule: async (
     //   _: any,
     //   { id }: { id: number },
     //   { user, pubsub }: { pubsub: any; user: UserType }
     // ) => {
-    //   const result = await GuestHousePrayer.update(
+    //   const result = await Visitor.update(
     //     {
     //       status: "CLOSED",
     //     },
@@ -194,14 +181,14 @@ const geustHouseResolvers = {
 
     createGuestHouseOrder: async (
       _: any,
-      { input }: { input: CreateGuestHousePrayerInputType },
+      { input }: { input: CreateVisitorInputType },
       { user }: { user: UserAccount }
     ) => {
       let t: Transaction = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
-      const guestHouse = await GuestHousePrayer.create(
+      const guestHouse = await Visitor.create(
         {
           ...input,
         },
@@ -242,7 +229,7 @@ const geustHouseResolvers = {
           { transaction: t }
         );
 
-        await GuestHousePrayer.update(
+        await Visitor.update(
           { status: "PAID" },
           {
             where: {
@@ -251,7 +238,7 @@ const geustHouseResolvers = {
             transaction: t,
           }
         );
-        await sendGuestHouseConfirmationEmail(
+        await sendVisitorConfirmationEmail(
           input.email,
           input.first_name,
           input.last_name
@@ -298,13 +285,13 @@ const geustHouseResolvers = {
       }
     },
 
-    updateGuestHousePrayerSchedule: async (
+    updateVisitorSchedule: async (
       _: any,
-      { input }: { input: UpdateGuestHousePrayerScheduleInputType },
+      { input }: { input: UpdateVisitorScheduleInputType },
       ___: any
     ) => {
       try {
-        const [updated] = await GuestHousePrayerSchedule.update(
+        const [updated] = await VisitorSchedule.update(
           { ...input },
           { where: { id: input.id } }
         );
@@ -313,13 +300,9 @@ const geustHouseResolvers = {
         throw new Error("Error updating guest house schedule");
       }
     },
-    deleteGuestHousePrayerSchedule: async (
-      _: any,
-      { id }: { id: number },
-      ___: any
-    ) => {
+    deleteVisitorSchedule: async (_: any, { id }: { id: number }, ___: any) => {
       try {
-        const result = await GuestHousePrayerSchedule.destroy({
+        const result = await VisitorSchedule.destroy({
           where: { id },
         });
         return result > 0;
@@ -327,13 +310,9 @@ const geustHouseResolvers = {
         throw new Error("Error deleting guest");
       }
     },
-    deleteGuestHousePrayer: async (
-      _: any,
-      { id }: { id: number },
-      ___: any
-    ) => {
+    deleteVisitor: async (_: any, { id }: { id: number }, ___: any) => {
       try {
-        const result = await await GuestHousePrayer.destroy({ where: { id } });
+        const result = await await Visitor.destroy({ where: { id } });
         return result > 0;
       } catch (error) {
         throw new Error("Error deleting guest");

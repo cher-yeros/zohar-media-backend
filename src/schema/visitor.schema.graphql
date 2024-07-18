@@ -1,6 +1,6 @@
 # import '../generated/schema.graphql'
 
-input CreateGuestHousePrayerScheduleInput {
+input CreateVisitorScheduleInput {
   start_time: Date!
   end_time: Date!
   payment_amount_etb: Float!
@@ -9,7 +9,7 @@ input CreateGuestHousePrayerScheduleInput {
   pickup_extra_payment_usd: Float!
 }
 
-input UpdateGuestHousePrayerScheduleInput {
+input UpdateVisitorScheduleInput {
   id: Int!
   start_time: Date
   end_time: Date
@@ -19,20 +19,21 @@ input UpdateGuestHousePrayerScheduleInput {
   pickup_extra_payment_usd: Float
 }
 
-input CreateGuestHousePrayerInput {
+input CreateVisitorInput {
   first_name: String!
   last_name: String!
   email: String!
   phone: String!
+  date: Date!
+  address: String!
   request_detail: String!
-  user_id: Int!
-  schedule_id: Int!
+  currency: String!
+  user_id: Int
   payment_method: String!
   payment_amount: Float!
-  include_pickup_from_airport: Boolean!
 }
 
-type GuestHousePrayerForUser {
+type VisitorForUser {
   id: Int!
   title: String!
   description: String!
@@ -41,30 +42,36 @@ type GuestHousePrayerForUser {
   end_time: Date!
   payment_amount: Float!
   createdAt: Date!
-  schedule: GuestHousePrayerSchedule!
+  schedule: VisitorSchedule!
+}
+
+type ChapaPaymentResponseData {
+  checkout_url: String!
+}
+
+type ChapaPaymentResponse {
+  message: String!
+  status: String!
+  data: ChapaPaymentResponseData!
 }
 
 type Query {
-  guestHousePrayerSchedules: [GuestHousePrayerSchedule!]!
-  guestHousePrayers: [GuestHousePrayer!]!
-  guestHousePrayerScheulesForUsers: [GuestHousePrayerSchedule!]!
+  VisitorSchedules: [VisitorSchedule!]!
+  Visitors: [Visitor!]!
+  VisitorScheulesForUsers: [VisitorSchedule!]!
   #   bibleStudyApplications: [BibleStudyApplication!]!
   #   myBibleStudyApplications: [BibleStudyApplication!]!
 }
 
 type Mutation {
-  createGuestHousePrayerSchedule(
-    input: CreateGuestHousePrayerScheduleInput!
-  ): GuestHousePrayerSchedule!
-  createGuestHousePrayer(input: CreateGuestHousePrayerInput!): JSON!
+  createVisitorSchedule(input: CreateVisitorScheduleInput!): VisitorSchedule!
+  createVisitor(input: CreateVisitorInput!): ChapaPaymentResponse!
 
-  updateGuestHousePrayerSchedule(
-    input: UpdateGuestHousePrayerScheduleInput!
-  ): Boolean!
-  deleteGuestHousePrayerSchedule(id: Int!): Boolean!
+  updateVisitorSchedule(input: UpdateVisitorScheduleInput!): Boolean!
+  deleteVisitorSchedule(id: Int!): Boolean!
 
-  deleteGuestHousePrayer(id: Int!): Boolean!
+  deleteVisitor(id: Int!): Boolean!
 
-  createGuestHouseOrder(input: CreateGuestHousePrayerInput): JSON!
+  createGuestHouseOrder(input: CreateVisitorInput): JSON!
   captureGuestHouseOrder(orderID: String!): JSON!
 }

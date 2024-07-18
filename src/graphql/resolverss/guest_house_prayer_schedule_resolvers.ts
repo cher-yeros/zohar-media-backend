@@ -1,27 +1,30 @@
-
-import { Transaction } from 'sequelize';
+import { Transaction } from "sequelize";
 // import { AuthenticationError, BadRequestError } from 'apollo-server-errors';
-import sequelize from '../../utils/db.connection'; 
-import GuestHousePrayerSchedule from '../../models/guest_house_prayer_schedule.model';
+import sequelize from "../../utils/db.connection";
+import VisitorSchedule from "../../models/guest_house_prayer_schedule.model";
 
-const guesthouseprayerscheduleResolvers = {
+const VisitorscheduleResolvers = {
   Query: {
-    guesthouseprayerschedule: async (_: any, { id }: { id: number }, ___: any) => {
-      return await GuestHousePrayerSchedule.findByPk(id);
+    Visitorschedule: async (_: any, { id }: { id: number }, ___: any) => {
+      return await VisitorSchedule.findByPk(id);
     },
-    allGuestHousePrayerSchedules: async (_: any, __: any, ___: any) => {
-      return await GuestHousePrayerSchedule.findAll();
+    allVisitorSchedules: async (_: any, __: any, ___: any) => {
+      return await VisitorSchedule.findAll();
     },
   },
 
   Mutation: {
-    createGuestHousePrayerSchedule: async (_: any, { input }: { input: any }, ___: any) => {
+    createVisitorSchedule: async (
+      _: any,
+      { input }: { input: any },
+      ___: any
+    ) => {
       let t: Transaction = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
       try {
-        const result = await GuestHousePrayerSchedule.create(input, { transaction: t });
+        const result = await VisitorSchedule.create(input, { transaction: t });
         await t.commit();
         return result;
       } catch (error: any) {
@@ -32,24 +35,28 @@ const guesthouseprayerscheduleResolvers = {
       }
     },
 
-    updateGuestHousePrayerSchedule: async (_: any, { id, input }: { id: number, input: any }, ___: any) => {
-      const instance = await GuestHousePrayerSchedule.findByPk(id);
+    updateVisitorSchedule: async (
+      _: any,
+      { id, input }: { id: number; input: any },
+      ___: any
+    ) => {
+      const instance = await VisitorSchedule.findByPk(id);
       if (!instance) {
-        throw new Error('GuestHousePrayerSchedule not found');
+        throw new Error("VisitorSchedule not found");
       }
       await instance.update(input);
       return instance;
     },
 
-    deleteGuestHousePrayerSchedule: async (_: any, { id }: { id: number }, ___: any) => {
-      const instance = await GuestHousePrayerSchedule.findByPk(id);
+    deleteVisitorSchedule: async (_: any, { id }: { id: number }, ___: any) => {
+      const instance = await VisitorSchedule.findByPk(id);
       if (!instance) {
-        throw new Error('GuestHousePrayerSchedule not found');
+        throw new Error("VisitorSchedule not found");
       }
       await instance.destroy();
-      return 'Deleted';
+      return "Deleted";
     },
   },
 };
 
-export default guesthouseprayerscheduleResolvers;
+export default VisitorscheduleResolvers;

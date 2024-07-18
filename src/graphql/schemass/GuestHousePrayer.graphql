@@ -1,5 +1,4 @@
-
-type GuestHousePrayer {
+type Visitor {
   id: Int
   user_id: Int
   first_name: String
@@ -15,7 +14,7 @@ type GuestHousePrayer {
   payment_id: Int
 }
 
-input CreateGuestHousePrayerInput {
+input CreateVisitorInput {
   user_id: Int
   first_name: String!
   last_name: String!
@@ -28,7 +27,7 @@ input CreateGuestHousePrayerInput {
   payment_id: Int
 }
 
-input UpdateGuestHousePrayerInput {
+input UpdateVisitorInput {
   id: Int!
   user_id: Int
   first_name: String
@@ -43,12 +42,12 @@ input UpdateGuestHousePrayerInput {
 }
 
 type Query {
-  guesthouseprayer(id: ID!): GuestHousePrayer
-  allGuestHousePrayers: [GuestHousePrayer]
+  Visitor(id: ID!): Visitor
+  allVisitors: [Visitor]
 }
 
 type Mutation {
-  createGuestHousePrayer(input: CreateGuestHousePrayerInput): GuestHousePrayer
-  updateGuestHousePrayer(id: ID!, input: UpdateGuestHousePrayerInput): GuestHousePrayer
-  deleteGuestHousePrayer(id: ID!): String
+  createVisitor(input: CreateVisitorInput): Visitor
+  updateVisitor(id: ID!, input: UpdateVisitorInput): Visitor
+  deleteVisitor(id: ID!): String
 }

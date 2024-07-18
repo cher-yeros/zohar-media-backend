@@ -135,23 +135,7 @@ type GalleryCategory {
   galleries: [Gallery!]!
 }
 
-type GuestHousePrayer {
-  id: Int!
-  first_name: String!
-  last_name: String!
-  email: String!
-  phone: String!
-  request_detail: String!
-  include_pickup_from_airport: Boolean!
-  status: String!
-  createdAt: Date!
-  updatedAt: Date!
-  user: User  
-  schedule: GuestHousePrayerSchedule  
-  paymnet: Payment  
-}
-
-type GuestHousePrayerSchedule {
+type VisitorSchedule {
   id: Int!
   date: Date!
   start_time: Date!
@@ -164,7 +148,6 @@ type GuestHousePrayerSchedule {
   pickup_extra_payment_etb: Float!
   createdAt: Date!
   updatedAt: Date!
-  guest_house_prayers: [GuestHousePrayer!]!
 }
 
 type Message {
@@ -220,6 +203,7 @@ type Payment {
   phone: String!
   email: String!
   payment_method: String!
+  reason: String!
   amount: Float!
   status: String!
   tx_ref: String!
@@ -295,4 +279,19 @@ type User {
   createdAt: Date!
   updatedAt: Date!
   user: [Payment!]!
+}
+
+type Visitor {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  address: String!
+  request_detail: String!
+  date: Date!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User  
+  paymnet: Payment  
 }

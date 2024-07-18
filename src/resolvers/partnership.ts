@@ -15,6 +15,7 @@ import { configDotenv } from "dotenv";
 import Payment from "../models/payment.model";
 // import { getAccessToken } from "../services/paypalClient";
 import { sendPartnershipConfirmationEmail } from "../services/sendEmail";
+import PartnershipPayment from "../models/partners_payment.model";
 configDotenv();
 const pubsub = new PubSub();
 
@@ -107,7 +108,7 @@ const partnershipResolvers = {
           reason: PaymentTypes.Partnership,
         });
 
-        await Payment.create(
+        const payment = await Payment.create(
           {
             first_name: input.first_name,
             last_name: input.last_name,
@@ -132,6 +133,14 @@ const partnershipResolvers = {
           await Partnership.update(
             { due_date },
             { where: { id: partnership.id }, transaction: t }
+          );
+
+          await PartnershipPayment.create(
+            {
+              partnership_id: partnership.id,
+              payment_id: payment.id,
+            },
+            { transaction: t }
           );
         }
 

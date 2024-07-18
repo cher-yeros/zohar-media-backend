@@ -26,7 +26,7 @@ const createChapaPayment = async ({
   currency: string;
   reason: PaymentTypes;
 }) => {
-  const tx_ref = "TX" + new Date().getTime();
+  const tx_ref = generateTransactionReference().toUpperCase();
 
   const CHAPA_TEST_SECRET_KEY = process.env.CHAPA_TEST_SECRET_KEY as Secret;
 
@@ -34,8 +34,8 @@ const createChapaPayment = async ({
 
   const CALLBACK_URL =
     process.env.NODE_ENV === "production"
-      ? `https://api.jpstvethiopia.com/api/verify-payment/${reason}/${tx_ref}`
-      : `http://localhost:4000/api/verify-payment/${reason}/${tx_ref}`;
+      ? `https://api.jpstvethiopia.com/api/payment/verify/${reason}/${tx_ref}`
+      : `http://localhost:4000/api/payment/verify/${reason}/${tx_ref}`;
 
   console.log({ CALLBACK_URL });
 
@@ -101,4 +101,13 @@ export function generateTxRef(userId: number): string {
   const txRef = `chapa_${userId}_${timestamp}_${randomString}`;
 
   return txRef.replace(/[:.-]/g, ""); // Remove special characters to make it URL safe
+}
+
+function generateTransactionReference() {
+  const dateStr = new Date()
+    .toISOString()
+    .replace(/[-:.TZ]/g, "")
+    .slice(-10); // Take the last 10 digits of the date string
+  const randomStr = Math.random().toString(36).substring(2, 5).toUpperCase(); // Random 3-character alphanumeric string
+  return `TXN-${dateStr}${randomStr}`; // Concatenate to get 17 characters
 }

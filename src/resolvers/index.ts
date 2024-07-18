@@ -13,7 +13,6 @@ import bookPurchaseResolvers from "./book_purchase";
 import donationResolvers from "./donation";
 import feedbackResolvers from "./feedback";
 import galleryResolvels from "./gallery";
-import geustHouseResolvers from "./guest_house";
 import lookupResolvers from "./lookup";
 import messageResolvers from "./message";
 import notificationResolvers from "./notification";
@@ -21,6 +20,7 @@ import partnershipResolvers from "./partnership";
 import paymentResolvers from "./payment";
 import serviceResolvers from "./service";
 import userResolvers from "./user";
+import geustHouseResolvers from "./visitor";
 
 const dateScalar = {
   Date: new GraphQLScalarType({

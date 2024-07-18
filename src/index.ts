@@ -32,14 +32,9 @@ import { v4 } from "uuid";
 import BookPurchase from "./models/book_purchase.model";
 import Partnership from "./models/partnership.model";
 import Payment from "./models/payment.model";
-import {
-  sendBookPurchaseEmail,
-  sendDonationConfirmationEmail,
-  sendPartnershipConfirmationEmail,
-  sendReminderEmail,
-} from "./services/sendEmail";
+import paymentRouter from "./routes/payment";
+import { sendBookPurchaseEmail, sendReminderEmail } from "./services/sendEmail";
 import { UserAccount } from "./types";
-import { PaymentTypes } from "./services/services";
 // import crypto from "crypto";
 // console.log(crypto.randomBytes(32).toString("hex"));
 configDotenv();
@@ -138,12 +133,13 @@ const serverCleanup = useServer(
               req.body.operationName === "CreateSubscription" ||
               req.body.operationName === "CaptureSubscription" ||
               req.body.operationName === "BibleStudySessionsForUsers" ||
-              req.body.operationName === "GuestHousePrayerScheulesForUsers" ||
+              req.body.operationName === "VisitorScheulesForUsers" ||
               req.body.operationName === "Blogs" ||
               req.body.operationName === "ServiceCategoryForUsers" ||
               req.body.operationName === "GalleriesForUsers" ||
               req.body.operationName === "GalleryCategoryForUsers" ||
               req.body.operationName === "CreateDonation" ||
+              req.body.operationName === "CreateVisitor" ||
               req.body.operationName === "CreateFeedback"
             )
           ) {
@@ -212,125 +208,10 @@ function authentication(token: any) {
   }
   return user;
 }
-
 app.use(cors(corsOptions));
-app.get("/api/verify-payment/:reason/:tx_ref", async (req, res) => {
-  console.log(req.params);
-  const config = {
-    headers: {
-      Authorization: "Bearer " + process.env.CHAPA_TEST_SECRET_KEY,
-    },
-  };
 
-  const VERIFY_URL =
-    "https://api.chapa.co/v1/transaction/verify/" + req.params.tx_ref;
-
-  let t: Transaction = await sequelize.transaction({
-    isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
-  });
-
-  try {
-    const payment = await Payment.findOne({
-      where: { tx_ref: req.params.tx_ref },
-    });
-
-    if (!payment) {
-      return res.status(404).json({
-        success: false,
-        message: "Payment not found",
-      });
-    }
-
-    const { data } = await axios.get(VERIFY_URL, config);
-
-    console.log("verification ", { ...data, tx_ref: req.params.tx_ref });
-
-    await payment.update(
-      {
-        status:
-          data?.data?.status === "success" ? "COMPLETED" : data?.data?.status,
-      }
-      // {
-      //   where: {
-      //     tx_ref: req.params.tx_ref,
-      //   },
-      //   transaction: t,
-      // }
-    );
-
-    if (req.params.reason === PaymentTypes.Partnership) {
-      await sendPartnershipConfirmationEmail(
-        payment.email!,
-        payment.first_name!,
-        payment.last_name!
-      );
-    } else if (req.params.reason === PaymentTypes.Donation) {
-      await sendDonationConfirmationEmail(
-        payment.email!,
-        payment.first_name!,
-        payment.last_name!
-      );
-    } else if (req.params.reason === PaymentTypes.Visitor) {
-    } else if (req.params.reason === PaymentTypes.BibleStudy) {
-    } else {
-      if (t) {
-        t.rollback;
-      }
-      throw new Error("Invalid reason");
-    }
-
-    t.commit();
-  } catch (error) {
-    t.rollback();
-    res.status(400).json({ error });
-  }
-});
-app.get("/api/verify-book-purchase-payment/:tx_ref", async (req, res) => {
-  const config = {
-    headers: {
-      Authorization: "Bearer " + process.env.CHAPA_TEST_SECRET_KEY,
-    },
-  };
-
-  const VERIFY_URL =
-    "https://api.chapa.co/v1/transaction/verify/" + req.params.tx_ref;
-
-  let t: Transaction = await sequelize.transaction({
-    isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
-  });
-
-  try {
-    const { data } = await axios.get(VERIFY_URL, config);
-
-    let payment = await Payment.update(
-      { status: "COMPLETED" },
-      {
-        where: {
-          tx_ref: req.params.tx_ref,
-        },
-        transaction: t,
-      }
-    );
-
-    const order = await BookPurchase.findOne({
-      where: {
-        tx_ref: req.params.tx_ref,
-      },
-      transaction: t,
-    });
-
-    await sendBookPurchaseEmail(
-      order!.email,
-      order!.first_name,
-      order!.last_name
-    );
-
-    t.commit();
-  } catch (error) {
-    t.rollback();
-    res.status(400).json({ error });
-  }
-});
+// Routes
+app.use("/api/payment", paymentRouter);
 
 app.post("/api/upload-file", async (req: any, res: Response) => {
   try {

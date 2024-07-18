@@ -1,7 +1,6 @@
 import { Transaction } from "sequelize";
 import Donation from "../models/donation.model";
 import Payment from "../models/payment.model";
-import { sendDonationConfirmationEmail } from "../services/sendEmail";
 import createChapaPayment, { PaymentTypes } from "../services/services";
 import { UserAccount } from "../types";
 import { CreateDonationInputType } from "../types/resolvers-types";
@@ -59,11 +58,6 @@ const donationResolvers = {
           { where: { id: result.id }, transaction: t }
         );
 
-        // await sendDonationConfirmationEmail(
-        //   input.email,
-        //   input.first_name,
-        //   input.last_name
-        // );
         await t.commit();
         return paymentInstance;
       } catch (error: any) {
