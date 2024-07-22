@@ -78,7 +78,7 @@ const geustHouseResolvers = {
       });
       return result;
     },
-    // myGuestHouseApplications: async (
+    // myVisitorApplications: async (
     //   _: any,
     //   __: any,
     //   { user }: { user: UserType }
@@ -112,13 +112,6 @@ const geustHouseResolvers = {
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
-      const visitor = await Visitor.create(
-        {
-          ...input,
-        },
-        { transaction: t }
-      );
-
       try {
         const paymentInstance = await createChapaPayment({
           first_name: input.first_name,
@@ -146,40 +139,24 @@ const geustHouseResolvers = {
           { transaction: t }
         );
 
-        await Visitor.update(
-          { status: "PENDING", payment_id: payment.id },
+        const visitor = await Visitor.create(
           {
-            where: {
-              id: visitor.id,
-            },
-            transaction: t,
-          }
+            ...input,
+            status: "PENDING",
+            payment_id: payment.id,
+          },
+          { transaction: t }
         );
 
         t.commit();
         return paymentInstance;
       } catch (error: any) {
         t.rollback();
-        console.log(error);
         return new BadRequestError(error.message);
       }
     },
 
-    // closeVisitorSchedule: async (
-    //   _: any,
-    //   { id }: { id: number },
-    //   { user, pubsub }: { pubsub: any; user: UserType }
-    // ) => {
-    //   const result = await Visitor.update(
-    //     {
-    //       status: "CLOSED",
-    //     },
-    //     { where: { id } }
-    //   );
-    //   return result;
-    // },
-
-    createGuestHouseOrder: async (
+    createVisitorOrder: async (
       _: any,
       { input }: { input: CreateVisitorInputType },
       { user }: { user: UserAccount }
@@ -187,13 +164,6 @@ const geustHouseResolvers = {
       let t: Transaction = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
-
-      const guestHouse = await Visitor.create(
-        {
-          ...input,
-        },
-        { transaction: t }
-      );
 
       const request = new paypal.orders.OrdersCreateRequest();
       request.prefer("return=representation");
@@ -222,26 +192,20 @@ const geustHouseResolvers = {
             amount: input.payment_amount,
             currency: "ETB",
             tx_ref: order.result?.id,
-            user_id: user.id,
-            reason: "For Guest House Prayer Registraton",
+            user_id: user?.id,
+            reason: "For Visitors Program",
             payment_method: input.payment_method,
           },
           { transaction: t }
         );
 
-        await Visitor.update(
-          { status: "PAID" },
+        const visitor = await Visitor.create(
           {
-            where: {
-              id: guestHouse.id,
-            },
-            transaction: t,
-          }
-        );
-        await sendVisitorConfirmationEmail(
-          input.email,
-          input.first_name,
-          input.last_name
+            ...input,
+            status: "PENDING",
+            payment_id: payment.id,
+          },
+          { transaction: t }
         );
 
         await t.commit();
@@ -252,7 +216,7 @@ const geustHouseResolvers = {
         return new BadRequestError(err.message);
       }
     },
-    captureGuestHouseOrder: async (
+    captureVisitorOrder: async (
       _: any,
       { orderID }: { orderID: string },
       { user }: { user: UserAccount }
@@ -261,21 +225,57 @@ const geustHouseResolvers = {
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
-      let payment = await Payment.update(
-        { status: "COMPLETED" },
-        {
-          where: {
-            tx_ref: orderID,
-          },
-          transaction: t,
+      const payment = await Payment.findOne({
+        where: {
+          tx_ref: orderID,
+        },
+        transaction: t,
+      });
+
+      if (!payment) {
+        if (t) {
+          t.rollback();
         }
-      );
+        return new BadRequestError("No payment found");
+      }
+
+      // let payment = await Payment.update(
+      //   { status: "COMPLETED" },
+      //   {
+      //     where: {
+      //       tx_ref: orderID,
+      //     },
+      //     transaction: t,
+      //   }
+      // );
+
+      if (!payment) {
+        return new BadRequestError("Payment not found!");
+      }
 
       const request = new paypal.orders.OrdersCaptureRequest(orderID);
       // request.requestBody({});
 
       try {
         const capture = await client.execute(request);
+
+        await Payment.update(
+          {
+            status: capture.result?.status,
+          },
+          {
+            where: {
+              tx_ref: orderID,
+            },
+            transaction: t,
+          }
+        );
+
+        await sendVisitorConfirmationEmail(
+          payment.email,
+          payment.first_name,
+          payment.last_name
+        );
 
         await t.commit();
         return capture;

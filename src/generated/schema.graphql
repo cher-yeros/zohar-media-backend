@@ -106,6 +106,14 @@ type Donation {
   paymnet: Payment  
 }
 
+type FAQ {
+  id: Int!
+  question: String!
+  answer: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
 type Feedback {
   id: Int!
   name: String!
@@ -222,6 +230,23 @@ type PaymentAmountLookup {
 
 type PostTag {
   id: Int!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type PrayerRequest {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  gender: String!
+  age: Int!
+  prayer_issue: String!
+  other_prayer_issue: String
+  address: String!
+  prayer_issue_description: String
   createdAt: Date!
   updatedAt: Date!
 }

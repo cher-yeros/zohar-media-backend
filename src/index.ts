@@ -104,7 +104,7 @@ const serverCleanup = useServer(
       },
     ],
     introspection: true,
-    // introspection:  process.env.NODE_ENV === "development" ? true : false,
+    // introspection: process.env.NODE_ENV === "development" ? true : false,
   });
 
   server.start().then(() => {
@@ -140,6 +140,10 @@ const serverCleanup = useServer(
               req.body.operationName === "GalleryCategoryForUsers" ||
               req.body.operationName === "CreateDonation" ||
               req.body.operationName === "CreateVisitor" ||
+              req.body.operationName === "CreateVisitorOrder" ||
+              req.body.operationName === "CaptureVisitorOrder" ||
+              req.body.operationName === "CreatePrayerRequest" ||
+              req.body.operationName === "AllFAQsForUsers" ||
               req.body.operationName === "CreateFeedback"
             )
           ) {

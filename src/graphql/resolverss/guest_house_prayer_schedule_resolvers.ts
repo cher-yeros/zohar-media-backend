@@ -1,11 +1,12 @@
-import { Transaction } from "sequelize";
-// import { AuthenticationError, BadRequestError } from 'apollo-server-errors';
-import sequelize from "../../utils/db.connection";
-import VisitorSchedule from "../../models/guest_house_prayer_schedule.model";
 
-const VisitorscheduleResolvers = {
+import { Transaction } from 'sequelize';
+// import { AuthenticationError, BadRequestError } from 'apollo-server-errors';
+import sequelize from '../../utils/db.connection'; 
+import VisitorSchedule from '../../models/guest_house_prayer_schedule.model';
+
+const visitorscheduleResolvers = {
   Query: {
-    Visitorschedule: async (_: any, { id }: { id: number }, ___: any) => {
+    visitorschedule: async (_: any, { id }: { id: number }, ___: any) => {
       return await VisitorSchedule.findByPk(id);
     },
     allVisitorSchedules: async (_: any, __: any, ___: any) => {
@@ -14,11 +15,7 @@ const VisitorscheduleResolvers = {
   },
 
   Mutation: {
-    createVisitorSchedule: async (
-      _: any,
-      { input }: { input: any },
-      ___: any
-    ) => {
+    createVisitorSchedule: async (_: any, { input }: { input: any }, ___: any) => {
       let t: Transaction = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
@@ -35,14 +32,10 @@ const VisitorscheduleResolvers = {
       }
     },
 
-    updateVisitorSchedule: async (
-      _: any,
-      { id, input }: { id: number; input: any },
-      ___: any
-    ) => {
+    updateVisitorSchedule: async (_: any, { id, input }: { id: number, input: any }, ___: any) => {
       const instance = await VisitorSchedule.findByPk(id);
       if (!instance) {
-        throw new Error("VisitorSchedule not found");
+        throw new Error('VisitorSchedule not found');
       }
       await instance.update(input);
       return instance;
@@ -51,12 +44,12 @@ const VisitorscheduleResolvers = {
     deleteVisitorSchedule: async (_: any, { id }: { id: number }, ___: any) => {
       const instance = await VisitorSchedule.findByPk(id);
       if (!instance) {
-        throw new Error("VisitorSchedule not found");
+        throw new Error('VisitorSchedule not found');
       }
       await instance.destroy();
-      return "Deleted";
+      return 'Deleted';
     },
   },
 };
 
-export default VisitorscheduleResolvers;
+export default visitorscheduleResolvers;

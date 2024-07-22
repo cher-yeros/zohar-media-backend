@@ -8,6 +8,7 @@ type Donation {
   email: String
   amount: String
   payment_method: String
+  currency: String
   additional_message: String
   createdAt: String
   updatedAt: String
@@ -22,6 +23,7 @@ input CreateDonationInput {
   email: String!
   amount: String!
   payment_method: String!
+  currency: String!
   additional_message: String
   payment_id: Int
 }
@@ -35,6 +37,7 @@ input UpdateDonationInput {
   email: String
   amount: String
   payment_method: String
+  currency: String
   additional_message: String
   payment_id: Int
 }

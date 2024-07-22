@@ -23,7 +23,7 @@ let clientId = process.env.PAYPAL_SANDBOX_CLIENT_ID!;
 let clientSecret = process.env.PAYPAL_SANDBOX_CLIENT_SECRET!;
 let paypalApi = process.env.PAYPAL_SANDBOX_PAYPAL_API!;
 
-let environment = new paypal.core.LiveEnvironment(clientId, clientSecret);
+let environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
 let client = new paypal.core.PayPalHttpClient(environment);
 
 const partnershipResolvers = {
@@ -144,11 +144,11 @@ const partnershipResolvers = {
           );
         }
 
-        await sendPartnershipConfirmationEmail(
-          partnership.email,
-          partnership.first_name,
-          partnership.last_name
-        );
+        // await sendPartnershipConfirmationEmail(
+        //   partnership.email,
+        //   partnership.first_name,
+        //   partnership.last_name
+        // );
 
         t.commit();
 
@@ -219,13 +219,21 @@ const partnershipResolvers = {
             { due_date },
             { where: { id: partnership.id }, transaction: t }
           );
+
+          await PartnershipPayment.create(
+            {
+              partnership_id: partnership.id,
+              payment_id: payment.id,
+            },
+            { transaction: t }
+          );
         }
 
-        await sendPartnershipConfirmationEmail(
-          partnership.email,
-          partnership.first_name,
-          partnership.last_name
-        );
+        // await sendPartnershipConfirmationEmail(
+        //   partnership.email,
+        //   partnership.first_name,
+        //   partnership.last_name
+        // );
 
         await t.commit();
         return order.result?.id;
@@ -247,12 +255,19 @@ const partnershipResolvers = {
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
-      const partnership = await Payment.findOne({
+      const payment = await Payment.findOne({
         where: {
           tx_ref: orderID,
         },
         transaction: t,
       });
+
+      if (!payment) {
+        if (t) {
+          t.rollback();
+        }
+        return new BadRequestError("No payment found");
+      }
 
       const request = new paypal.orders.OrdersCaptureRequest(orderID);
       // request.requestBody({});
@@ -270,6 +285,12 @@ const partnershipResolvers = {
             },
             transaction: t,
           }
+        );
+
+        await sendPartnershipConfirmationEmail(
+          payment.email,
+          payment.first_name,
+          payment.last_name
         );
 
         await t.commit();

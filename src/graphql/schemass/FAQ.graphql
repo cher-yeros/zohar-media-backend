@@ -1,0 +1,30 @@
+
+type FAQ {
+  id: Int
+  question: String
+  answer: String
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateFAQInput {
+  question: String!
+  answer: String!
+}
+
+input UpdateFAQInput {
+  id: Int!
+  question: String
+  answer: String
+}
+
+type Query {
+  faq(id: ID!): FAQ
+  allFAQs: [FAQ]
+}
+
+type Mutation {
+  createFAQ(input: CreateFAQInput): FAQ
+  updateFAQ(id: ID!, input: UpdateFAQInput): FAQ
+  deleteFAQ(id: ID!): String
+}

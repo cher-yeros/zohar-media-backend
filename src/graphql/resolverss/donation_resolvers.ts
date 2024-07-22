@@ -1,7 +1,8 @@
-import { Transaction } from "sequelize";
+
+import { Transaction } from 'sequelize';
 // import { AuthenticationError, BadRequestError } from 'apollo-server-errors';
-import sequelize from "../../utils/db.connection";
-import Donation from "../../models/donation.model";
+import sequelize from '../../utils/db.connection'; 
+import Donation from '../../models/donation.model';
 
 const donationResolvers = {
   Query: {
@@ -31,14 +32,10 @@ const donationResolvers = {
       }
     },
 
-    updateDonation: async (
-      _: any,
-      { id, input }: { id: number; input: any },
-      ___: any
-    ) => {
+    updateDonation: async (_: any, { id, input }: { id: number, input: any }, ___: any) => {
       const instance = await Donation.findByPk(id);
       if (!instance) {
-        throw new Error("Donation not found");
+        throw new Error('Donation not found');
       }
       await instance.update(input);
       return instance;
@@ -47,10 +44,10 @@ const donationResolvers = {
     deleteDonation: async (_: any, { id }: { id: number }, ___: any) => {
       const instance = await Donation.findByPk(id);
       if (!instance) {
-        throw new Error("Donation not found");
+        throw new Error('Donation not found');
       }
       await instance.destroy();
-      return "Deleted";
+      return 'Deleted';
     },
   },
 };

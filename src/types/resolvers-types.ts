@@ -186,6 +186,11 @@ export type CreateDonationInputType = {
   phone: Scalars["String"]["input"];
 };
 
+export type CreateFAQInputType = {
+  answer: Scalars["String"]["input"];
+  question: Scalars["String"]["input"];
+};
+
 export type CreateFeedbackInputType = {
   email: Scalars["String"]["input"];
   message: Scalars["String"]["input"];
@@ -225,6 +230,19 @@ export type CreatePaymentInputType = {
   amount: Scalars["Float"]["input"];
   contract_id: Scalars["Int"]["input"];
   freelancer_id: Scalars["Int"]["input"];
+};
+
+export type CreatePrayerRequestInputType = {
+  address: Scalars["String"]["input"];
+  age: Scalars["Int"]["input"];
+  email: Scalars["String"]["input"];
+  first_name: Scalars["String"]["input"];
+  gender: Scalars["String"]["input"];
+  last_name: Scalars["String"]["input"];
+  other_prayer_issue?: Scalars["String"]["input"];
+  phone: Scalars["String"]["input"];
+  prayer_issue: Scalars["String"]["input"];
+  prayer_issue_description: Scalars["String"]["input"];
 };
 
 export type CreateServiceCategoryInputType = {
@@ -307,6 +325,15 @@ export type EditProfileInputType = {
   username: Scalars["String"]["input"];
 };
 
+export interface FAQType {
+  __typename?: "FAQ";
+  answer: Scalars["String"]["output"];
+  createdAt: Scalars["Date"]["output"];
+  id: Scalars["Int"]["output"];
+  question: Scalars["String"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+}
+
 export interface FeedbackType {
   __typename?: "Feedback";
   createdAt: Scalars["Date"]["output"];
@@ -382,7 +409,7 @@ export interface MutationcaptureBookPurchaseOrderArgsType {
   orderID: Scalars["String"]["input"];
 }
 
-export interface MutationcaptureGuestHouseOrderArgsType {
+export interface MutationcaptureDonationOrderArgsType {
   orderID: Scalars["String"]["input"];
 }
 
@@ -391,6 +418,10 @@ export interface MutationcaptureOrderArgsType {
 }
 
 export interface MutationcaptureSubscriptionArgsType {
+  orderID: Scalars["String"]["input"];
+}
+
+export interface MutationcaptureVisitorOrderArgsType {
   orderID: Scalars["String"]["input"];
 }
 
@@ -430,6 +461,14 @@ export interface MutationcreateDonationArgsType {
   input?: CreateDonationInputType;
 }
 
+export interface MutationcreateDonationOrderArgsType {
+  input?: CreateDonationInputType;
+}
+
+export interface MutationcreateFAQArgsType {
+  input?: CreateFAQInputType;
+}
+
 export interface MutationcreateFeedbackArgsType {
   input?: CreateFeedbackInputType;
 }
@@ -442,10 +481,6 @@ export interface MutationcreateGalleryCategoryArgsType {
   input?: CreateGalleryCategoryInputType;
 }
 
-export interface MutationcreateGuestHouseOrderArgsType {
-  input?: CreateVisitorInputType;
-}
-
 export interface MutationcreateOrderArgsType {
   input?: CreatePartnershipInputType;
 }
@@ -456,6 +491,10 @@ export interface MutationcreatePartnershipArgsType {
 
 export interface MutationcreatePaymentArgsType {
   input: CreatePaymentInputType;
+}
+
+export interface MutationcreatePrayerRequestArgsType {
+  input?: CreatePrayerRequestInputType;
 }
 
 export interface MutationcreateServiceArgsType {
@@ -482,6 +521,10 @@ export interface MutationcreateVisitorArgsType {
   input: CreateVisitorInputType;
 }
 
+export interface MutationcreateVisitorOrderArgsType {
+  input?: CreateVisitorInputType;
+}
+
 export interface MutationcreateVisitorScheduleArgsType {
   input: CreateVisitorScheduleInputType;
 }
@@ -506,12 +549,20 @@ export interface MutationdeleteDonationArgsType {
   id: Scalars["ID"]["input"];
 }
 
+export interface MutationdeleteFAQArgsType {
+  id: Scalars["ID"]["input"];
+}
+
 export interface MutationdeleteGalleryArgsType {
   id: Scalars["Int"]["input"];
 }
 
 export interface MutationdeleteGalleryCategoryArgsType {
   id: Scalars["Int"]["input"];
+}
+
+export interface MutationdeletePrayerRequestArgsType {
+  id: Scalars["ID"]["input"];
 }
 
 export interface MutationdeleteServiceArgsType {
@@ -585,12 +636,22 @@ export interface MutationupdateDonationArgsType {
   input?: UpdateDonationInputType;
 }
 
+export interface MutationupdateFAQArgsType {
+  id: Scalars["ID"]["input"];
+  input?: UpdateFAQInputType;
+}
+
 export interface MutationupdateGalleryArgsType {
   input?: UpdateGalleryInputType;
 }
 
 export interface MutationupdateGalleryCategoryArgsType {
   input?: UpdateGalleryCategoryInputType;
+}
+
+export interface MutationupdatePrayerRequestArgsType {
+  id: Scalars["ID"]["input"];
+  input?: UpdatePrayerRequestInputType;
 }
 
 export interface MutationupdateServiceArgsType {
@@ -677,12 +738,38 @@ export interface PostTagType {
   updatedAt: Scalars["Date"]["output"];
 }
 
+export interface PrayerRequestType {
+  __typename?: "PrayerRequest";
+  address: Scalars["String"]["output"];
+  age: Scalars["Int"]["output"];
+  createdAt: Scalars["Date"]["output"];
+  email: Scalars["String"]["output"];
+  first_name: Scalars["String"]["output"];
+  full_name: Scalars["String"]["output"];
+  gender: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  last_name: Scalars["String"]["output"];
+  other_prayer_issue?: Scalars["String"]["output"];
+  phone: Scalars["String"]["output"];
+  prayer_issue: Scalars["String"]["output"];
+  prayer_issue_description?: Scalars["String"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+}
+
 export interface QuerydonationArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface QueryfaqArgsType {
   id: Scalars["ID"]["input"];
 }
 
 export interface QuerypartnershipArgsType {
   id: Scalars["Int"]["input"];
+}
+
+export interface QueryprayerrequestArgsType {
+  id: Scalars["ID"]["input"];
 }
 
 export interface QueryuserArgsType {
@@ -781,6 +868,12 @@ export type UpdateDonationInputType = {
   phone?: Scalars["String"]["input"];
 };
 
+export type UpdateFAQInputType = {
+  answer?: Scalars["String"]["input"];
+  id: Scalars["Int"]["input"];
+  question?: Scalars["String"]["input"];
+};
+
 export type UpdateGalleryCategoryInputType = {
   id: Scalars["Int"]["input"];
   title: Scalars["String"]["input"];
@@ -791,6 +884,20 @@ export type UpdateGalleryInputType = {
   id: Scalars["Int"]["input"];
   image?: Scalars["String"]["input"];
   title?: Scalars["String"]["input"];
+};
+
+export type UpdatePrayerRequestInputType = {
+  address?: Scalars["String"]["input"];
+  age?: Scalars["Int"]["input"];
+  email?: Scalars["String"]["input"];
+  first_name?: Scalars["String"]["input"];
+  gender?: Scalars["String"]["input"];
+  id: Scalars["Int"]["input"];
+  last_name?: Scalars["String"]["input"];
+  other_prayer_issue?: Scalars["String"]["input"];
+  phone?: Scalars["String"]["input"];
+  prayer_issue?: Scalars["String"]["input"];
+  prayer_issue_description?: Scalars["String"]["input"];
 };
 
 export type UpdateServiceCategoryInputType = {

@@ -146,7 +146,7 @@ export const sendBibleStudyEmail = async (
   return transporter.sendMail(mailOptions);
 };
 
-export const sendGuestHouseConfirmationEmail = async (
+export const sendVisitorConfirmationEmail = async (
   to: string,
   first_name: string,
   last_name: string

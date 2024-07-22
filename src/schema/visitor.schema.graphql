@@ -72,6 +72,6 @@ type Mutation {
 
   deleteVisitor(id: Int!): Boolean!
 
-  createGuestHouseOrder(input: CreateVisitorInput): JSON!
-  captureGuestHouseOrder(orderID: String!): JSON!
+  createVisitorOrder(input: CreateVisitorInput): JSON!
+  captureVisitorOrder(orderID: String!): JSON!
 }

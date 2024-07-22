@@ -177,7 +177,7 @@ export const sendVisitorConfirmationEmail = async (
   let htmlToSend = template(data);
 
   const mailOptions = {
-    from: '"JPS TV Visitors " <visitors@jpstvethiopia.com>',
+    from: '"JPS TV Visitors " <no-reply@jpstvethiopia.com>',
     to,
     subject: "Visitor / One to One Meeting With Man of God Message",
     html: htmlToSend,

@@ -43,4 +43,7 @@ type Mutation {
   createDonation(input: CreateDonationInput): ChapaPaymentResponse
   updateDonation(id: ID!, input: UpdateDonationInput): Donation
   deleteDonation(id: ID!): String
+
+  createDonationOrder(input: CreateDonationInput): JSON!
+  captureDonationOrder(orderID: String!): JSON!
 }
