@@ -1,0 +1,49 @@
+name: Deploy Node.js App to cPanel
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build # adjust this if your build command is different
+
+      - name: Deploy to cPanel via SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+          rsync -avz --delete dist/ $SSH_USERNAME@$SSH_HOST:/home/$SSH_USERNAME/backend/
+
+      - name: Restart Node.js server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST << 'EOF'
+            cd /home/$SSH_USERNAME/backend
+            pm2 delete all
+            pm2 start dist/index.js
+          EOF
