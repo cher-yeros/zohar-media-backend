@@ -1,0 +1,57 @@
+
+type PrayerRequest {
+  id: Int
+  first_name: String
+  last_name: String
+  full_name: String
+  phone: String
+  email: String
+  gender: String
+  age: Int
+  prayer_issue: String
+  other_prayer_issue: String
+  address: String
+  prayer_issue_description: String
+  createdAt: String
+  updatedAt: String
+}
+
+input CreatePrayerRequestInput {
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  gender: String!
+  age: Int!
+  prayer_issue: String!
+  other_prayer_issue: String!
+  address: String!
+  prayer_issue_description: String
+}
+
+input UpdatePrayerRequestInput {
+  id: Int!
+  first_name: String
+  last_name: String
+  full_name: String
+  phone: String
+  email: String
+  gender: String
+  age: Int
+  prayer_issue: String
+  other_prayer_issue: String
+  address: String
+  prayer_issue_description: String
+}
+
+type Query {
+  prayerrequest(id: ID!): PrayerRequest
+  allPrayerRequests: [PrayerRequest]
+}
+
+type Mutation {
+  createPrayerRequest(input: CreatePrayerRequestInput): PrayerRequest
+  updatePrayerRequest(id: ID!, input: UpdatePrayerRequestInput): PrayerRequest
+  deletePrayerRequest(id: ID!): String
+}

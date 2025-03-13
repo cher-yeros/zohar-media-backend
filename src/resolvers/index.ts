@@ -4,15 +4,24 @@ import { addResolversToSchema, mergeSchemas } from "@graphql-tools/schema";
 import { merge } from "lodash";
 import path from "path";
 
-import { addMocksToSchema } from "@graphql-tools/mock";
 import { GraphQLScalarType, Kind } from "graphql";
+import adminesolvers from "./admin";
+import bibleStudyResolvers from "./bible_study";
+import blogResolvers from "./blog";
+import bookPurchaseResolvers from "./book_purchase";
+import donationResolvers from "./donation";
+import faqResolvers from "./faq";
 import feedbackResolvers from "./feedback";
+import galleryResolvels from "./gallery";
 import lookupResolvers from "./lookup";
 import messageResolvers from "./message";
 import notificationResolvers from "./notification";
 import partnershipResolvers from "./partnership";
 import paymentResolvers from "./payment";
+import prayerRequestResolvers from "./prayer_request";
+import serviceResolvers from "./service";
 import userResolvers from "./user";
+import geustHouseResolvers from "./visitor";
 
 const dateScalar = {
   Date: new GraphQLScalarType({
@@ -56,14 +65,6 @@ export const mergedSchema = mergeSchemas({
   schemas: [allOperation, allSchema],
 });
 
-const mockedSchema = addMocksToSchema({
-  schema: mergedSchema,
-  mocks: {
-    Date: () => new Date(),
-  },
-  preserveResolvers: true,
-});
-
 const gatewaySchema = addResolversToSchema({
   schema: mergedSchema,
   resolvers: merge(
@@ -74,7 +75,17 @@ const gatewaySchema = addResolversToSchema({
     messageResolvers,
     feedbackResolvers,
     paymentResolvers,
-    partnershipResolvers
+    partnershipResolvers,
+    blogResolvers,
+    adminesolvers,
+    bibleStudyResolvers,
+    geustHouseResolvers,
+    galleryResolvels,
+    serviceResolvers,
+    bookPurchaseResolvers,
+    donationResolvers,
+    prayerRequestResolvers,
+    faqResolvers
   ),
 });
 

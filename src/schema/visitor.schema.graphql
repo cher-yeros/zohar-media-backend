@@ -1,0 +1,77 @@
+# import '../generated/schema.graphql'
+
+input CreateVisitorScheduleInput {
+  start_time: Date!
+  end_time: Date!
+  payment_amount_etb: Float!
+  payment_amount_usd: Float!
+  pickup_extra_payment_etb: Float!
+  pickup_extra_payment_usd: Float!
+}
+
+input UpdateVisitorScheduleInput {
+  id: Int!
+  start_time: Date
+  end_time: Date
+  payment_amount_etb: Float
+  payment_amount_usd: Float
+  pickup_extra_payment_etb: Float
+  pickup_extra_payment_usd: Float
+}
+
+input CreateVisitorInput {
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  date: Date!
+  address: String!
+  request_detail: String!
+  currency: String!
+  user_id: Int
+  payment_method: String!
+  payment_amount: Float!
+}
+
+type VisitorForUser {
+  id: Int!
+  title: String!
+  description: String!
+  date: Date!
+  start_time: Date!
+  end_time: Date!
+  payment_amount: Float!
+  createdAt: Date!
+  schedule: VisitorSchedule!
+}
+
+type ChapaPaymentResponseData {
+  checkout_url: String!
+}
+
+type ChapaPaymentResponse {
+  message: String!
+  status: String!
+  data: ChapaPaymentResponseData!
+}
+
+type Query {
+  VisitorSchedules: [VisitorSchedule!]!
+  Visitors: [Visitor!]!
+  VisitorScheulesForUsers: [VisitorSchedule!]!
+  #   bibleStudyApplications: [BibleStudyApplication!]!
+  #   myBibleStudyApplications: [BibleStudyApplication!]!
+}
+
+type Mutation {
+  createVisitorSchedule(input: CreateVisitorScheduleInput!): VisitorSchedule!
+  createVisitor(input: CreateVisitorInput!): ChapaPaymentResponse!
+
+  updateVisitorSchedule(input: UpdateVisitorScheduleInput!): Boolean!
+  deleteVisitorSchedule(id: Int!): Boolean!
+
+  deleteVisitor(id: Int!): Boolean!
+
+  createVisitorOrder(input: CreateVisitorInput): JSON!
+  captureVisitorOrder(orderID: String!): JSON!
+}

@@ -1,0 +1,27 @@
+
+type GalleryCategory {
+  id: Int
+  title: String
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateGalleryCategoryInput {
+  title: String!
+}
+
+input UpdateGalleryCategoryInput {
+  id: Int!
+  title: String
+}
+
+type Query {
+  gallerycategory(id: ID!): GalleryCategory
+  allGalleryCategorys: [GalleryCategory]
+}
+
+type Mutation {
+  createGalleryCategory(input: CreateGalleryCategoryInput): GalleryCategory
+  updateGalleryCategory(id: ID!, input: UpdateGalleryCategoryInput): GalleryCategory
+  deleteGalleryCategory(id: ID!): String
+}

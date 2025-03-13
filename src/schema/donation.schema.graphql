@@ -1,0 +1,49 @@
+# import '../generated/schema.graphql'
+
+input CreateDonationInput {
+  first_name: String!
+  last_name: String!
+  phone: String!
+  email: String!
+  currency: String!
+  amount: Float!
+  payment_method: String!
+  additional_message: String
+  payment_id: Int
+}
+
+input UpdateDonationInput {
+  id: Int!
+  first_name: String
+  last_name: String
+  phone: String
+  email: String
+  amount: Float
+  payment_method: String
+  additional_message: String
+  payment_id: Int
+}
+
+type ChapaPaymentResponseData {
+  checkout_url: String!
+}
+
+type ChapaPaymentResponse {
+  message: String!
+  status: String!
+  data: ChapaPaymentResponseData!
+}
+
+type Query {
+  donation(id: ID!): Donation
+  allDonations: [Donation]
+}
+
+type Mutation {
+  createDonation(input: CreateDonationInput): ChapaPaymentResponse
+  updateDonation(id: ID!, input: UpdateDonationInput): Donation
+  deleteDonation(id: ID!): String
+
+  createDonationOrder(input: CreateDonationInput): JSON!
+  captureDonationOrder(orderID: String!): JSON!
+}

@@ -1,13 +1,13 @@
 {
   "db": {
-    "host": "hertz-development-db.c1oss6au8pr0.us-east-1.rds.amazonaws.com",
-    "name": "skill_connect_et",
-    "user": "admin",
-    "password": "hertz-dev-2024&&",
+    "host": "jpstvethiopia.com",
+    "name": "jpstvedg_jps_tv_prod",
+    "user": "jpstvedg_jps_tv_admin",
+    "password": "1k^1nunsr_~5",
     "dialect": "mysql",
     "port": 3306
   },
-  "port": 5000,
-  "jwt_secret": "accf34a848722979e326cf33847506b1d753fde0c38205e13dac15a195d5faf0",
+  "port": 3002,
+  "jwt_secret": "f62df8ecc4a85aa9b09702422c0f4d401af3af7ec6ebf2a7",
   "enc_key": "31362e00db54edbfd79a9693103b9f0da65019cb11f88dd0"
 }

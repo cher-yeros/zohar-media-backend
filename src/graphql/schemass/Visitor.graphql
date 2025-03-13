@@ -1,0 +1,51 @@
+
+type Visitor {
+  id: Int
+  user_id: Int
+  first_name: String
+  last_name: String
+  email: String
+  phone: String
+  address: String
+  request_detail: String
+  date: String
+  createdAt: String
+  updatedAt: String
+  payment_id: Int
+}
+
+input CreateVisitorInput {
+  user_id: Int
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  address: String!
+  request_detail: String!
+  date: String!
+  payment_id: Int
+}
+
+input UpdateVisitorInput {
+  id: Int!
+  user_id: Int
+  first_name: String
+  last_name: String
+  email: String
+  phone: String
+  address: String
+  request_detail: String
+  date: String
+  payment_id: Int
+}
+
+type Query {
+  visitor(id: ID!): Visitor
+  allVisitors: [Visitor]
+}
+
+type Mutation {
+  createVisitor(input: CreateVisitorInput): Visitor
+  updateVisitor(id: ID!, input: UpdateVisitorInput): Visitor
+  deleteVisitor(id: ID!): String
+}

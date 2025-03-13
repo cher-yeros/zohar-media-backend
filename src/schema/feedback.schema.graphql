@@ -1,22 +1,21 @@
 # import '../generated/schema.graphql'
 
-input CreateAdminFeedbackInput {
+input CreateFeedbackInput {
   name: String!
   email: String!
+  phone: String!
   subject: String!
-  content: String!
+  message: String!
 }
-input CreateFeedbackInput {
-  to_id: Int!
-  content: String!
-}
+
 type Query {
-  myFeedbacks: [Feedback!]!
-  feedbacksByUserId(id: Int!): [Feedback!]!
+  feedbacks: [Feedback!]!
 }
+
 type Mutation {
   createFeedback(input: CreateFeedbackInput): Feedback
 }
+
 # type Subscription {
 #   newFeedback: Feedback!
 # }

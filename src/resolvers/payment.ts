@@ -44,6 +44,11 @@ const paymentResolvers = {
       });
     },
   },
+  Query: {
+    payments: async () => {
+      return await Payment.findAll({});
+    },
+  },
 };
 
 export default paymentResolvers;

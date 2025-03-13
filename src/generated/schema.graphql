@@ -14,14 +14,148 @@ type Subscription {
   _ : Boolean
 }
 
-type Feedback {
+type BibleStudyApplication {
   id: Int!
-  content: String!
-  seen: Boolean!
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  title: String
+  description: String
+  date: Date
+  zoom_id: String
+  zoom_link: String
+  zoom_passcode: String
+  payment_amount: Float!
+  status: String!
   createdAt: Date!
   updatedAt: Date!
-  from: User ! 
-  to: User ! 
+  user: User  
+  bible_study_session: BibleStudySession  
+  paymnet: Payment  
+}
+
+type BibleStudySession {
+  id: Int!
+  title: String!
+  description: String!
+  date: Date!
+  start_time: Date!
+  end_time: Date!
+  zoom_id: String!
+  zoom_link: String!
+  zoom_passcode: String!
+  payment_amount_usd: Float!
+  payment_amount_etb: Float!
+  status: String!
+  picture: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Blog {
+  id: Int!
+  title: String!
+  slug: String!
+  excerpt: String!
+  body: String!
+  featured: Boolean!
+  image: String!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User  
+  category: Category  
+}
+
+type BookPurchase {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  amount: Float!
+  payment_method: String!
+  tx_ref: String!
+  createdAt: Date!
+  updatedAt: Date!
+  paymnet: Payment  
+}
+
+type Category {
+  id: Int!
+  title: String!
+  createdAt: Date!
+  updatedAt: Date!
+  blogs: [Blog!]!
+}
+
+type Donation {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  amount: Float!
+  payment_method: String!
+  currency: String!
+  additional_message: String
+  createdAt: Date!
+  updatedAt: Date!
+  paymnet: Payment  
+}
+
+type FAQ {
+  id: Int!
+  question: String!
+  answer: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Feedback {
+  id: Int!
+  name: String!
+  phone: String
+  email: String!
+  subject: String
+  message: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Gallery {
+  id: Int!
+  title: String!
+  city: String!
+  images: JSON!
+  createdAt: Date!
+  updatedAt: Date!
+  category: GalleryCategory  
+}
+
+type GalleryCategory {
+  id: Int!
+  title: String!
+  createdAt: Date!
+  updatedAt: Date!
+  galleries: [Gallery!]!
+}
+
+type VisitorSchedule {
+  id: Int!
+  date: Date!
+  start_time: Date!
+  end_time: Date!
+  availabile: Boolean!
+  status: String!
+  payment_amount_usd: Float!
+  payment_amount_etb: Float!
+  pickup_extra_payment_usd: Float!
+  pickup_extra_payment_etb: Float!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 type Message {
@@ -48,26 +182,97 @@ type Notification {
 
 type Partnership {
   id: Int!
-  firstname: String!
-  lastname: String!
-  fullname: String!
-  phone: String
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
   email: String!
+  partnership_type: String!
+  partnership_plan: String
+  amount: Float!
+  payment_method: String!
+  additional_message: String
+  due_date: Date
   createdAt: Date!
   updatedAt: Date!
-  user: User  
   payments: [Payment!]!
+}
+
+type PartnershipPayment {
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 type Payment {
   id: Int!
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  payment_method: String!
+  reason: String!
   amount: Float!
   status: String!
   tx_ref: String!
   createdAt: Date!
   updatedAt: Date!
   user: User  
-  partnership: Partnership  
+}
+
+type PaymentAmountLookup {
+  id: Int!
+  payment_for: String!
+  amount: Float!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type PostTag {
+  id: Int!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type PrayerRequest {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  gender: String!
+  age: Int!
+  prayer_issue: String!
+  other_prayer_issue: String
+  address: String!
+  prayer_issue_description: String
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Service {
+  id: Int!
+  youtube_link: String!
+  createdAt: Date!
+  updatedAt: Date!
+  category: ServiceCategory  
+}
+
+type ServiceCategory {
+  id: Int!
+  title: String!
+  playlist_link: String!
+  createdAt: Date!
+  updatedAt: Date!
+  services: [Service!]!
+}
+
+type Tag {
+  id: Int!
+  title: String!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 type Token {
@@ -82,9 +287,10 @@ type Token {
 type User {
   id: Int!
   avatar: String
-  firstname: String!
-  lastname: String!
-  fullname: String!
+  first_name: String!
+  role: String!
+  last_name: String!
+  full_name: String!
   gender: String
   password: String!
   phone: String
@@ -97,6 +303,20 @@ type User {
   resetTokenExpires: Date
   createdAt: Date!
   updatedAt: Date!
-  partnerships: [Partnership!]!
   user: [Payment!]!
+}
+
+type Visitor {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  address: String!
+  request_detail: String!
+  date: Date!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User  
+  paymnet: Payment  
 }

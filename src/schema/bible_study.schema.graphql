@@ -1,0 +1,77 @@
+# import '../generated/schema.graphql'
+
+input CreateBibleStudySessionInput {
+  title: String!
+  description: String!
+  date: String!
+  start_time: Date!
+  end_time: Date!
+  zoom_id: String!
+  zoom_link: String!
+  zoom_passcode: String!
+  payment_amount_etb: Float!
+  payment_amount_usd: Float!
+  picture: String!
+}
+
+input UpdateBibleStudySessionInput {
+  id: Int!
+  title: String
+  description: String
+  date: String
+  start_time: Date
+  end_time: Date
+  zoom_id: String
+  zoom_link: String
+  zoom_passcode: String
+  payment_amount_etb: Float
+  payment_amount_usd: Float
+  picture: String
+}
+
+input CreateBibleStudyApplicationInput {
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  payment_method: String!
+  bible_study_session_id: Int
+  payment_amount: Float!
+}
+
+type BibleStudySessionForUser {
+  id: Int!
+  title: String!
+  description: String!
+  date: Date!
+  start_time: Date!
+  end_time: Date!
+  payment_amount_etb: Float!
+  payment_amount_usd: Float!
+  createdAt: Date!
+  picture: String!
+}
+
+type Query {
+  bibleStudySessions: [BibleStudySession!]!
+  bibleStudySessionsForUsers: [BibleStudySessionForUser!]!
+  bibleStudyApplications: [BibleStudyApplication!]!
+  myBibleStudyApplications: [BibleStudyApplication!]!
+}
+
+type Mutation {
+  createBibleStudySession(
+    input: CreateBibleStudySessionInput!
+  ): BibleStudySession!
+  applyForBibleStudy(input: CreateBibleStudyApplicationInput!): JSON!
+  registerBiblesStudyMembers(input: CreateBibleStudyApplicationInput!): JSON!
+  closeBibleStudySession(id: Int!): Boolean!
+
+  updateBibleStudySession(input: UpdateBibleStudySessionInput!): Boolean!
+  deleteBibleStudySession(id: Int!): Boolean!
+
+  deleteBibleStudyApplication(id: Int!): Boolean!
+
+  createBibleStudyOrder(input: CreateBibleStudyApplicationInput): JSON!
+  captureBibleStudyOrder(orderID: String!): JSON!
+}

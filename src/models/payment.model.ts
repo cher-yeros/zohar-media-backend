@@ -23,6 +23,38 @@ class Payment extends Model {
   id!: number;
 
   @Column({
+    allowNull: false,
+  })
+  first_name!: string;
+
+  @Column({
+    allowNull: false,
+  })
+  last_name!: string;
+
+  @Column({ type: DataType.VIRTUAL })
+  get full_name() {
+    return `${this.getDataValue("first_name")} ${this.getDataValue(
+      "last_name"
+    )}`;
+  }
+
+  @Column(DataType.STRING)
+  phone!: string;
+
+  @Column({
+    allowNull: false,
+    unique: false,
+  })
+  email!: string;
+
+  @Column(DataType.STRING)
+  payment_method!: string;
+
+  @Column(DataType.STRING)
+  reason!: string;
+
+  @Column({
     type: DataType.FLOAT,
     allowNull: false,
   })
@@ -30,7 +62,7 @@ class Payment extends Model {
 
   @Column({
     type: DataType.STRING,
-    defaultValue: "Pending",
+    defaultValue: "PENDING",
   })
   status!: string;
 
@@ -43,14 +75,7 @@ class Payment extends Model {
   @ForeignKey(() => User)
   user_id!: number;
 
-  @ForeignKey(() => Partnership)
-  @Column({ allowNull: true, type: DataType.INTEGER })
-  partnership_id!: number;
-
   @BelongsTo(() => User)
   user!: User;
-
-  @BelongsTo(() => Partnership)
-  partnership!: number;
 }
 export default Payment;

@@ -1,13 +1,10 @@
 import {
-  BelongsTo,
   Column,
   DataType,
-  ForeignKey,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import User from "./user.model";
 
 @Table({
   timestamps: true,
@@ -22,30 +19,31 @@ class Feedback extends Model {
   id!: number;
 
   @Column({
-    type: DataType.TEXT,
     allowNull: false,
   })
-  content!: string;
+  name!: string;
 
   @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
+    allowNull: true,
   })
-  seen!: boolean;
+  phone?: string;
 
-  @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  from_id!: number;
+  @Column({
+    allowNull: false,
+  })
+  email!: string;
 
-  @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  to_id!: number;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  subject!: string;
 
-  @BelongsTo(() => User, "from_id")
-  from!: User;
-
-  @BelongsTo(() => User, "to_id")
-  to!: User;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  message!: string;
 }
 
 export default Feedback;

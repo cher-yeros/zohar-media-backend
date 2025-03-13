@@ -1,0 +1,69 @@
+
+type BibleStudyApplication {
+  id: Int
+  first_name: String
+  last_name: String
+  email: String
+  phone: String
+  title: String
+  description: String
+  date: String
+  zoom_id: String
+  zoom_link: String
+  zoom_passcode: String
+  payment_amount: String
+  user_id: Int
+  bible_study_session_id: Int
+  status: String
+  createdAt: String
+  updatedAt: String
+  payment_id: Int
+}
+
+input CreateBibleStudyApplicationInput {
+  first_name: String!
+  last_name: String!
+  email: String!
+  phone: String!
+  title: String
+  description: String
+  date: String
+  zoom_id: String
+  zoom_link: String
+  zoom_passcode: String
+  payment_amount: String!
+  user_id: Int
+  bible_study_session_id: Int
+  status: String!
+  payment_id: Int
+}
+
+input UpdateBibleStudyApplicationInput {
+  id: Int!
+  first_name: String
+  last_name: String
+  email: String
+  phone: String
+  title: String
+  description: String
+  date: String
+  zoom_id: String
+  zoom_link: String
+  zoom_passcode: String
+  payment_amount: String
+  user_id: Int
+  bible_study_session_id: Int
+  status: String
+  payment_id: Int
+}
+
+type Query {
+  biblestudyapplication(id: ID!): BibleStudyApplication
+  allBibleStudyApplications: [BibleStudyApplication]
+}
+
+type Mutation {
+  createBibleStudyApplication(input: CreateBibleStudyApplicationInput): BibleStudyApplication
+  updateBibleStudyApplication(id: ID!, input: UpdateBibleStudyApplicationInput): BibleStudyApplication
+  deleteBibleStudyApplication(id: ID!): String
+}

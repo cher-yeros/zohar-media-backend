@@ -30,15 +30,21 @@ class User extends Model {
   @Column({
     allowNull: false,
   })
-  firstname!: string;
+  first_name!: string;
+
+  @Column({
+    allowNull: false,
+    defaultValue: "user",
+  })
+  role!: string;
 
   @Column({
     allowNull: false,
   })
-  lastname!: string;
+  last_name!: string;
 
   @Column({ type: DataType.VIRTUAL })
-  get fullname() {
+  get full_name() {
     return `${this.getDataValue("firstname")} ${this.getDataValue("lastname")}`;
   }
 
@@ -95,8 +101,8 @@ class User extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   resetTokenExpires?: Date;
 
-  @HasMany(() => Partnership)
-  partnerships!: Partnership[];
+  // @HasMany(() => Partnership)
+  // partnerships!: Partnership[];
 
   @HasMany(() => Payment)
   user!: Payment[];

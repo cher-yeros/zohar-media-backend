@@ -1,11 +1,20 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Transaction } from "sequelize";
+import { Op, Transaction } from "sequelize";
 import { AuthenticationError, BadRequestError } from "../helpers/error_handler";
+import BibleStudyApplication from "../models/bible_study.model";
+import Partnership from "../models/partnership.model";
 import Token from "../models/token.model";
 import User from "../models/user.model";
-import { sendVerificationEmail } from "../services/sendEmail";
-import { CreateUserInputType } from "../types/resolvers-types";
+import {
+  sendMemberEmail,
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from "../services/sendEmail";
+import {
+  BulkEmailInputType,
+  CreateUserInputType,
+} from "../types/resolvers-types";
 import sequelize from "../utils/db.connection";
 
 const userResolvers = {
@@ -77,7 +86,12 @@ const userResolvers = {
           { transaction: t }
         );
 
-        await sendVerificationEmail(result.email, token.token);
+        await sendVerificationEmail(
+          result.email,
+          token.token,
+          result.first_name,
+          result.last_name
+        );
 
         await t.commit();
         return result;
@@ -115,7 +129,6 @@ const userResolvers = {
       }
       // const user = dataValues;
       const token = jwt.sign({ user }, process.env.JWT_SECRET!);
-      console.log({ user });
       return { token, user: userInfo };
     },
     // updateProfile: async (
@@ -152,134 +165,160 @@ const userResolvers = {
     //     throw new Error(`${error}`);
     //   }
     // },
-    // editProfile: async (
-    //   _: any,
-    //   { input }: { input: EditProfileInputType },
-    //   ___: any
-    // ) => {
-    //   try {
-    //     const user = await User.update(
-    //       { ...input },
-    //       {
-    //         where: {
-    //           id: input.id,
-    //         },
-    //       }
-    //     ).then(async () => {
-    //       return await User.findOne({
-    //         where: {
-    //           id: input.id,
-    //         },
-    //       });
-    //     });
-    //     if (!user) {
-    //       throw new Error(`User not found `);
-    //     }
 
-    //     await t.commit();
-    //     return true;
-    //   } catch (error) {
-    //     if (t) {
-    //       await t.rollback();
-    //     }
-    //     throw new Error(`${error}`);
-    //   }
-    // },
+    requestResetPassword: async (
+      _: any,
+      { email }: { email: string },
+      ___: any
+    ) => {
+      let t: Transaction = await sequelize.transaction({
+        isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
+      });
 
-    // banUser: async (
-    //   _: any,
-    //   { user_id, ban }: { user_id: number; ban: boolean },
-    //   ___: any
-    // ) => {
-    //   const banned = await User.update(
-    //     {
-    //       banned: ban,
-    //     },
-    //     {
-    //       where: {
-    //         id: user_id,
-    //       },
-    //     }
-    //   );
-    //   return true;
-    // },
-    // deleteUser: async (_: any, { user_id }: { user_id: number }, ___: any) => {
-    //   const result = await User.destroy({
-    //     where: {
-    //       id: user_id,
-    //     },
-    //   });
-    //   return true;
-    // },
-    // requestResetPassword: async (_: any, { email }: { email: string }) => {
-    //   const user = await User.findOne({ where: { email } });
-    //   if (!user) {
-    //     throw new Error("User not found");
-    //   }
+      const user = await User.findOne({ where: { email }, transaction: t });
 
-    //   const resetToken = Math.floor(100000 + Math.random() * 900000).toString();
-    //   const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour expiration
+      if (!user) {
+        throw new Error("User not found");
+      }
 
-    //   user.resetToken = resetToken;
-    //   user.resetTokenExpires = resetTokenExpires;
-    //   await user.save();
+      const token = await Token.create({ userId: user.id }, { transaction: t });
 
-    //   const transporter = nodemailer.createTransport({
-    //     host: "sandbox.smtp.mailtrap.io",
-    //     port: 2525,
-    //     // service: "gmail",
-    //     auth: {
-    //       user: process.env.EMAIL_USER,
-    //       pass: process.env.APP_EMAIL_PASS,
-    //     },
-    //   });
-    //   const mailOptions = {
-    //     from: process.env.GMAIL_USER,
-    //     to: email,
-    //     subject: "Password Reset",
-    //     text: `To reset your password, use this token: ${resetToken}`,
-    //   };
+      const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour expiration
 
-    //   await transporter.sendMail(mailOptions);
+      await User.update(
+        { resetToken: token.token, resetTokenExpires },
+        { where: { id: user.id }, transaction: t }
+      );
 
-    //   return "Password reset token sent to email";
-    // },
-    // resetPassword: async (
-    //   _: any,
-    //   {
-    //     email,
-    //     resetToken,
-    //     newPassword,
-    //   }: { email: string; resetToken: string; newPassword: string }
-    // ) => {
-    //   const user = await User.findOne({
-    //     where: {
-    //       email,
-    //       resetToken,
-    //       resetTokenExpires: { [Op.gt]: new Date() },
-    //     },
-    //   });
-    //   if (!user) {
-    //     throw new Error("Invalid or expired reset token");
-    //   }
-    //   const hashedPassword = await bcrypt.hash(newPassword, 10);
+      t.commit();
+      try {
+        await sendPasswordResetEmail(
+          user.email,
+          token.token,
+          user.first_name,
+          user.last_name
+        );
+      } catch (error: any) {
+        t.rollback();
+        return new BadRequestError(error.message);
+      }
 
-    //   await User.update(
-    //     {
-    //       password: hashedPassword,
-    //       resetToken: null,
-    //       resetTokenExpires: null,
-    //     },
-    //     {
-    //       where: {
-    //         id: user.id,
-    //       },
-    //     }
-    //   );
-    //   // await user.save();
+      return "Password reset token sent to email";
+    },
+    resetPassword: async (
+      _: any,
+      {
+        email,
+        resetToken,
+        newPassword,
+      }: { email: string; resetToken: string; newPassword: string }
+    ) => {
+      const user = await User.findOne({
+        where: {
+          email,
+          resetToken,
+          resetTokenExpires: { [Op.gt]: new Date() },
+        },
+      });
+      if (!user) {
+        throw new Error("Invalid or expired reset token");
+      }
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    //   return "Password has been reset successfully";
-    // },
+      await User.update(
+        {
+          password: hashedPassword,
+          resetToken: null,
+          resetTokenExpires: null,
+        },
+        {
+          where: {
+            id: user.id,
+          },
+        }
+      );
+      // await user.save();
+
+      return "Password has been reset successfully";
+    },
+    sendBulkEmailForPropheticSchoolMembers: async (
+      _: any,
+      { input }: { input: BulkEmailInputType },
+      ___: any
+    ) => {
+      const members = await BibleStudyApplication.findAll();
+
+      let received: Object[] = [];
+      let notRecieved: Object[] = [];
+
+      await Promise.all(
+        members.map(async (member) => {
+          try {
+            await sendMemberEmail({
+              to: member.email,
+              first_name: member.first_name,
+              last_name: member.last_name,
+              title: input.title,
+              subject: input.subject,
+              body: input.body,
+            });
+
+            received.push({
+              first_name: member.first_name,
+              last_name: member.last_name,
+              email: member.email,
+            });
+          } catch (error) {
+            notRecieved.push({
+              first_name: member.first_name,
+              last_name: member.last_name,
+              email: member.email,
+            });
+          }
+        })
+      );
+
+      return { received, notRecieved };
+    },
+    sendBulkEmailForPartners: async (
+      _: any,
+      { input }: { input: BulkEmailInputType },
+      ___: any
+    ) => {
+      const partners = await Partnership.findAll();
+
+      let received: Object[] = [];
+      let notRecieved: Object[] = [];
+
+      await Promise.all(
+        partners.map(async (partner) => {
+          try {
+            await sendMemberEmail({
+              to: partner.email,
+              first_name: partner.first_name,
+              last_name: partner.last_name,
+              title: input.title,
+              subject: input.subject,
+              body: input.body,
+            });
+
+            received.push({
+              first_name: partner.first_name,
+              last_name: partner.last_name,
+              email: partner.email,
+            });
+          } catch (error) {
+            notRecieved.push({
+              first_name: partner.first_name,
+              last_name: partner.last_name,
+              email: partner.email,
+            });
+          }
+        })
+      );
+
+      return { received, notRecieved };
+    },
   },
 };
 export default userResolvers;

@@ -1,0 +1,26 @@
+
+type PostTag {
+  id: Int
+  createdAt: String
+  updatedAt: String
+}
+
+input CreatePostTagInput {
+  
+}
+
+input UpdatePostTagInput {
+  id: Int!
+  
+}
+
+type Query {
+  posttag(id: ID!): PostTag
+  allPostTags: [PostTag]
+}
+
+type Mutation {
+  createPostTag(input: CreatePostTagInput): PostTag
+  updatePostTag(id: ID!, input: UpdatePostTagInput): PostTag
+  deletePostTag(id: ID!): String
+}

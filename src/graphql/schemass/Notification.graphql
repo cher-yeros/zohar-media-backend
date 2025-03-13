@@ -1,0 +1,42 @@
+
+type Notification {
+  id: Int
+  message: String
+  type: String
+  seen: Boolean
+  is_read: Boolean
+  link: String
+  recipient_id: Int
+  createdAt: String
+  updatedAt: String
+}
+
+input CreateNotificationInput {
+  message: String!
+  type: String!
+  seen: Boolean
+  is_read: Boolean
+  link: String!
+  recipient_id: Int
+}
+
+input UpdateNotificationInput {
+  id: Int!
+  message: String
+  type: String
+  seen: Boolean
+  is_read: Boolean
+  link: String
+  recipient_id: Int
+}
+
+type Query {
+  notification(id: ID!): Notification
+  allNotifications: [Notification]
+}
+
+type Mutation {
+  createNotification(input: CreateNotificationInput): Notification
+  updateNotification(id: ID!, input: UpdateNotificationInput): Notification
+  deleteNotification(id: ID!): String
+}
