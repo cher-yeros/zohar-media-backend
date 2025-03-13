@@ -21,19 +21,15 @@ import { CustomJwtPayload } from "./middleware/auth";
 import gatewaySchema from "./resolvers";
 import sequelize from "./utils/db.connection";
 
-import axios from "axios";
 import fileUpload from "express-fileupload";
 import { accessSync } from "fs";
 import { constants } from "fs/promises";
 import cron from "node-cron";
 import { join } from "path";
-import { Transaction } from "sequelize";
 import { v4 } from "uuid";
-import BookPurchase from "./models/book_purchase.model";
 import Partnership from "./models/partnership.model";
-import Payment from "./models/payment.model";
 import paymentRouter from "./routes/payment";
-import { sendBookPurchaseEmail, sendReminderEmail } from "./services/sendEmail";
+import { sendReminderEmail } from "./services/sendEmail";
 import { UserAccount } from "./types";
 // import crypto from "crypto";
 // console.log(crypto.randomBytes(32).toString("hex"));
@@ -103,8 +99,8 @@ const serverCleanup = useServer(
         },
       },
     ],
-    introspection: true,
-    // introspection: process.env.NODE_ENV === "development" ? true : false,
+    // introspection: true,
+    introspection: process.env.NODE_ENV === "development" ? true : false,
   });
 
   server.start().then(() => {
