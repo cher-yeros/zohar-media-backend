@@ -1,0 +1,34 @@
+name: Node.js CI/CD to cPanel
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # Use your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project (if applicable)
+        run: npm run build
+
+      - name: Deploy to cPanel via SSH
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USERNAME }}
+          key: ${{ secrets.CPANEL_SSH_KEY }}
+          source: "." # Source files to deploy
+          target: "/home/jpstvedg/api2.jpstvethiopia.com" # Target directory on cPanel
