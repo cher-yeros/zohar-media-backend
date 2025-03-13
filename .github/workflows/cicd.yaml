@@ -30,5 +30,7 @@ jobs:
           host: ${{ secrets.CPANEL_HOST }}
           username: ${{ secrets.CPANEL_USERNAME }}
           key: ${{ secrets.CPANEL_SSH_KEY }}
+          passphrase: ${{ secrets.CPANEL_SSH_PASSPHRASE }} # Add the passphrase here
+
           source: "." # Source files to deploy
           target: "/home/jpstvedg/api2.jpstvethiopia.com" # Target directory on cPanel
