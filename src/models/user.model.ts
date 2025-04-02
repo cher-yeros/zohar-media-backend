@@ -6,8 +6,9 @@ import {
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import Partnership from "./partnership.model";
+import { UserRole } from "../enums";
 import Payment from "./payment.model";
+import Subscription from "./subscription.model";
 
 @Table({
   timestamps: true,
@@ -34,7 +35,8 @@ class User extends Model {
 
   @Column({
     allowNull: false,
-    defaultValue: "user",
+    defaultValue: UserRole.USER,
+    type: DataType.ENUM(...Object.values(UserRole)),
   })
   role!: string;
 
@@ -105,7 +107,10 @@ class User extends Model {
   // partnerships!: Partnership[];
 
   @HasMany(() => Payment)
-  user!: Payment[];
+  payments!: Payment[];
+
+  @HasMany(() => Subscription)
+  subscriptions!: Subscription[];
 }
 
 export default User;

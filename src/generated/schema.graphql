@@ -180,6 +180,30 @@ type Notification {
   recipient: User  
 }
 
+type Package {
+  id: Int!
+  picture: String!
+  name: String!
+  description: String
+  features: JSON!
+  price_etb: Float!
+  price_usd: Float!
+  rating: Float!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Partner {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String!
+  email: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
 type Partnership {
   id: Int!
   first_name: String!
@@ -251,6 +275,19 @@ type PrayerRequest {
   updatedAt: Date!
 }
 
+type TeachingReview {
+  id: Int!
+  name: String!
+  email: String!
+  rating: Int!
+  comment: String!
+  is_visible: Boolean!
+  createdAt: Date!
+  updatedAt: Date!
+  teaching: Teaching  
+  user: User  
+}
+
 type Service {
   id: Int!
   youtube_link: String!
@@ -268,9 +305,43 @@ type ServiceCategory {
   services: [Service!]!
 }
 
+type Subscription {
+  id: Int!
+  createdAt: Date!
+  updatedAt: Date!
+  payment: Payment  
+}
+
 type Tag {
   id: Int!
   title: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Teaching {
+  id: Int!
+  picture: String!
+  trailer: String!
+  title: String!
+  description: String!
+  content_type: String!
+  file_url: String!
+  seo_tags: String!
+  is_downloadable: Boolean!
+  active: Boolean!
+  price_etb: Float!
+  price_usd: Float!
+  createdAt: Date!
+  updatedAt: Date!
+  category: TeachingCategory  
+}
+
+type TeachingCategory {
+  id: Int!
+  title: String!
+  picture: String!
+  description: JSON!
   createdAt: Date!
   updatedAt: Date!
 }
@@ -303,7 +374,8 @@ type User {
   resetTokenExpires: Date
   createdAt: Date!
   updatedAt: Date!
-  user: [Payment!]!
+  payments: [Payment!]!
+  subscriptions: [Subscription!]!
 }
 
 type Visitor {

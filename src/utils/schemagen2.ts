@@ -24,6 +24,7 @@ function generateGraphQLType(model: ModelCtor): string {
       case "CHAR":
       case "TEXT":
       case "VIRTUAL":
+      case "ENUM":
         graphQLType = "String";
         break;
       case "INTEGER":

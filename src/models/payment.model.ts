@@ -7,7 +7,6 @@ import {
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import Partnership from "./partnership.model";
 import User from "./user.model";
 
 @Table({
@@ -77,5 +76,11 @@ class Payment extends Model {
 
   @BelongsTo(() => User)
   user!: User;
+
+  // @BelongsTo(() => Partner)
+  // partner!: Partner;
+
+  // @BelongsTo(() => Subscription)
+  // subscription!: Subscription;
 }
 export default Payment;

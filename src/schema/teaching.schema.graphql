@@ -1,0 +1,52 @@
+# import '../generated/schema.graphql'
+
+enum TeachingType {
+  VIDEO
+  AUDIO
+  PDF
+  EPUB
+  ZOOM_MEETING
+  YOUTUBE_LIVE
+}
+
+input CreateTeachingInput {
+  picture: String!
+  trailer: String
+  owner: String!
+  title: String!
+  description: String!
+  content_type: TeachingType!
+  file_url: String!
+  seo_tags: String!
+  #   is_downloadable: Boolean
+  category_id: ID!
+  price_etb: Float!
+  price_usd: Float!
+}
+
+input UpdateTeachingInput {
+  id: ID!
+  picture: String
+  trailer: String
+  owner: String
+  title: String
+  description: String
+  content_type: TeachingType
+  file_url: String
+  seo_tags: String
+  is_downloadable: Boolean
+  category_id: ID
+  price_etb: Float
+  price_usd: Float
+}
+
+type Query {
+  getTeaching(id: ID!): Teaching
+  getTeachings: [Teaching]
+}
+
+type Mutation {
+  createTeaching(input: CreateTeachingInput!): Teaching
+  updateTeaching(input: UpdateTeachingInput!): Teaching
+  deleteTeaching(id: ID!): Boolean
+}

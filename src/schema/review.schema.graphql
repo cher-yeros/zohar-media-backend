@@ -1,0 +1,29 @@
+# import '../generated/schema.graphql'
+
+input CreateTeachingReviewInput {
+  teaching_id: ID!
+  user_id: ID
+  rating: Int!
+  name: String
+  email: String
+  comment: String
+}
+
+input UpdateTeachingReviewInput {
+  id: ID!
+  rating: Int
+  name: String
+  email: String
+  comment: String
+  is_visible: Boolean
+}
+
+type Query {
+  getTeachingReviews(teaching_id: ID!): [TeachingReview]
+}
+
+type Mutation {
+  createTeachingReview(input: CreateTeachingReviewInput!): TeachingReview
+  updateTeachingReview(input: UpdateTeachingReviewInput!): TeachingReview
+  deleteTeachingReview(id: ID!): Boolean
+}

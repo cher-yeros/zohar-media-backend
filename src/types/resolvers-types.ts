@@ -210,6 +210,27 @@ export type CreateGalleryInputType = {
   title: Scalars["String"]["input"];
 };
 
+export type CreatePackageInputType = {
+  description?: Scalars["String"]["input"];
+  features: Scalars["JSON"]["input"];
+  name: Scalars["String"]["input"];
+  price_etb: Scalars["Float"]["input"];
+  price_usd: Scalars["Float"]["input"];
+};
+
+export type CreatePartnerInputType = {
+  address?: Scalars["String"]["input"];
+  currency: Scalars["String"]["input"];
+  dob?: Scalars["String"]["input"];
+  email: Scalars["String"]["input"];
+  first_name: Scalars["String"]["input"];
+  gender?: Scalars["String"]["input"];
+  last_name: Scalars["String"]["input"];
+  package_id: Scalars["Int"]["input"];
+  password: Scalars["String"]["input"];
+  phone: Scalars["String"]["input"];
+};
+
 export type CreatePartnershipInputType = {
   additional_message: Scalars["String"]["input"];
   address?: Scalars["String"]["input"];
@@ -259,6 +280,28 @@ export type CreateServiceInputType = {
 
 export type CreateTagInputType = {
   title: Scalars["String"]["input"];
+};
+
+export type CreateTeachingInputType = {
+  category_id: Scalars["ID"]["input"];
+  content_type: TeachingTypeType;
+  description: Scalars["String"]["input"];
+  file_url: Scalars["String"]["input"];
+  picture: Scalars["String"]["input"];
+  price_etb: Scalars["Float"]["input"];
+  price_usd: Scalars["Float"]["input"];
+  seo_tags: Scalars["String"]["input"];
+  title: Scalars["String"]["input"];
+  trailer?: Scalars["String"]["input"];
+};
+
+export type CreateTeachingReviewInputType = {
+  comment?: Scalars["String"]["input"];
+  email?: Scalars["String"]["input"];
+  name?: Scalars["String"]["input"];
+  rating: Scalars["Int"]["input"];
+  teaching_id: Scalars["ID"]["input"];
+  user_id?: Scalars["ID"]["input"];
 };
 
 export type CreateUserInputType = {
@@ -485,6 +528,14 @@ export interface MutationcreateOrderArgsType {
   input?: CreatePartnershipInputType;
 }
 
+export interface MutationcreatePackageArgsType {
+  input: CreatePackageInputType;
+}
+
+export interface MutationcreatePartnerArgsType {
+  input: CreatePartnerInputType;
+}
+
 export interface MutationcreatePartnershipArgsType {
   input?: CreatePartnershipInputType;
 }
@@ -511,6 +562,14 @@ export interface MutationcreateSubscriptionArgsType {
 
 export interface MutationcreateTagArgsType {
   input?: CreateTagInputType;
+}
+
+export interface MutationcreateTeachingArgsType {
+  input: CreateTeachingInputType;
+}
+
+export interface MutationcreateTeachingReviewArgsType {
+  input: CreateTeachingReviewInputType;
 }
 
 export interface MutationcreateUserArgsType {
@@ -561,6 +620,14 @@ export interface MutationdeleteGalleryCategoryArgsType {
   id: Scalars["Int"]["input"];
 }
 
+export interface MutationdeletePackageArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface MutationdeletePartnerArgsType {
+  id: Scalars["ID"]["input"];
+}
+
 export interface MutationdeletePrayerRequestArgsType {
   id: Scalars["ID"]["input"];
 }
@@ -575,6 +642,14 @@ export interface MutationdeleteServiceCategoryArgsType {
 
 export interface MutationdeleteTagArgsType {
   id?: Scalars["Int"]["input"];
+}
+
+export interface MutationdeleteTeachingArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface MutationdeleteTeachingReviewArgsType {
+  id: Scalars["ID"]["input"];
 }
 
 export interface MutationdeleteVisitorArgsType {
@@ -649,6 +724,16 @@ export interface MutationupdateGalleryCategoryArgsType {
   input?: UpdateGalleryCategoryInputType;
 }
 
+export interface MutationupdatePackageArgsType {
+  id: Scalars["ID"]["input"];
+  input: UpdatePackageInputType;
+}
+
+export interface MutationupdatePartnerArgsType {
+  id: Scalars["ID"]["input"];
+  input: UpdatePartnerInputType;
+}
+
 export interface MutationupdatePrayerRequestArgsType {
   id: Scalars["ID"]["input"];
   input?: UpdatePrayerRequestInputType;
@@ -660,6 +745,14 @@ export interface MutationupdateServiceArgsType {
 
 export interface MutationupdateServiceCategoryArgsType {
   input?: UpdateServiceCategoryInputType;
+}
+
+export interface MutationupdateTeachingArgsType {
+  input: UpdateTeachingInputType;
+}
+
+export interface MutationupdateTeachingReviewArgsType {
+  input: UpdateTeachingReviewInputType;
 }
 
 export interface MutationupdateVisitorScheduleArgsType {
@@ -676,6 +769,32 @@ export interface NotificationType {
   recipient?: UserType;
   seen?: Scalars["Boolean"]["output"];
   type: Scalars["String"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+}
+
+export interface PackageType {
+  __typename?: "Package";
+  createdAt: Scalars["Date"]["output"];
+  description?: Scalars["String"]["output"];
+  features: Scalars["JSON"]["output"];
+  id: Scalars["Int"]["output"];
+  name: Scalars["String"]["output"];
+  picture: Scalars["String"]["output"];
+  price_etb: Scalars["Float"]["output"];
+  price_usd: Scalars["Float"]["output"];
+  rating: Scalars["Float"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+}
+
+export interface PartnerType {
+  __typename?: "Partner";
+  createdAt: Scalars["Date"]["output"];
+  email: Scalars["String"]["output"];
+  first_name: Scalars["String"]["output"];
+  full_name: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  last_name: Scalars["String"]["output"];
+  phone: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
 }
 
@@ -764,6 +883,22 @@ export interface QueryfaqArgsType {
   id: Scalars["ID"]["input"];
 }
 
+export interface QuerygetPackageArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface QuerygetPartnerArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface QuerygetTeachingArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface QuerygetTeachingReviewsArgsType {
+  teaching_id: Scalars["ID"]["input"];
+}
+
 export interface QuerypartnershipArgsType {
   id: Scalars["Int"]["input"];
 }
@@ -814,6 +949,57 @@ export interface TagType {
   title: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
 }
+
+export interface TeachingType {
+  __typename?: "Teaching";
+  active: Scalars["Boolean"]["output"];
+  category?: TeachingCategoryType;
+  content_type: Scalars["String"]["output"];
+  createdAt: Scalars["Date"]["output"];
+  description: Scalars["String"]["output"];
+  file_url: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  is_downloadable: Scalars["Boolean"]["output"];
+  picture: Scalars["String"]["output"];
+  price_etb: Scalars["Float"]["output"];
+  price_usd: Scalars["Float"]["output"];
+  seo_tags: Scalars["String"]["output"];
+  title: Scalars["String"]["output"];
+  trailer: Scalars["String"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+}
+
+export interface TeachingCategoryType {
+  __typename?: "TeachingCategory";
+  createdAt: Scalars["Date"]["output"];
+  description: Scalars["JSON"]["output"];
+  id: Scalars["Int"]["output"];
+  picture: Scalars["String"]["output"];
+  title: Scalars["String"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+}
+
+export interface TeachingReviewType {
+  __typename?: "TeachingReview";
+  comment: Scalars["String"]["output"];
+  createdAt: Scalars["Date"]["output"];
+  email: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  is_visible: Scalars["Boolean"]["output"];
+  name: Scalars["String"]["output"];
+  rating: Scalars["Int"]["output"];
+  teaching?: TeachingType;
+  updatedAt: Scalars["Date"]["output"];
+  user?: UserType;
+}
+
+export type TeachingTypeType =
+  | "AUDIO"
+  | "EPUB"
+  | "PDF"
+  | "VIDEO"
+  | "YOUTUBE_LIVE"
+  | "ZOOM_MEETING";
 
 export interface TokenType {
   __typename?: "Token";
@@ -886,6 +1072,28 @@ export type UpdateGalleryInputType = {
   title?: Scalars["String"]["input"];
 };
 
+export type UpdatePackageInputType = {
+  description?: Scalars["String"]["input"];
+  features?: Scalars["JSON"]["input"];
+  id: Scalars["Int"]["input"];
+  name?: Scalars["String"]["input"];
+  price_etb?: Scalars["Float"]["input"];
+  price_usd?: Scalars["Float"]["input"];
+};
+
+export type UpdatePartnerInputType = {
+  address?: Scalars["String"]["input"];
+  currency: Scalars["String"]["input"];
+  dob?: Scalars["String"]["input"];
+  email: Scalars["String"]["input"];
+  first_name: Scalars["String"]["input"];
+  gender?: Scalars["String"]["input"];
+  last_name: Scalars["String"]["input"];
+  package_id: Scalars["Int"]["input"];
+  password: Scalars["String"]["input"];
+  phone: Scalars["String"]["input"];
+};
+
 export type UpdatePrayerRequestInputType = {
   address?: Scalars["String"]["input"];
   age?: Scalars["Int"]["input"];
@@ -919,6 +1127,30 @@ export type UpdateTagInputType = {
   title?: Scalars["String"]["input"];
 };
 
+export type UpdateTeachingInputType = {
+  category_id?: Scalars["ID"]["input"];
+  content_type?: TeachingTypeType;
+  description?: Scalars["String"]["input"];
+  file_url?: Scalars["String"]["input"];
+  id: Scalars["ID"]["input"];
+  is_downloadable?: Scalars["Boolean"]["input"];
+  picture?: Scalars["String"]["input"];
+  price_etb?: Scalars["Float"]["input"];
+  price_usd?: Scalars["Float"]["input"];
+  seo_tags?: Scalars["String"]["input"];
+  title?: Scalars["String"]["input"];
+  trailer?: Scalars["String"]["input"];
+};
+
+export type UpdateTeachingReviewInputType = {
+  comment?: Scalars["String"]["input"];
+  email?: Scalars["String"]["input"];
+  id: Scalars["ID"]["input"];
+  is_visible?: Scalars["Boolean"]["input"];
+  name?: Scalars["String"]["input"];
+  rating?: Scalars["Int"]["input"];
+};
+
 export type UpdateVisitorScheduleInputType = {
   end_time?: Scalars["Date"]["input"];
   id: Scalars["Int"]["input"];
@@ -944,12 +1176,13 @@ export interface UserType {
   is_verified: Scalars["Boolean"]["output"];
   last_name: Scalars["String"]["output"];
   password: Scalars["String"]["output"];
+  payments: Array<PaymentType>;
   phone?: Scalars["String"]["output"];
   resetToken?: Scalars["String"]["output"];
   resetTokenExpires?: Scalars["Date"]["output"];
   role: Scalars["String"]["output"];
+  subscriptions: Array<SubscriptionType>;
   updatedAt: Scalars["Date"]["output"];
-  user: Array<PaymentType>;
 }
 
 export interface VisitorType {

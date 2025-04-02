@@ -16,7 +16,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Use your Node.js version
+          node-version: "20" # Use your Node.js version
 
       - name: Install dependencies
         run: npm install
@@ -38,10 +38,12 @@ jobs:
       - name: Restart Node.js App
         uses: appleboy/ssh-action@v0.1.3
         with:
-            host: ${{ secrets.CPANEL_HOST }}
-            username: ${{ secrets.CPANEL_USERNAME }}
-            key: ${{ secrets.CPANEL_SSH_KEY }}
-            script: |
-                cd /home/jpstvedg/api2.jpstvethiopia.com
-                npm install --production
-                pm2 restart dist/index.js # Use pm2 or the cPanel Node.js manager
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USERNAME }}
+          key: ${{ secrets.CPANEL_SSH_KEY }}
+          passphrase: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
+          script: |
+            source /home/jpstvedg/nodevenv/backend/20/bin/activate
+            cd /home/jpstvedg/api2.jpstvethiopia.com
+            npm install --production
+            pm2 restart dist/index.js # Use pm2 or the cPanel Node.js manager

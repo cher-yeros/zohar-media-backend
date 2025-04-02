@@ -1,0 +1,29 @@
+# import '../generated/schema.graphql'
+
+input CreatePackageInput {
+  name: String!
+  description: String
+  features: JSON!
+  price_etb: Float!
+  price_usd: Float!
+}
+
+input UpdatePackageInput {
+  id: Int!
+  name: String
+  description: String
+  features: [String]
+  price_etb: Float
+  price_usd: Float
+}
+
+type Query {
+  getPackages: [Package]
+  getPackage(id: ID!): Package
+}
+
+type Mutation {
+  createPackage(input: CreatePackageInput!): Package
+  updatePackage(id: ID!, input: UpdatePackageInput!): Package
+  deletePackage(id: ID!): Boolean
+}
