@@ -99,7 +99,7 @@ const serverCleanup = useServer(
         },
       },
     ],
-    introspection: true,
+    introspection: false,
     // introspection: process.env.NODE_ENV === "development" ? true : false,
   });
 
