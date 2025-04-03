@@ -99,8 +99,8 @@ const serverCleanup = useServer(
         },
       },
     ],
-    // introspection: true,
-    introspection: process.env.NODE_ENV === "development" ? true : false,
+    introspection: true,
+    // introspection: process.env.NODE_ENV === "development" ? true : false,
   });
 
   server.start().then(() => {
