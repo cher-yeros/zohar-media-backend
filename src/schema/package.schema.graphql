@@ -2,6 +2,7 @@
 
 input CreatePackageInput {
   name: String!
+  picture: String!
   description: String
   features: JSON!
   price_etb: Float!
@@ -11,6 +12,7 @@ input CreatePackageInput {
 input UpdatePackageInput {
   id: Int!
   name: String
+  picture: String
   description: String
   features: JSON
   price_etb: Float

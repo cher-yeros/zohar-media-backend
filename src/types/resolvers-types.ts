@@ -214,6 +214,7 @@ export type CreatePackageInputType = {
   description?: Scalars["String"]["input"];
   features: Scalars["JSON"]["input"];
   name: Scalars["String"]["input"];
+  picture: Scalars["String"]["input"];
   price_etb: Scalars["Float"]["input"];
   price_usd: Scalars["Float"]["input"];
 };
@@ -1087,6 +1088,7 @@ export type UpdatePackageInputType = {
   features?: Scalars["JSON"]["input"];
   id: Scalars["Int"]["input"];
   name?: Scalars["String"]["input"];
+  picture?: Scalars["String"]["input"];
   price_etb?: Scalars["Float"]["input"];
   price_usd?: Scalars["Float"]["input"];
 };
