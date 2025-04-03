@@ -22,10 +22,10 @@ import gatewaySchema from "./resolvers";
 import sequelize from "./utils/db.connection";
 
 import fileUpload from "express-fileupload";
-import { accessSync } from "fs";
+import { accessSync, existsSync, mkdirSync } from "fs";
 import { constants } from "fs/promises";
 import cron from "node-cron";
-import { join } from "path";
+import path, { join } from "path";
 import { v4 } from "uuid";
 import Partnership from "./models/partnership.model";
 import paymentRouter from "./routes/payment";
@@ -52,7 +52,13 @@ export interface MyContext {
 }
 
 var corsOptions = {
-  origin: ["http://localhost:3000", "https://jpstvethiopia.com"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://jpstvethiopia.com",
+    "https://www.jpstvethiopia.com",
+    "https://admin.jpstvethiopia.com",
+  ],
   credentials: true,
 };
 
@@ -213,16 +219,22 @@ app.use(cors(corsOptions));
 // Routes
 app.use("/api/payment", paymentRouter);
 
-app.post("/api/upload-file", async (req: any, res: Response) => {
+app.post("/api/upload-file/:folder", async (req: any, res: Response) => {
   try {
     if (!req?.files?.picture) {
       return res.status(400).json({ message: "Please Upload Picture" });
     }
 
-    let fileName =
-      Date.now() + v4() + "." + req.files?.picture.mimetype.split("/")[1];
+    const folderPath = join("public", req.params.folder);
 
-    req.files?.picture.mv("public/" + fileName, function (err: any) {
+    // Ensure the folder exists
+    if (!existsSync(folderPath)) {
+      mkdirSync(folderPath, { recursive: true });
+    }
+
+    let fileName = v4() + "." + req.files?.picture.mimetype.split("/")[1];
+
+    req.files?.picture.mv(path.join(folderPath, fileName), function (err: any) {
       if (err) {
         return res.status(400).json({
           success: false,
@@ -232,8 +244,8 @@ app.post("/api/upload-file", async (req: any, res: Response) => {
 
       const address =
         process.env.NODE_ENV === "production"
-          ? "https://api.jpstvethiopia.com/static/" + fileName
-          : "http://localhost:4000/static/" + fileName;
+          ? `https://api2.jpstvethiopia.com/static/${req.params.folder}/${fileName}`
+          : `http://localhost:4000/static/${req.params.folder}/${fileName}`;
 
       return res.json({ fileName: address });
     });
@@ -242,10 +254,10 @@ app.post("/api/upload-file", async (req: any, res: Response) => {
   }
 });
 
-app.get("/static/:fileName", (req: Request, res: Response) => {
-  const { fileName } = req.params;
+app.get("/static/:folder/:fileName", (req: Request, res: Response) => {
+  const { fileName, folder } = req.params;
 
-  const filePath = join(staticFilePath, fileName);
+  const filePath = join(staticFilePath, folder, fileName);
 
   try {
     accessSync(filePath, constants.F_OK);
