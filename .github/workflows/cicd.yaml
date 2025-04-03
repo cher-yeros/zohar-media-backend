@@ -45,5 +45,5 @@ jobs:
           script: |
             source /home/jpstvedg/nodevenv/backend/20/bin/activate
             cd /home/jpstvedg/api2.jpstvethiopia.com
-            npm install --production
-            pm2 restart dist/index.js # Use pm2 or the cPanel Node.js manager
+            npm install
+            pm2 restart all # Use pm2 or the cPanel Node.js manager
