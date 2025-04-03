@@ -287,6 +287,7 @@ export type CreateTeachingInputType = {
   content_type: TeachingTypeType;
   description: Scalars["String"]["input"];
   file_url: Scalars["String"]["input"];
+  owner: Scalars["String"]["input"];
   picture: Scalars["String"]["input"];
   price_etb: Scalars["Float"]["input"];
   price_usd: Scalars["Float"]["input"];
@@ -960,6 +961,7 @@ export interface TeachingType {
   file_url: Scalars["String"]["output"];
   id: Scalars["Int"]["output"];
   is_downloadable: Scalars["Boolean"]["output"];
+  owner: Scalars["String"]["output"];
   picture: Scalars["String"]["output"];
   price_etb: Scalars["Float"]["output"];
   price_usd: Scalars["Float"]["output"];
@@ -991,6 +993,14 @@ export interface TeachingReviewType {
   teaching?: TeachingType;
   updatedAt: Scalars["Date"]["output"];
   user?: UserType;
+}
+
+export interface TeachingSubscriptionType {
+  __typename?: "TeachingSubscription";
+  createdAt: Scalars["Date"]["output"];
+  id: Scalars["Int"]["output"];
+  payment?: PaymentType;
+  updatedAt: Scalars["Date"]["output"];
 }
 
 export type TeachingTypeType =
@@ -1134,6 +1144,7 @@ export type UpdateTeachingInputType = {
   file_url?: Scalars["String"]["input"];
   id: Scalars["ID"]["input"];
   is_downloadable?: Scalars["Boolean"]["input"];
+  owner?: Scalars["String"]["input"];
   picture?: Scalars["String"]["input"];
   price_etb?: Scalars["Float"]["input"];
   price_usd?: Scalars["Float"]["input"];
@@ -1181,7 +1192,7 @@ export interface UserType {
   resetToken?: Scalars["String"]["output"];
   resetTokenExpires?: Scalars["Date"]["output"];
   role: Scalars["String"]["output"];
-  subscriptions: Array<SubscriptionType>;
+  subscriptions: Array<TeachingSubscriptionType>;
   updatedAt: Scalars["Date"]["output"];
 }
 

@@ -12,7 +12,7 @@ input UpdatePackageInput {
   id: Int!
   name: String
   description: String
-  features: [String]
+  features: JSON
   price_etb: Float
   price_usd: Float
 }

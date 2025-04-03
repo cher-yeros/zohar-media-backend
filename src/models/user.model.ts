@@ -8,7 +8,7 @@ import {
 } from "sequelize-typescript";
 import { UserRole } from "../enums";
 import Payment from "./payment.model";
-import Subscription from "./subscription.model";
+import TeachingSubscription from "./subscription.model";
 
 @Table({
   timestamps: true,
@@ -109,8 +109,8 @@ class User extends Model {
   @HasMany(() => Payment)
   payments!: Payment[];
 
-  @HasMany(() => Subscription)
-  subscriptions!: Subscription[];
+  @HasMany(() => TeachingSubscription)
+  subscriptions!: TeachingSubscription[];
 }
 
 export default User;

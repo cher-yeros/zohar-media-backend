@@ -11,7 +11,7 @@ import Payment from "./payment.model";
 import User from "./user.model";
 
 @Table
-export default class Subscription extends Model {
+export default class TeachingSubscription extends Model {
   @ForeignKey(() => User)
   partner_id!: number;
 

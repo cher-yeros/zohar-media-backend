@@ -305,7 +305,7 @@ type ServiceCategory {
   services: [Service!]!
 }
 
-type Subscription {
+type TeachingSubscription {
   id: Int!
   createdAt: Date!
   updatedAt: Date!
@@ -324,6 +324,7 @@ type Teaching {
   picture: String!
   trailer: String!
   title: String!
+  owner: String!
   description: String!
   content_type: String!
   file_url: String!
@@ -375,7 +376,7 @@ type User {
   createdAt: Date!
   updatedAt: Date!
   payments: [Payment!]!
-  subscriptions: [Subscription!]!
+  subscriptions: [TeachingSubscription!]!
 }
 
 type Visitor {

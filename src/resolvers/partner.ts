@@ -3,7 +3,7 @@ import { UserRole } from "../enums";
 import Package from "../models/package.model";
 import Partner from "../models/partner.model";
 import Payment from "../models/payment.model";
-import Subscription from "../models/subscription.model";
+import TeachingSubscription from "../models/subscription.model";
 import User from "../models/user.model";
 import { sendPartnershipConfirmationEmail } from "../services/sendEmail";
 import createChapaPayment, { PaymentTypes } from "../services/services";
@@ -89,7 +89,7 @@ const partnerResolvers = {
           { transaction }
         );
 
-        await Subscription.create(
+        await TeachingSubscription.create(
           {
             partner_id: user.id,
             package_id: input.package_id,
