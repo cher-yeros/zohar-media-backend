@@ -276,38 +276,38 @@ app.get("/static/:folder/:fileName", (req: Request, res: Response) => {
   });
 });
 
-const task = cron.schedule("0 0 * * *", async () => {
-  console.log("Running a task day minute");
+// const task = cron.schedule("0 0 * * *", async () => {
+//   console.log("Running a task day minute");
 
-  // Check for expired subscriptions
-  const partners = await Partnership.findAll({
-    where: {
-      due_date: new Date(),
-    },
-  });
+//   // Check for expired subscriptions
+//   const partners = await Partnership.findAll({
+//     where: {
+//       due_date: new Date(),
+//     },
+//   });
 
-  try {
-    await Promise.all(
-      partners.map(async (partner) => {
-        await sendReminderEmail(
-          partner?.email!,
-          partner?.id.toString()!,
-          partner?.first_name!,
-          partner?.last_name!
-        );
-      })
-    );
-  } catch (error) {
-    console.log(error);
-  }
-});
+//   try {
+//     await Promise.all(
+//       partners.map(async (partner) => {
+//         await sendReminderEmail(
+//           partner?.email!,
+//           partner?.id.toString()!,
+//           partner?.first_name!,
+//           partner?.last_name!
+//         );
+//       })
+//     );
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 // Start the cron job
-task.start();
+// task.start();
 
 // // Optionally, handle the shutdown process
-process.on("SIGINT", () => {
-  task.stop();
-  console.log("Cron job stopped.");
-  process.exit();
-});
+// process.on("SIGINT", () => {
+//   task.stop();
+//   console.log("Cron job stopped.");
+//   process.exit();
+// });
