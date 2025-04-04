@@ -18,9 +18,7 @@ const teachingResolvers = {
       });
     },
     async getTeachingCategories() {
-      return await TeachingCategory.findAll({
-        where: { active: true },
-      });
+      return await TeachingCategory.findAll({});
     },
   },
 
