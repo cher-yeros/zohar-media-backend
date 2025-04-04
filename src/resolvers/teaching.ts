@@ -41,22 +41,23 @@ const teachingResolvers = {
       await teaching.destroy();
       return true;
     },
-  },
-  async createTeachingCategory(_: any, { input }: { input: any }) {
-    return await TeachingCategory.create(input);
-  },
 
-  async updateTeachingCategory(_: any, { input }: { input: any }) {
-    const teachingCategory = await TeachingCategory.findByPk(input.id);
-    if (!teachingCategory) throw new Error("Teaching Category not found");
-    return await teachingCategory.update(input);
-  },
+    async createTeachingCategory(_: any, { input }: { input: any }) {
+      return await TeachingCategory.create(input);
+    },
 
-  async deleteTeachingCategory(_: any, { id }: { id: string }) {
-    const teachingCategory = await TeachingCategory.findByPk(id);
-    if (!teachingCategory) throw new Error("Teaching Category not found");
-    await teachingCategory.destroy();
-    return true;
+    async updateTeachingCategory(_: any, { input }: { input: any }) {
+      const teachingCategory = await TeachingCategory.findByPk(input.id);
+      if (!teachingCategory) throw new Error("Teaching Category not found");
+      return await teachingCategory.update(input);
+    },
+
+    async deleteTeachingCategory(_: any, { id }: { id: string }) {
+      const teachingCategory = await TeachingCategory.findByPk(id);
+      if (!teachingCategory) throw new Error("Teaching Category not found");
+      await teachingCategory.destroy();
+      return true;
+    },
   },
 };
 
