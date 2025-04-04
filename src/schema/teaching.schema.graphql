@@ -42,7 +42,7 @@ input UpdateTeachingInput {
 
 type Query {
   getTeaching(id: ID!): Teaching
-  getTeachings: [Teaching]
+  getAllTeachings: [Teaching]
 }
 
 type Mutation {
