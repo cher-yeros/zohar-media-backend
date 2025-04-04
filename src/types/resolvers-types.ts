@@ -228,7 +228,7 @@ export type CreatePartnerInputType = {
   gender?: Scalars["String"]["input"];
   last_name: Scalars["String"]["input"];
   package_id: Scalars["Int"]["input"];
-  password: Scalars["String"]["input"];
+  password?: Scalars["String"]["input"];
   phone: Scalars["String"]["input"];
 };
 
@@ -280,6 +280,12 @@ export type CreateServiceInputType = {
 };
 
 export type CreateTagInputType = {
+  title: Scalars["String"]["input"];
+};
+
+export type CreateTeachingCategoryInputType = {
+  description: Scalars["String"]["input"];
+  picture: Scalars["String"]["input"];
   title: Scalars["String"]["input"];
 };
 
@@ -570,6 +576,10 @@ export interface MutationcreateTeachingArgsType {
   input: CreateTeachingInputType;
 }
 
+export interface MutationcreateTeachingCategoryArgsType {
+  input: CreateTeachingCategoryInputType;
+}
+
 export interface MutationcreateTeachingReviewArgsType {
   input: CreateTeachingReviewInputType;
 }
@@ -647,6 +657,10 @@ export interface MutationdeleteTagArgsType {
 }
 
 export interface MutationdeleteTeachingArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface MutationdeleteTeachingCategoryArgsType {
   id: Scalars["ID"]["input"];
 }
 
@@ -751,6 +765,10 @@ export interface MutationupdateServiceCategoryArgsType {
 
 export interface MutationupdateTeachingArgsType {
   input: UpdateTeachingInputType;
+}
+
+export interface MutationupdateTeachingCategoryArgsType {
+  input: UpdateTeachingCategoryInputType;
 }
 
 export interface MutationupdateTeachingReviewArgsType {
@@ -1136,6 +1154,13 @@ export type UpdateServiceInputType = {
 
 export type UpdateTagInputType = {
   id: Scalars["Int"]["input"];
+  title?: Scalars["String"]["input"];
+};
+
+export type UpdateTeachingCategoryInputType = {
+  description?: Scalars["String"]["input"];
+  id: Scalars["ID"]["input"];
+  picture?: Scalars["String"]["input"];
   title?: Scalars["String"]["input"];
 };
 
