@@ -22,6 +22,10 @@ import prayerRequestResolvers from "./prayer_request";
 import serviceResolvers from "./service";
 import userResolvers from "./user";
 import geustHouseResolvers from "./visitor";
+import partnerResolvers from "./partner";
+import packageResolvers from "./package";
+import teachingResolvers from "./teaching";
+import reviewResolvers from "./review";
 
 const dateScalar = {
   Date: new GraphQLScalarType({
@@ -85,7 +89,11 @@ const gatewaySchema = addResolversToSchema({
     bookPurchaseResolvers,
     donationResolvers,
     prayerRequestResolvers,
-    faqResolvers
+    faqResolvers,
+    packageResolvers,
+    partnerResolvers,
+    teachingResolvers,
+    reviewResolvers
   ),
 });
 
