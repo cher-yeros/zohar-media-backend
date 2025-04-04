@@ -31,13 +31,23 @@ input UpdatePartnerInput {
   dob: String
 }
 
+type ChapaPaymentResponseData {
+  checkout_url: String!
+}
+
+type ChapaPaymentResponse {
+  message: String!
+  status: String!
+  data: ChapaPaymentResponseData!
+}
+
 type Query {
   getPartners: [Partner]
   getPartner(id: ID!): Partner
 }
 
 type Mutation {
-  createPartner(input: CreatePartnerInput!): Partner
+  createPartner(input: CreatePartnerInput!): ChapaPaymentResponse!
   updatePartner(id: ID!, input: UpdatePartnerInput!): Partner
   deletePartner(id: ID!): Boolean
 }

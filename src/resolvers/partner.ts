@@ -1,11 +1,13 @@
+import bcrypt from "bcryptjs";
 import { Transaction } from "sequelize";
 import { UserRole } from "../enums";
+import { generateRandomString } from "../helpers/helpers";
 import Package from "../models/package.model";
 import Partner from "../models/partner.model";
 import Payment from "../models/payment.model";
 import TeachingSubscription from "../models/subscription.model";
 import User from "../models/user.model";
-import { sendPartnershipConfirmationEmail } from "../services/sendEmail";
+import { sendPartnerRegistrationConfirmationEmail } from "../services/sendEmail";
 import createChapaPayment, { PaymentTypes } from "../services/services";
 import {
   CreatePartnerInputType,
@@ -35,16 +37,27 @@ const partnerResolvers = {
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
       });
 
+      const newPassword = input.password || generateRandomString(6);
+
       try {
         let user = await User.findOne({ where: { phone: input.phone } });
 
         if (!user) {
-          user = await User.create(input, { transaction });
+          const salt = await bcrypt.genSalt(10);
+          const password = await bcrypt.hash(newPassword, salt);
+
+          const role = UserRole.PARTNER;
+          user = await User.create(
+            { ...input, password, role },
+            { transaction }
+          );
 
           if (!user) {
             throw new Error("User registration failed!");
           }
         }
+
+        // console.log({ user });
 
         let partner = await Partner.findOne({ where: { phone: input.phone } });
 
@@ -55,12 +68,17 @@ const partnerResolvers = {
           );
         }
 
+        // console.log({ partner });
+
         const pkg = await Package.findByPk(input.package_id);
         if (!pkg) {
           throw new Error("Invalid package selection!");
         }
 
+        // console.log({ pkg });
+
         const amount = input.currency === "ETB" ? pkg.price_etb : pkg.price_usd;
+
         const paymentInstance = await createChapaPayment({
           first_name: input.first_name,
           last_name: input.last_name,
@@ -71,7 +89,9 @@ const partnerResolvers = {
           reason: PaymentTypes.Partnership,
         });
 
-        console.log(paymentInstance);
+        // console.log({ amount });
+
+        console.log({ paymentInstance });
 
         const payment = await Payment.create(
           {
@@ -89,7 +109,9 @@ const partnerResolvers = {
           { transaction }
         );
 
-        await TeachingSubscription.create(
+        // console.log({ payment });
+
+        const sub = await TeachingSubscription.create(
           {
             partner_id: user.id,
             package_id: input.package_id,
@@ -98,13 +120,18 @@ const partnerResolvers = {
           { transaction }
         );
 
-        await sendPartnershipConfirmationEmail(
+        // console.log({ sub });
+
+        const emailed = await sendPartnerRegistrationConfirmationEmail(
           input.email,
           input.first_name,
-          input.last_name
+          input.last_name,
+          newPassword
         );
 
         await transaction.commit();
+
+        return paymentInstance;
       } catch (error) {
         await transaction.rollback();
         console.error("Error creating partner:", error);

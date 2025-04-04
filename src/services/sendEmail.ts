@@ -227,6 +227,48 @@ export const sendPartnershipConfirmationEmail = async (
   return transporter.sendMail(mailOptions);
 };
 
+export const sendPartnerRegistrationConfirmationEmail = async (
+  to: string,
+  first_name: string,
+  last_name: string,
+  password?: string
+) => {
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_SERVER, // Outgoing server
+    port: 465, // SMTP port for SSL
+    secure: true, // Use SSL
+    auth: {
+      user: process.env.EMAIL_USER_PARTNERS,
+      pass: process.env.APP_EMAIL_PASS_PARTNERS,
+    },
+  });
+
+  const tempPath = path.join(__dirname, "emailTemplate.html");
+
+  let html = readFileSync(tempPath, "utf8");
+  let template = handlebars.compile(html);
+
+  let data = {
+    fullname: first_name + " " + last_name,
+    link: "https://jpstvethiopia.com/give/",
+    title: "Partnership Registration Confirmation",
+    content: `You have successfully registered as JPS TV  Partner. You will receive reminder email, on the payment due date. Your password is : <b>${password} </b> !`,
+    linkName: "Payment Page",
+    password,
+  };
+
+  let htmlToSend = template(data);
+
+  const mailOptions = {
+    from: '"JPS TV Ethiopia" <no-reply@jpstvethiopia.com>',
+    to,
+    subject: "Partnership Registration Confirmation Message",
+    html: htmlToSend,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
 export const sendDonationConfirmationEmail = async (
   to: string,
   first_name: string,
