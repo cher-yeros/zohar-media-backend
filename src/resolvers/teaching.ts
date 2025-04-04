@@ -8,12 +8,14 @@ const teachingResolvers = {
     },
     async getAllTeachings() {
       return await Teaching.findAll({
-        where: { active: true },
         include: [TeachingCategory],
       });
     },
     async getTeachings() {
-      return await Teaching.findAll({ include: [TeachingCategory] });
+      return await Teaching.findAll({
+        where: { active: true },
+        include: [TeachingCategory],
+      });
     },
   },
 
