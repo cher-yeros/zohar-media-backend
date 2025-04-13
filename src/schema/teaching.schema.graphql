@@ -59,6 +59,8 @@ type Query {
   getTeachings: [Teaching]
 
   getTeachingCategories: [TeachingCategory]
+
+  getTeachingSubscriptions: [TeachingSubscription]
 }
 
 type Mutation {

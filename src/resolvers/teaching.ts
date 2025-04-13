@@ -1,3 +1,4 @@
+import TeachingSubscription from "../models/subscription.model";
 import Teaching from "../models/teaching.model";
 import TeachingCategory from "../models/teaching_category.model";
 
@@ -19,6 +20,9 @@ const teachingResolvers = {
     },
     async getTeachingCategories() {
       return await TeachingCategory.findAll({});
+    },
+    async getTeachingSubscriptions() {
+      return await TeachingSubscription.findAll({});
     },
   },
 
