@@ -1018,8 +1018,10 @@ export interface TeachingSubscriptionType {
   __typename?: "TeachingSubscription";
   createdAt: Scalars["Date"]["output"];
   id: Scalars["Int"]["output"];
+  package?: PackageType;
   payment?: PaymentType;
   updatedAt: Scalars["Date"]["output"];
+  user?: UserType;
 }
 
 export type TeachingTypeType =

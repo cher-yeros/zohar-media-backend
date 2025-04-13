@@ -1,6 +1,9 @@
+import Package from "../models/package.model";
+import Payment from "../models/payment.model";
 import TeachingSubscription from "../models/subscription.model";
 import Teaching from "../models/teaching.model";
 import TeachingCategory from "../models/teaching_category.model";
+import User from "../models/user.model";
 
 const teachingResolvers = {
   Query: {
@@ -22,7 +25,9 @@ const teachingResolvers = {
       return await TeachingCategory.findAll({});
     },
     async getTeachingSubscriptions() {
-      return await TeachingSubscription.findAll({});
+      return await TeachingSubscription.findAll({
+        include: [Payment, User, Package],
+      });
     },
   },
 

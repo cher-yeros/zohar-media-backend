@@ -310,6 +310,8 @@ type TeachingSubscription {
   createdAt: Date!
   updatedAt: Date!
   payment: Payment  
+  user: User  
+  package: Package  
 }
 
 type Tag {
