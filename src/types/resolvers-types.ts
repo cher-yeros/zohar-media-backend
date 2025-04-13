@@ -1022,8 +1022,8 @@ export interface TeachingSubscriptionType {
   id: Scalars["Int"]["output"];
   package?: PackageType;
   payment?: PaymentType;
-  role: Scalars["String"]["output"];
   start_date?: Scalars["Date"]["output"];
+  status: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
   user?: UserType;
 }

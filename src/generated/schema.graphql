@@ -310,7 +310,7 @@ type TeachingSubscription {
   id: Int!
   start_date: Date
   end_date: Date
-  role: String!
+  status: String!
   createdAt: Date!
   updatedAt: Date!
   payment: Payment  
