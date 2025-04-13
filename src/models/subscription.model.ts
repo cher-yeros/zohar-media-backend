@@ -43,5 +43,5 @@ export default class TeachingSubscription extends Model {
     defaultValue: SubscriptionStatus.PENDING,
     type: DataType.ENUM(...Object.values(SubscriptionStatus)),
   })
-  role!: string;
+  status!: string;
 }
