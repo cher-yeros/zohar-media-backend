@@ -847,6 +847,7 @@ export interface PaymentType {
   __typename?: "Payment";
   amount: Scalars["Float"]["output"];
   createdAt: Scalars["Date"]["output"];
+  currency: Scalars["String"]["output"];
   email: Scalars["String"]["output"];
   first_name: Scalars["String"]["output"];
   full_name: Scalars["String"]["output"];
@@ -1017,9 +1018,12 @@ export interface TeachingReviewType {
 export interface TeachingSubscriptionType {
   __typename?: "TeachingSubscription";
   createdAt: Scalars["Date"]["output"];
+  end_date?: Scalars["Date"]["output"];
   id: Scalars["Int"]["output"];
   package?: PackageType;
   payment?: PaymentType;
+  role: Scalars["String"]["output"];
+  start_date?: Scalars["Date"]["output"];
   updatedAt: Scalars["Date"]["output"];
   user?: UserType;
 }

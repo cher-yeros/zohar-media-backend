@@ -237,6 +237,7 @@ type Payment {
   payment_method: String!
   reason: String!
   amount: Float!
+  currency: String!
   status: String!
   tx_ref: String!
   createdAt: Date!
@@ -307,6 +308,9 @@ type ServiceCategory {
 
 type TeachingSubscription {
   id: Int!
+  start_date: Date
+  end_date: Date
+  role: String!
   createdAt: Date!
   updatedAt: Date!
   payment: Payment  

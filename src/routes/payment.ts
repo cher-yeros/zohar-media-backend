@@ -9,6 +9,8 @@ import {
 } from "../services/sendEmail";
 import { PaymentTypes } from "../services/services";
 import sequelize from "../utils/db.connection";
+import TeachingSubscription from "../models/subscription.model";
+import { SubscriptionStatus } from "../enums";
 
 const router = express.Router();
 
@@ -49,6 +51,15 @@ router.get("/verify/:reason/:tx_ref", async (req: Request, res: Response) => {
         data?.data?.status === "success" ? "COMPLETED" : data?.data?.status,
       payment_method: data?.data?.method,
     });
+
+    await TeachingSubscription.update(
+      { status: SubscriptionStatus.ACTIVE },
+      {
+        where: {
+          payment_id: payment.id,
+        },
+      }
+    );
 
     if (req.params.reason === PaymentTypes.Partnership) {
       await sendPartnershipConfirmationEmail(

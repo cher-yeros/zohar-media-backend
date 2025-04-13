@@ -61,6 +61,13 @@ class Payment extends Model {
 
   @Column({
     type: DataType.STRING,
+    allowNull: false,
+    defaultValue: "ETB",
+  })
+  currency!: String;
+
+  @Column({
+    type: DataType.STRING,
     defaultValue: "PENDING",
   })
   status!: string;

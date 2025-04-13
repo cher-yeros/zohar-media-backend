@@ -1,3 +1,11 @@
+export enum SubscriptionStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "Inactive",
+  PENDING = "Pending",
+  EXPIRED = "Expired",
+  CANCELLED = "Cancelled",
+}
+
 export enum UserRole {
   USER = "User",
   PARTNER = "Partner",
