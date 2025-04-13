@@ -23,4 +23,10 @@ export default class TeachingSubscription extends Model {
 
   @BelongsTo(() => Payment)
   payment!: Payment;
+
+  @BelongsTo(() => User)
+  user!: User;
+
+  @BelongsTo(() => Package)
+  package!: Package;
 }
