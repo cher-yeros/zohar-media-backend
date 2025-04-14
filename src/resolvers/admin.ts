@@ -5,7 +5,8 @@ import Partnership from "../models/partnership.model";
 import Payment from "../models/payment.model";
 import User from "../models/user.model";
 import { UserType } from "../types/resolvers-types";
-import { UserRole } from "../enums";
+import { SubscriptionStatus, UserRole } from "../enums";
+import TeachingSubscription from "../models/subscription.model";
 
 const adminesolvers = {
   Query: {
@@ -20,15 +21,23 @@ const adminesolvers = {
       const visitors = await Visitor.count();
 
       const foreign_txn = await Payment.sum("amount", {
-        where: { payment_method: "Paypal", status: "COMPLETED" },
+        where: { currency: "USD", status: "COMPLETED" },
       });
       const local_txn = await Payment.sum("amount", {
-        where: { payment_method: "Local Currency", status: "COMPLETED" },
+        where: { currency: "ETB", status: "COMPLETED" },
       });
 
       const recentTransactions = await Payment.findAll({
         where: {
           status: "COMPLETED",
+        },
+        order: [["createdAt", "Desc"]],
+        limit: 10,
+      });
+
+      const susbcriptions = await TeachingSubscription.findAll({
+        where: {
+          status: SubscriptionStatus.ACTIVE,
         },
         order: [["createdAt", "Desc"]],
         limit: 10,
@@ -43,6 +52,7 @@ const adminesolvers = {
         propheticSchoolSessions,
         visitors,
         recentTransactions,
+        susbcriptions,
       };
     },
   },
