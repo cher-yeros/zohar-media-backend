@@ -47,6 +47,15 @@ const adminesolvers = {
 
       console.log(subscriptions);
 
+      console.log(
+        subscriptions?.map((sub) => ({
+          ...sub.dataValues,
+          user: sub.user.dataValues,
+          package: sub.package.dataValues,
+          payment: sub.payment.dataValues,
+        }))
+      );
+
       return {
         partners,
         members,
@@ -57,7 +66,7 @@ const adminesolvers = {
         visitors,
         recentTransactions,
         subscriptions: subscriptions?.map((sub) => ({
-          ...sub,
+          ...sub.dataValues,
           user: sub.user.dataValues,
           package: sub.package.dataValues,
           payment: sub.payment.dataValues,
