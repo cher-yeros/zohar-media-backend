@@ -64,7 +64,7 @@ class Donation extends Model {
   payment_id!: number;
 
   @BelongsTo(() => Payment)
-  paymnet!: Payment;
+  payment!: Payment;
 }
 
 export default Donation;

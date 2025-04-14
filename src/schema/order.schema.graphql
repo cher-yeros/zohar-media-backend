@@ -1,0 +1,56 @@
+# import '../generated/schema.graphql'
+
+type ChapaPaymentResponseData {
+  checkout_url: String!
+}
+
+type ChapaPaymentResponse {
+  message: String!
+  status: String!
+  data: ChapaPaymentResponseData!
+}
+
+input OrderItem {
+  teaching_id: ID!
+  quantity: Int!
+  price: Float!
+  total: Float!
+}
+
+input CreateTeachingOrderInput {
+  first_name: String!
+  last_name: String!
+  phone: String!
+  email: String!
+  payment_method: String!
+  sub_total: Float!
+  currency: String!
+  user_id: ID
+  items: [OrderItem!]!
+}
+
+input UpdateTeachingOrderInput {
+  first_name: String!
+  last_name: String!
+  phone: String
+  email: String!
+  payment_method: String!
+  sub_total: Float!
+  status: String!
+  user_id: ID
+  payemnt_id: ID
+  items: [OrderItem!]
+}
+
+type Query {
+  getTeachingOrders: [Order!]!
+  getTeachingOrder(id: ID!): Order
+
+  getMyTeachingOrders: [Order!]!
+}
+
+type Mutation {
+  createTeachingOrder(input: CreateTeachingOrderInput!): ChapaPaymentResponse!
+  updateTeachingOrder(input: UpdateTeachingOrderInput!): Order!
+  deleteTeachingOrder(id: ID!): Boolean!
+}

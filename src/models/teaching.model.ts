@@ -1,6 +1,7 @@
 // src/models/Token.ts
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -9,6 +10,8 @@ import {
 } from "sequelize-typescript";
 import { TeachingType } from "../enums";
 import TeachingCategory from "./teaching_category.model";
+import Order from "./teaching_order.model";
+import TeachingXOrder from "./teaching_x_order.model";
 
 @Table
 export default class Teaching extends Model {
@@ -62,4 +65,7 @@ export default class Teaching extends Model {
     allowNull: false,
   })
   price_usd!: number;
+
+  @BelongsToMany(() => Order, () => TeachingXOrder)
+  orders!: Order[];
 }

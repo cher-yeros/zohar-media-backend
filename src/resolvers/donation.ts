@@ -23,7 +23,7 @@ const donationResolvers = {
       return await Donation.findByPk(id);
     },
     allDonations: async (_: any, __: any, ___: any) => {
-      return await Donation.findAll();
+      return await Donation.findAll({ include: [Payment] });
     },
   },
 

@@ -56,5 +56,5 @@ export default class Visitor extends Model {
   payment_id!: number;
 
   @BelongsTo(() => Payment)
-  paymnet!: Payment;
+  payment!: Payment;
 }

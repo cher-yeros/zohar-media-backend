@@ -26,6 +26,7 @@ import partnerResolvers from "./partner";
 import packageResolvers from "./package";
 import teachingResolvers from "./teaching";
 import reviewResolvers from "./review";
+import orderResolvers from "./order";
 
 const dateScalar = {
   Date: new GraphQLScalarType({
@@ -93,7 +94,8 @@ const gatewaySchema = addResolversToSchema({
     packageResolvers,
     partnerResolvers,
     teachingResolvers,
-    reviewResolvers
+    reviewResolvers,
+    orderResolvers
   ),
 });
 

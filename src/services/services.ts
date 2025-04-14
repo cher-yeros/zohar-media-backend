@@ -7,6 +7,7 @@ export enum PaymentTypes {
   Donation = "Donation",
   Visitor = "Visitor",
   BibleStudy = "BibleStudy",
+  TeachingSales = "TeachingSales",
 }
 
 const createChapaPayment = async ({

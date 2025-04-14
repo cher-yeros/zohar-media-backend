@@ -76,5 +76,5 @@ export default class BibleStudyApplication extends Model {
   payment_id!: number;
 
   @BelongsTo(() => Payment)
-  paymnet!: Payment;
+  payment!: Payment;
 }

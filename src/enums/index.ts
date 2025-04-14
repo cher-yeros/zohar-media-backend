@@ -21,3 +21,8 @@ export enum TeachingType {
   ZOOM_MEETING = "zoom_meeting",
   YOUTUBE_LIVE = "youtube_live",
 }
+
+export enum OrderStatus {
+  PENDING = "Pending",
+  COMPLETED = "Completed",
+}

@@ -20,7 +20,7 @@ export interface BibleStudyApplicationType {
   id: Scalars["Int"]["output"];
   last_name: Scalars["String"]["output"];
   payment_amount: Scalars["Float"]["output"];
-  paymnet?: PaymentType;
+  payment?: PaymentType;
   phone: Scalars["String"]["output"];
   status: Scalars["String"]["output"];
   title?: Scalars["String"]["output"];
@@ -89,7 +89,7 @@ export interface BookPurchaseType {
   id: Scalars["Int"]["output"];
   last_name: Scalars["String"]["output"];
   payment_method: Scalars["String"]["output"];
-  paymnet?: PaymentType;
+  payment?: PaymentType;
   phone: Scalars["String"]["output"];
   tx_ref: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
@@ -303,6 +303,18 @@ export type CreateTeachingInputType = {
   trailer?: Scalars["String"]["input"];
 };
 
+export type CreateTeachingOrderInputType = {
+  currency: Scalars["String"]["input"];
+  email: Scalars["String"]["input"];
+  first_name: Scalars["String"]["input"];
+  items: Array<OrderItemType>;
+  last_name: Scalars["String"]["input"];
+  payment_method: Scalars["String"]["input"];
+  phone: Scalars["String"]["input"];
+  sub_total: Scalars["Float"]["input"];
+  user_id?: Scalars["ID"]["input"];
+};
+
 export type CreateTeachingReviewInputType = {
   comment?: Scalars["String"]["input"];
   email?: Scalars["String"]["input"];
@@ -358,7 +370,7 @@ export interface DonationType {
   id: Scalars["Int"]["output"];
   last_name: Scalars["String"]["output"];
   payment_method: Scalars["String"]["output"];
-  paymnet?: PaymentType;
+  payment?: PaymentType;
   phone: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
 }
@@ -580,6 +592,10 @@ export interface MutationcreateTeachingCategoryArgsType {
   input: CreateTeachingCategoryInputType;
 }
 
+export interface MutationcreateTeachingOrderArgsType {
+  input: CreateTeachingOrderInputType;
+}
+
 export interface MutationcreateTeachingReviewArgsType {
   input: CreateTeachingReviewInputType;
 }
@@ -661,6 +677,10 @@ export interface MutationdeleteTeachingArgsType {
 }
 
 export interface MutationdeleteTeachingCategoryArgsType {
+  id: Scalars["ID"]["input"];
+}
+
+export interface MutationdeleteTeachingOrderArgsType {
   id: Scalars["ID"]["input"];
 }
 
@@ -771,6 +791,10 @@ export interface MutationupdateTeachingCategoryArgsType {
   input: UpdateTeachingCategoryInputType;
 }
 
+export interface MutationupdateTeachingOrderArgsType {
+  input: UpdateTeachingOrderInputType;
+}
+
 export interface MutationupdateTeachingReviewArgsType {
   input: UpdateTeachingReviewInputType;
 }
@@ -791,6 +815,32 @@ export interface NotificationType {
   type: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];
 }
+
+export interface OrderType {
+  __typename?: "Order";
+  createdAt: Scalars["Date"]["output"];
+  email: Scalars["String"]["output"];
+  first_name: Scalars["String"]["output"];
+  full_name: Scalars["String"]["output"];
+  id: Scalars["Int"]["output"];
+  last_name: Scalars["String"]["output"];
+  order_no: Scalars["String"]["output"];
+  payemnt?: PaymentType;
+  payment_method: Scalars["String"]["output"];
+  phone?: Scalars["String"]["output"];
+  status: Scalars["String"]["output"];
+  sub_total: Scalars["Float"]["output"];
+  teachings: Array<TeachingType>;
+  updatedAt: Scalars["Date"]["output"];
+  user?: UserType;
+}
+
+export type OrderItemType = {
+  price: Scalars["Float"]["input"];
+  quantity: Scalars["Int"]["input"];
+  teaching_id: Scalars["ID"]["input"];
+  total: Scalars["Float"]["input"];
+};
 
 export interface PackageType {
   __typename?: "Package";
@@ -916,6 +966,10 @@ export interface QuerygetTeachingArgsType {
   id: Scalars["ID"]["input"];
 }
 
+export interface QuerygetTeachingOrderArgsType {
+  id: Scalars["ID"]["input"];
+}
+
 export interface QuerygetTeachingReviewsArgsType {
   teaching_id: Scalars["ID"]["input"];
 }
@@ -981,6 +1035,7 @@ export interface TeachingType {
   file_url: Scalars["String"]["output"];
   id: Scalars["Int"]["output"];
   is_downloadable: Scalars["Boolean"]["output"];
+  orders: Array<OrderType>;
   owner: Scalars["String"]["output"];
   picture: Scalars["String"]["output"];
   price_etb: Scalars["Float"]["output"];
@@ -1035,6 +1090,15 @@ export type TeachingTypeType =
   | "VIDEO"
   | "YOUTUBE_LIVE"
   | "ZOOM_MEETING";
+
+export interface TeachingXOrderType {
+  __typename?: "TeachingXOrder";
+  createdAt: Scalars["Date"]["output"];
+  price: Scalars["Float"]["output"];
+  quantity: Scalars["Float"]["output"];
+  total: Scalars["Float"]["output"];
+  updatedAt: Scalars["Date"]["output"];
+}
 
 export interface TokenType {
   __typename?: "Token";
@@ -1186,6 +1250,19 @@ export type UpdateTeachingInputType = {
   trailer?: Scalars["String"]["input"];
 };
 
+export type UpdateTeachingOrderInputType = {
+  email: Scalars["String"]["input"];
+  first_name: Scalars["String"]["input"];
+  items?: Array<OrderItemType>;
+  last_name: Scalars["String"]["input"];
+  payemnt_id?: Scalars["ID"]["input"];
+  payment_method: Scalars["String"]["input"];
+  phone?: Scalars["String"]["input"];
+  status: Scalars["String"]["input"];
+  sub_total: Scalars["Float"]["input"];
+  user_id?: Scalars["ID"]["input"];
+};
+
 export type UpdateTeachingReviewInputType = {
   comment?: Scalars["String"]["input"];
   email?: Scalars["String"]["input"];
@@ -1238,7 +1315,7 @@ export interface VisitorType {
   first_name: Scalars["String"]["output"];
   id: Scalars["Int"]["output"];
   last_name: Scalars["String"]["output"];
-  paymnet?: PaymentType;
+  payment?: PaymentType;
   phone: Scalars["String"]["output"];
   request_detail: Scalars["String"]["output"];
   updatedAt: Scalars["Date"]["output"];

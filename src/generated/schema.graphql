@@ -1,17 +1,16 @@
-
 scalar Date
 scalar JSON
 
 type Query {
-  _ : Boolean
+  _: Boolean
 }
 
 type Mutation {
-  _ : Boolean
+  _: Boolean
 }
 
 type Subscription {
-  _ : Boolean
+  _: Boolean
 }
 
 type BibleStudyApplication {
@@ -30,9 +29,9 @@ type BibleStudyApplication {
   status: String!
   createdAt: Date!
   updatedAt: Date!
-  user: User  
-  bible_study_session: BibleStudySession  
-  paymnet: Payment  
+  user: User
+  bible_study_session: BibleStudySession
+  payment: Payment
 }
 
 type BibleStudySession {
@@ -63,8 +62,8 @@ type Blog {
   image: String!
   createdAt: Date!
   updatedAt: Date!
-  user: User  
-  category: Category  
+  user: User
+  category: Category
 }
 
 type BookPurchase {
@@ -79,7 +78,7 @@ type BookPurchase {
   tx_ref: String!
   createdAt: Date!
   updatedAt: Date!
-  paymnet: Payment  
+  payment: Payment
 }
 
 type Category {
@@ -103,7 +102,7 @@ type Donation {
   additional_message: String
   createdAt: Date!
   updatedAt: Date!
-  paymnet: Payment  
+  payment: Payment
 }
 
 type FAQ {
@@ -132,7 +131,7 @@ type Gallery {
   images: JSON!
   createdAt: Date!
   updatedAt: Date!
-  category: GalleryCategory  
+  category: GalleryCategory
 }
 
 type GalleryCategory {
@@ -164,8 +163,8 @@ type Message {
   seen: Boolean
   createdAt: Date!
   updatedAt: Date!
-  sender: User ! 
-  receiver: User ! 
+  sender: User!
+  receiver: User!
 }
 
 type Notification {
@@ -177,7 +176,7 @@ type Notification {
   link: JSON!
   createdAt: Date!
   updatedAt: Date!
-  recipient: User  
+  recipient: User
 }
 
 type Package {
@@ -242,7 +241,7 @@ type Payment {
   tx_ref: String!
   createdAt: Date!
   updatedAt: Date!
-  user: User  
+  user: User
 }
 
 type PaymentAmountLookup {
@@ -285,8 +284,8 @@ type TeachingReview {
   is_visible: Boolean!
   createdAt: Date!
   updatedAt: Date!
-  teaching: Teaching  
-  user: User  
+  teaching: Teaching
+  user: User
 }
 
 type Service {
@@ -294,7 +293,7 @@ type Service {
   youtube_link: String!
   createdAt: Date!
   updatedAt: Date!
-  category: ServiceCategory  
+  category: ServiceCategory
 }
 
 type ServiceCategory {
@@ -313,9 +312,9 @@ type TeachingSubscription {
   status: String!
   createdAt: Date!
   updatedAt: Date!
-  payment: Payment  
-  user: User  
-  package: Package  
+  payment: Payment
+  user: User
+  package: Package
 }
 
 type Tag {
@@ -341,7 +340,8 @@ type Teaching {
   price_usd: Float!
   createdAt: Date!
   updatedAt: Date!
-  category: TeachingCategory  
+  category: TeachingCategory
+  orders: [Order!]!
 }
 
 type TeachingCategory {
@@ -353,13 +353,39 @@ type TeachingCategory {
   updatedAt: Date!
 }
 
+type Order {
+  id: Int!
+  order_no: String!
+  first_name: String!
+  last_name: String!
+  full_name: String!
+  phone: String
+  email: String!
+  payment_method: String!
+  sub_total: Float!
+  status: String!
+  createdAt: Date!
+  updatedAt: Date!
+  payemnt: Payment
+  user: User
+  teachings: [Teaching!]!
+}
+
+type TeachingXOrder {
+  quantity: Float!
+  price: Float!
+  total: Float!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
 type Token {
   id: Int!
   token: String!
   expiryDate: Date!
   createdAt: Date!
   updatedAt: Date!
-  user: User  
+  user: User
 }
 
 type User {
@@ -396,6 +422,6 @@ type Visitor {
   date: Date!
   createdAt: Date!
   updatedAt: Date!
-  user: User  
-  paymnet: Payment  
+  user: User
+  payment: Payment
 }
