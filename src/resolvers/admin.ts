@@ -7,6 +7,7 @@ import User from "../models/user.model";
 import { UserType } from "../types/resolvers-types";
 import { SubscriptionStatus, UserRole } from "../enums";
 import TeachingSubscription from "../models/subscription.model";
+import Package from "../models/package.model";
 
 const adminesolvers = {
   Query: {
@@ -39,6 +40,7 @@ const adminesolvers = {
         where: {
           status: SubscriptionStatus.ACTIVE,
         },
+        include: [User, Payment, Package],
         order: [["createdAt", "Desc"]],
         limit: 10,
       });
