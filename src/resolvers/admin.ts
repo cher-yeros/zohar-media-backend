@@ -45,17 +45,6 @@ const adminesolvers = {
         limit: 10,
       });
 
-      console.log(subscriptions);
-
-      console.log(
-        subscriptions?.map((sub) => ({
-          ...sub.dataValues,
-          user: sub.user.dataValues,
-          package: sub.package.dataValues,
-          payment: sub.payment.dataValues,
-        }))
-      );
-
       return {
         partners,
         members,
