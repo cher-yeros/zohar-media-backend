@@ -5,11 +5,12 @@ import Partnership from "../models/partnership.model";
 import Payment from "../models/payment.model";
 import User from "../models/user.model";
 import { UserType } from "../types/resolvers-types";
+import { UserRole } from "../enums";
 
 const adminesolvers = {
   Query: {
     stats: async (_: any, __: any, { user }: { user: UserType }) => {
-      if (user.role !== "admin") return {};
+      if (user.role !== UserRole.ADMIN) return {};
 
       const partners = await Partnership.count();
       const members = await User.count();
