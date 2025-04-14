@@ -36,7 +36,7 @@ const adminesolvers = {
         limit: 10,
       });
 
-      const susbcriptions = await TeachingSubscription.findAll({
+      const subscriptions = await TeachingSubscription.findAll({
         where: {
           status: SubscriptionStatus.ACTIVE,
         },
@@ -44,6 +44,8 @@ const adminesolvers = {
         order: [["createdAt", "Desc"]],
         limit: 10,
       });
+
+      console.log(subscriptions);
 
       return {
         partners,
@@ -54,7 +56,12 @@ const adminesolvers = {
         propheticSchoolSessions,
         visitors,
         recentTransactions,
-        susbcriptions,
+        subscriptions: subscriptions?.map((sub) => ({
+          ...sub,
+          user: sub.user.dataValues,
+          package: sub.package.dataValues,
+          payment: sub.payment.dataValues,
+        })),
       };
     },
   },
