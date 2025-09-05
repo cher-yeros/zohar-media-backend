@@ -7,110 +7,74 @@ import {
   Table,
 } from "sequelize-typescript";
 import { UserRole } from "../enums";
-import Payment from "./payment.model";
-import TeachingSubscription from "./subscription.model";
+import ActivityLog from "./activity_log.model";
 
 @Table({
   timestamps: true,
+  tableName: "users",
 })
 class User extends Model {
   @PrimaryKey
   @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: number;
+  id!: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  avatar?: string;
-
-  @Column({
-    allowNull: false,
-  })
-  first_name!: string;
-
-  @Column({
-    allowNull: false,
-    defaultValue: UserRole.USER,
-    type: DataType.ENUM(...Object.values(UserRole)),
-  })
-  role!: string;
-
-  @Column({
-    allowNull: false,
-  })
-  last_name!: string;
-
-  @Column({ type: DataType.VIRTUAL })
-  get full_name() {
-    return `${this.getDataValue("firstname")} ${this.getDataValue("lastname")}`;
-  }
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  gender?: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  password!: string;
-
-  @Column({
-    allowNull: true,
-  })
-  phone?: string;
-
-  @Column({
+    type: DataType.STRING(255),
     allowNull: false,
     unique: true,
   })
   email!: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.STRING(255),
+    allowNull: false,
+  })
+  password_hash!: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: false,
+  })
+  first_name!: string;
+
+  @Column({
+    type: DataType.STRING(100),
+    allowNull: false,
+  })
+  last_name!: string;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(UserRole)),
+    allowNull: false,
+    defaultValue: UserRole.ADMIN,
+  })
+  role!: UserRole;
+
+  @Column({
+    type: DataType.TEXT,
     allowNull: true,
   })
-  address?: string;
+  avatar_url?: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
+  is_active!: boolean;
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  dob?: Date;
+  last_login_at?: Date;
 
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
-  })
-  is_verified!: boolean;
-
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
-  })
-  banned!: boolean;
-
-  @Column({ type: DataType.STRING, allowNull: true })
-  resetToken?: string;
-
-  @Column({ type: DataType.DATE, allowNull: true })
-  resetTokenExpires?: Date;
-
-  // @HasMany(() => Partnership)
-  // partnerships!: Partnership[];
-
-  @HasMany(() => Payment)
-  payments!: Payment[];
-
-  @HasMany(() => TeachingSubscription)
-  subscriptions!: TeachingSubscription[];
+  @HasMany(() => ActivityLog)
+  activity_logs!: ActivityLog[];
 }
 
 export default User;

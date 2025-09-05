@@ -1,28 +1,45 @@
-export enum SubscriptionStatus {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "Inactive",
-  PENDING = "Pending",
-  EXPIRED = "Expired",
-  CANCELLED = "Cancelled",
-}
-
 export enum UserRole {
-  USER = "User",
-  PARTNER = "Partner",
-  ADMIN = "Admin",
-  SUPER_ADMIN = "Super Admin",
+  ADMIN = "admin",
+  MANAGER = "manager",
+  EDITOR = "editor",
 }
 
-export enum TeachingType {
+export enum TeamMemberStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+
+export enum PortfolioItemStatus {
+  COMPLETED = "completed",
+  IN_PROGRESS = "in-progress",
+  DRAFT = "draft",
+}
+
+export enum InquiryStatus {
+  UNREAD = "unread",
+  RESPONDED = "responded",
+  RESOLVED = "resolved",
+}
+
+export enum InquiryType {
+  GENERAL = "general",
+  COLLABORATION = "collaboration",
+  PRICING = "pricing",
+  SUPPORT = "support",
+}
+
+export enum TestimonialStatus {
+  PENDING = "pending",
+  APPROVED = "approved",
+  REJECTED = "rejected",
+}
+
+export enum MediaType {
+  IMAGE = "image",
   VIDEO = "video",
-  AUDIO = "audio",
-  PDF = "pdf",
-  EPUB = "epub",
-  ZOOM_MEETING = "zoom_meeting",
-  YOUTUBE_LIVE = "youtube_live",
 }
 
-export enum OrderStatus {
-  PENDING = "Pending",
-  COMPLETED = "Completed",
+export enum Theme {
+  LIGHT = "light",
+  DARK = "dark",
 }

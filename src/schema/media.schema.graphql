@@ -1,0 +1,70 @@
+type MediaItem {
+  id: ID!
+  title: String!
+  type: MediaType!
+  url: String!
+  thumbnail_url: String
+  file_size: String
+  dimensions: String
+  duration: String
+  upload_date: Date!
+  created_at: Date!
+  updated_at: Date!
+  tags: [MediaItemTag!]!
+}
+
+type MediaItemTag {
+  id: ID!
+  media_item_id: ID!
+  tag_name: String!
+  created_at: Date!
+  media_item: MediaItem!
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+type MediaItemsResponse {
+  items: [MediaItem!]!
+  total: Int!
+}
+
+type MediaItemResponse {
+  success: Boolean!
+  message: String!
+  mediaItem: MediaItem
+}
+
+extend type Query {
+  mediaItems(type: MediaType, limit: Int, offset: Int): MediaItemsResponse!
+  mediaItem(id: ID!): MediaItem
+}
+
+extend type Mutation {
+  createMediaItem(
+    title: String!
+    type: MediaType!
+    url: String!
+    thumbnail_url: String
+    file_size: String
+    dimensions: String
+    duration: String
+    tags: [String!]
+  ): MediaItemResponse!
+
+  updateMediaItem(
+    id: ID!
+    title: String
+    type: MediaType
+    url: String
+    thumbnail_url: String
+    file_size: String
+    dimensions: String
+    duration: String
+    tags: [String!]
+  ): MediaItemResponse!
+
+  deleteMediaItem(id: ID!): MediaItemResponse!
+}

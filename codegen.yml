@@ -1,5 +1,4 @@
 schema:
-  - "src/generated/schema.graphql"
   - "src/schema/**/*.graphql"
 generates:
   "src/types/resolvers-types.ts":

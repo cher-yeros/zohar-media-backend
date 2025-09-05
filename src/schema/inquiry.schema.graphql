@@ -1,0 +1,70 @@
+type Inquiry {
+  id: ID!
+  name: String!
+  email: String!
+  subject: String!
+  message: String!
+  inquiry_date: Date!
+  status: InquiryStatus!
+  type: InquiryType!
+  assigned_to: ID
+  response: String
+  response_date: Date
+  created_at: Date!
+  updated_at: Date!
+  assigned_team_member: TeamMember
+}
+
+enum InquiryStatus {
+  UNREAD
+  RESPONDED
+  RESOLVED
+}
+
+enum InquiryType {
+  GENERAL
+  COLLABORATION
+  PRICING
+  SUPPORT
+}
+
+type InquiriesResponse {
+  items: [Inquiry!]!
+  total: Int!
+}
+
+type InquiryResponse {
+  success: Boolean!
+  message: String!
+  inquiry: Inquiry
+}
+
+extend type Query {
+  inquiries(
+    status: InquiryStatus
+    type: InquiryType
+    assigned_to: ID
+    limit: Int
+    offset: Int
+  ): InquiriesResponse!
+  inquiry(id: ID!): Inquiry
+}
+
+extend type Mutation {
+  createInquiry(
+    name: String!
+    email: String!
+    subject: String!
+    message: String!
+    type: InquiryType
+  ): InquiryResponse!
+
+  updateInquiry(
+    id: ID!
+    status: InquiryStatus
+    assigned_to: ID
+    response: String
+  ): InquiryResponse!
+
+  deleteInquiry(id: ID!): InquiryResponse!
+}

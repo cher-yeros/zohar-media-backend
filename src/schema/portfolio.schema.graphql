@@ -1,0 +1,168 @@
+type PortfolioCategory {
+  id: ID!
+  name: String!
+  description: String
+  color: String!
+  created_at: Date!
+  updated_at: Date!
+  portfolio_items: [PortfolioItem!]!
+}
+
+type PortfolioItem {
+  id: ID!
+  title: String!
+  description: String!
+  category_id: ID
+  thumbnail_url: String
+  client_name: String
+  project_date: Date!
+  status: PortfolioItemStatus!
+  featured: Boolean!
+  project_url: String
+  testimonial: String
+  created_at: Date!
+  updated_at: Date!
+  category: PortfolioCategory
+  images: [PortfolioItemImage!]!
+  tags: [PortfolioItemTag!]!
+  technologies: [PortfolioItemTechnology!]!
+  team_members: [PortfolioItemTeamMember!]!
+  testimonials: [Testimonial!]!
+}
+
+type PortfolioItemImage {
+  id: ID!
+  portfolio_item_id: ID!
+  image_url: String!
+  alt_text: String
+  sort_order: Int!
+  created_at: Date!
+  portfolio_item: PortfolioItem!
+}
+
+type PortfolioItemTag {
+  id: ID!
+  portfolio_item_id: ID!
+  tag_name: String!
+  created_at: Date!
+  portfolio_item: PortfolioItem!
+}
+
+type PortfolioItemTechnology {
+  id: ID!
+  portfolio_item_id: ID!
+  technology_name: String!
+  created_at: Date!
+  portfolio_item: PortfolioItem!
+}
+
+type PortfolioItemTeamMember {
+  id: ID!
+  portfolio_item_id: ID!
+  team_member_id: ID!
+  role: String
+  created_at: Date!
+  portfolio_item: PortfolioItem!
+  team_member: TeamMember!
+}
+
+enum PortfolioItemStatus {
+  COMPLETED
+  IN_PROGRESS
+  DRAFT
+}
+
+type PortfolioItemsResponse {
+  items: [PortfolioItem!]!
+  total: Int!
+}
+
+type PortfolioCategoryResponse {
+  success: Boolean!
+  message: String!
+  category: PortfolioCategory
+}
+
+type PortfolioItemResponse {
+  success: Boolean!
+  message: String!
+  portfolioItem: PortfolioItem
+}
+
+extend type Query {
+  portfolioCategories: [PortfolioCategory!]!
+  portfolioCategory(id: ID!): PortfolioCategory
+  portfolioItems(
+    category_id: ID
+    status: PortfolioItemStatus
+    featured: Boolean
+    limit: Int
+    offset: Int
+  ): PortfolioItemsResponse!
+  portfolioItem(id: ID!): PortfolioItem
+}
+
+extend type Mutation {
+  createPortfolioCategory(
+    name: String!
+    description: String
+    color: String!
+  ): PortfolioCategoryResponse!
+
+  updatePortfolioCategory(
+    id: ID!
+    name: String
+    description: String
+    color: String
+  ): PortfolioCategoryResponse!
+
+  deletePortfolioCategory(id: ID!): PortfolioCategoryResponse!
+
+  createPortfolioItem(
+    title: String!
+    description: String!
+    category_id: ID
+    thumbnail_url: String
+    client_name: String
+    project_date: String!
+    status: PortfolioItemStatus
+    featured: Boolean
+    project_url: String
+    testimonial: String
+    images: [PortfolioItemImageInput!]
+    tags: [String!]
+    technologies: [String!]
+    team_members: [PortfolioItemTeamMemberInput!]
+  ): PortfolioItemResponse!
+
+  updatePortfolioItem(
+    id: ID!
+    title: String
+    description: String
+    category_id: ID
+    thumbnail_url: String
+    client_name: String
+    project_date: String
+    status: PortfolioItemStatus
+    featured: Boolean
+    project_url: String
+    testimonial: String
+    images: [PortfolioItemImageInput!]
+    tags: [String!]
+    technologies: [String!]
+    team_members: [PortfolioItemTeamMemberInput!]
+  ): PortfolioItemResponse!
+
+  deletePortfolioItem(id: ID!): PortfolioItemResponse!
+}
+
+input PortfolioItemImageInput {
+  image_url: String!
+  alt_text: String
+  sort_order: Int
+}
+
+input PortfolioItemTeamMemberInput {
+  team_member_id: ID!
+  role: String
+}

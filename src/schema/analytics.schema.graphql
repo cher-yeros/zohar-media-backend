@@ -1,0 +1,78 @@
+type AnalyticsData {
+  id: ID!
+  date: Date!
+  visitors_today: Int!
+  visitors_this_week: Int!
+  visitors_this_month: Int!
+  visitor_trend: Float!
+  inquiries_total: Int!
+  inquiries_this_month: Int!
+  inquiry_trend: Float!
+  media_total_views: Int!
+  created_at: Date!
+  updated_at: Date!
+}
+
+type BusinessStatistics {
+  id: ID!
+  completed_projects: Int!
+  happy_clients: Int!
+  perspective_clients: Int!
+  total_revenue: Float!
+  average_project_value: Float!
+  is_public: Boolean!
+  auto_update: Boolean!
+  created_at: Date!
+  updated_at: Date!
+}
+
+type AnalyticsDataResponse {
+  items: [AnalyticsData!]!
+  total: Int!
+}
+
+type AnalyticsDataMutationResponse {
+  success: Boolean!
+  message: String!
+  analyticsData: AnalyticsData
+}
+
+type BusinessStatisticsResponse {
+  success: Boolean!
+  message: String!
+  statistics: BusinessStatistics
+}
+
+extend type Query {
+  analyticsData(
+    start_date: String
+    end_date: String
+    limit: Int
+    offset: Int
+  ): AnalyticsDataResponse!
+  businessStatistics: BusinessStatistics
+}
+
+extend type Mutation {
+  updateAnalyticsData(
+    date: String!
+    visitors_today: Int
+    visitors_this_week: Int
+    visitors_this_month: Int
+    visitor_trend: Float
+    inquiries_total: Int
+    inquiries_this_month: Int
+    inquiry_trend: Float
+    media_total_views: Int
+  ): AnalyticsDataMutationResponse!
+
+  updateBusinessStatistics(
+    completed_projects: Int
+    happy_clients: Int
+    perspective_clients: Int
+    total_revenue: Float
+    average_project_value: Float
+    is_public: Boolean
+    auto_update: Boolean
+  ): BusinessStatisticsResponse!
+}

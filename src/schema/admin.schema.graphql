@@ -1,8 +1,0 @@
-# import '../generated/schema.graphql'
-
-
-type Query {
-  stats: JSON
-}
-
-

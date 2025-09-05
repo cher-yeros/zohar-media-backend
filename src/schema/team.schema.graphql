@@ -1,0 +1,86 @@
+type TeamMember {
+  id: ID!
+  name: String!
+  role: String!
+  email: String!
+  phone: String
+  avatar_url: String
+  bio: String
+  join_date: Date!
+  status: TeamMemberStatus!
+  created_at: Date!
+  updated_at: Date!
+  skills: [TeamMemberSkill!]!
+  social_links: [TeamMemberSocialLink!]!
+  portfolio_items: [PortfolioItemTeamMember!]!
+  assigned_inquiries: [Inquiry!]!
+}
+
+type TeamMemberSkill {
+  id: ID!
+  team_member_id: ID!
+  skill_name: String!
+  created_at: Date!
+  team_member: TeamMember!
+}
+
+type TeamMemberSocialLink {
+  id: ID!
+  team_member_id: ID!
+  platform: String!
+  url: String!
+  created_at: Date!
+  team_member: TeamMember!
+}
+
+enum TeamMemberStatus {
+  ACTIVE
+  INACTIVE
+}
+
+type TeamMemberResponse {
+  success: Boolean!
+  message: String!
+  teamMember: TeamMember
+}
+
+extend type Query {
+  teamMembers: [TeamMember!]!
+  teamMember(id: ID!): TeamMember
+}
+
+extend type Mutation {
+  createTeamMember(
+    name: String!
+    role: String!
+    email: String!
+    phone: String
+    avatar_url: String
+    bio: String
+    join_date: String!
+    status: TeamMemberStatus
+    skills: [String!]
+    social_links: [SocialLinkInput!]
+  ): TeamMemberResponse!
+
+  updateTeamMember(
+    id: ID!
+    name: String
+    role: String
+    email: String
+    phone: String
+    avatar_url: String
+    bio: String
+    join_date: String
+    status: TeamMemberStatus
+    skills: [String!]
+    social_links: [SocialLinkInput!]
+  ): TeamMemberResponse!
+
+  deleteTeamMember(id: ID!): TeamMemberResponse!
+}
+
+input SocialLinkInput {
+  platform: String!
+  url: String!
+}

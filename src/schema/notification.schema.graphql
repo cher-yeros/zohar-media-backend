@@ -1,5 +1,0 @@
-# import '../generated/schema.graphql'
-
-type Query {
-  notifications: [Notification!]!
-}

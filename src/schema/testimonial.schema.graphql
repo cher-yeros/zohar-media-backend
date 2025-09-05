@@ -1,0 +1,70 @@
+type Testimonial {
+  id: ID!
+  name: String!
+  company: String
+  message: String!
+  rating: Int
+  testimonial_date: Date!
+  status: TestimonialStatus!
+  featured: Boolean!
+  avatar_url: String
+  portfolio_item_id: ID
+  created_at: Date!
+  updated_at: Date!
+  portfolio_item: PortfolioItem
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+type TestimonialsResponse {
+  items: [Testimonial!]!
+  total: Int!
+}
+
+type TestimonialResponse {
+  success: Boolean!
+  message: String!
+  testimonial: Testimonial
+}
+
+extend type Query {
+  testimonials(
+    status: TestimonialStatus
+    featured: Boolean
+    portfolio_item_id: ID
+    limit: Int
+    offset: Int
+  ): TestimonialsResponse!
+  testimonial(id: ID!): Testimonial
+}
+
+extend type Mutation {
+  createTestimonial(
+    name: String!
+    company: String
+    message: String!
+    rating: Int
+    testimonial_date: String!
+    portfolio_item_id: ID
+    avatar_url: String
+  ): TestimonialResponse!
+
+  updateTestimonial(
+    id: ID!
+    name: String
+    company: String
+    message: String
+    rating: Int
+    testimonial_date: String
+    status: TestimonialStatus
+    featured: Boolean
+    portfolio_item_id: ID
+    avatar_url: String
+  ): TestimonialResponse!
+
+  deleteTestimonial(id: ID!): TestimonialResponse!
+}

@@ -1,65 +1,73 @@
-# import '../generated/schema.graphql'
-
-input CreateUserInput {
-  first_name: String!
-  last_name: String!
-  email: String!
-  phone: String!
-  gender: String!
-  address: String!
-  password: String!
-  dob: Date!
-}
-
-input EditProfileInput {
-  id: Int!
-  firstname: String!
-  lastname: String!
-  username: String!
-  email: String!
-  phone: String!
-  gender: String!
-  address: String!
-  password: String!
-  dob: Date!
-}
-
-input LoginInput {
-  email: String!
-  password: String!
-}
-
-input BulkEmailInput {
-  title: String!
-  subject: String!
-  body: String!
-}
-
-type LoginResponse {
-  token: String!
-  user: User!
-}
+scalar Date
+scalar JSON
 
 type Query {
-  user(id: Int!): User
-  users: [User]
-  verifyEmail(token: String!): Boolean
+  _: Boolean
 }
 
 type Mutation {
-  createUser(input: CreateUserInput): User!
-  loginUser(input: LoginInput): LoginResponse
-  # updateProfile(input: UpdateProfileInput): Boolean!
-  # editProfile(input: EditProfileInput): Boolean!
-  # banUser(user_id: Int!, ban: Boolean!): Boolean!
-  # deleteUser(user_id: Int!): Boolean!
-  requestResetPassword(email: String!): String!
-  resetPassword(
-    email: String!
-    resetToken: String!
-    newPassword: String!
-  ): String!
+  _: Boolean
+}
 
-  sendBulkEmailForPropheticSchoolMembers(input: BulkEmailInput!): JSON
-  sendBulkEmailForPartners(input: BulkEmailInput!): JSON
+type User {
+  id: ID!
+  email: String!
+  first_name: String!
+  last_name: String!
+  role: UserRole!
+  avatar_url: String
+  is_active: Boolean!
+  last_login_at: Date
+  created_at: Date!
+  updated_at: Date!
+  activity_logs: [ActivityLog!]
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  EDITOR
+}
+
+type UserResponse {
+  success: Boolean!
+  message: String!
+  user: User
+}
+
+type LoginResponse {
+  success: Boolean!
+  message: String!
+  token: String
+  user: User
+}
+
+extend type Query {
+  users: [User!]!
+  user(id: ID!): User
+}
+
+extend type Mutation {
+  createUser(
+    email: String!
+    password: String!
+    first_name: String!
+    last_name: String!
+    role: UserRole
+    avatar_url: String
+  ): UserResponse!
+
+  updateUser(
+    id: ID!
+    email: String
+    first_name: String
+    last_name: String
+    role: UserRole
+    avatar_url: String
+    is_active: Boolean
+  ): UserResponse!
+
+  deleteUser(id: ID!): UserResponse!
+
+  loginUser(email: String!, password: String!): LoginResponse!
 }

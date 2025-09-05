@@ -27,9 +27,9 @@ import { constants } from "fs/promises";
 import cron from "node-cron";
 import path, { join } from "path";
 import { v4 } from "uuid";
-import Partnership from "./models/partnership.model";
-import paymentRouter from "./routes/payment";
-import { sendReminderEmail } from "./services/sendEmail";
+// Removed old model imports
+// Payment router removed - no longer needed for Zohar Media backend
+// Email service removed - no longer needed for Zohar Media backend
 import { UserAccount } from "./types";
 // import crypto from "crypto";
 // console.log(crypto.randomBytes(32).toString("hex"));
@@ -126,27 +126,7 @@ const serverCleanup = useServer(
               req.body.operationName === "IntrospectionQuery" ||
               req.body.operationName === "CreateUser" ||
               req.body.operationName === "LoginUser" ||
-              req.body.operationName === "VerifyEmail" ||
-              req.body.operationName === "RequestResetPassword" ||
-              req.body.operationName === "ResetPassword" ||
-              req.body.operationName === "CreatePartnership" ||
-              req.body.operationName === "CreateOrder" ||
-              req.body.operationName === "CaptureOrder" ||
-              req.body.operationName === "CreateSubscription" ||
-              req.body.operationName === "CaptureSubscription" ||
-              req.body.operationName === "BibleStudySessionsForUsers" ||
-              req.body.operationName === "VisitorScheulesForUsers" ||
-              req.body.operationName === "Blogs" ||
-              req.body.operationName === "ServiceCategoryForUsers" ||
-              req.body.operationName === "GalleriesForUsers" ||
-              req.body.operationName === "GalleryCategoryForUsers" ||
-              req.body.operationName === "CreateDonation" ||
-              req.body.operationName === "CreateVisitor" ||
-              req.body.operationName === "CreateVisitorOrder" ||
-              req.body.operationName === "CaptureVisitorOrder" ||
-              req.body.operationName === "CreatePrayerRequest" ||
-              req.body.operationName === "AllFAQsForUsers" ||
-              req.body.operationName === "CreateFeedback"
+              req.body.operationName === "CreateInquiry"
             )
           ) {
             user = authentication(token);
@@ -216,8 +196,7 @@ function authentication(token: any) {
 }
 app.use(cors(corsOptions));
 
-// Routes
-app.use("/api/payment", paymentRouter);
+// Routes - Payment routes removed for Zohar Media backend
 
 app.post("/api/upload-file/:folder", async (req: any, res: Response) => {
   try {
@@ -276,38 +255,4 @@ app.get("/static/:folder/:fileName", (req: Request, res: Response) => {
   });
 });
 
-const task = cron.schedule("0 0 * * *", async () => {
-  console.log("Running a task day minute");
-
-  // Check for expired subscriptions
-  const partners = await Partnership.findAll({
-    where: {
-      due_date: new Date(),
-    },
-  });
-
-  try {
-    await Promise.all(
-      partners.map(async (partner) => {
-        await sendReminderEmail(
-          partner?.email!,
-          partner?.id.toString()!,
-          partner?.first_name!,
-          partner?.last_name!
-        );
-      })
-    );
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-// Start the cron job
-task.start();
-
-// // Optionally, handle the shutdown process
-process.on("SIGINT", () => {
-  task.stop();
-  console.log("Cron job stopped.");
-  process.exit();
-});
+// Cron job removed - no longer needed for Zohar Media backend
