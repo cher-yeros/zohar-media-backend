@@ -23,8 +23,8 @@ CREATE TABLE users (
     avatar_url TEXT,
     is_active BOOLEAN DEFAULT true,
     last_login_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -43,8 +43,8 @@ CREATE TABLE team_members (
     bio TEXT,
     join_date DATE NOT NULL,
     status VARCHAR(20) DEFAULT 'active', -- active, inactive
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -55,7 +55,7 @@ CREATE TABLE team_member_skills (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     team_member_id UUID REFERENCES team_members(id) ON DELETE CASCADE,
     skill_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -67,7 +67,7 @@ CREATE TABLE team_member_social_links (
     team_member_id UUID REFERENCES team_members(id) ON DELETE CASCADE,
     platform VARCHAR(50) NOT NULL, -- linkedin, twitter, instagram
     url TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -81,8 +81,8 @@ CREATE TABLE portfolio_categories (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     color VARCHAR(7) NOT NULL, -- hex color code
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -101,8 +101,8 @@ CREATE TABLE portfolio_items (
     featured BOOLEAN DEFAULT false,
     project_url TEXT,
     testimonial TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -115,7 +115,7 @@ CREATE TABLE portfolio_item_images (
     image_url TEXT NOT NULL,
     alt_text VARCHAR(255),
     sort_order INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -126,7 +126,7 @@ CREATE TABLE portfolio_item_tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     portfolio_item_id UUID REFERENCES portfolio_items(id) ON DELETE CASCADE,
     tag_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -137,7 +137,7 @@ CREATE TABLE portfolio_item_technologies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     portfolio_item_id UUID REFERENCES portfolio_items(id) ON DELETE CASCADE,
     technology_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -149,7 +149,7 @@ CREATE TABLE portfolio_item_team_members (
     portfolio_item_id UUID REFERENCES portfolio_items(id) ON DELETE CASCADE,
     team_member_id UUID REFERENCES team_members(id) ON DELETE CASCADE,
     role VARCHAR(100), -- optional role for this specific project
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(portfolio_item_id, team_member_id)
 );
 ```
@@ -171,8 +171,8 @@ CREATE TABLE inquiries (
     assigned_to UUID REFERENCES team_members(id),
     response TEXT,
     response_date TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -190,8 +190,8 @@ CREATE TABLE testimonials (
     featured BOOLEAN DEFAULT false,
     avatar_url TEXT,
     portfolio_item_id UUID REFERENCES portfolio_items(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -210,8 +210,8 @@ CREATE TABLE media_items (
     dimensions VARCHAR(20), -- e.g., "1920x1080"
     duration VARCHAR(10), -- e.g., "2:15" for videos
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -222,7 +222,7 @@ CREATE TABLE media_item_tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     media_item_id UUID REFERENCES media_items(id) ON DELETE CASCADE,
     tag_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -242,8 +242,8 @@ CREATE TABLE analytics_data (
     inquiries_this_month INTEGER DEFAULT 0,
     inquiry_trend DECIMAL(5,2) DEFAULT 0, -- percentage change
     media_total_views INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(date)
 );
 ```
@@ -260,8 +260,8 @@ CREATE TABLE business_statistics (
     average_project_value DECIMAL(10,2) DEFAULT 0,
     is_public BOOLEAN DEFAULT true, -- whether to show on public website
     auto_update BOOLEAN DEFAULT true, -- auto-update from completed projects
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -278,8 +278,8 @@ CREATE TABLE system_settings (
     website_url TEXT,
     contact_email VARCHAR(255),
     theme VARCHAR(20) DEFAULT 'light', -- light, dark
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -294,7 +294,7 @@ CREATE TABLE activity_logs (
     entity_id UUID,
     description TEXT,
     metadata JSONB, -- additional data about the action
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 

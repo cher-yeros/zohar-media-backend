@@ -3,7 +3,7 @@ type PortfolioCategory {
   name: String!
   description: String
   color: String!
-  created_at: Date!
+  createdAt: Date!
   updated_at: Date!
   portfolio_items: [PortfolioItem!]!
 }
@@ -20,7 +20,7 @@ type PortfolioItem {
   featured: Boolean!
   project_url: String
   testimonial: String
-  created_at: Date!
+  createdAt: Date!
   updated_at: Date!
   category: PortfolioCategory
   images: [PortfolioItemImage!]!
@@ -36,7 +36,7 @@ type PortfolioItemImage {
   image_url: String!
   alt_text: String
   sort_order: Int!
-  created_at: Date!
+  createdAt: Date!
   portfolio_item: PortfolioItem!
 }
 
@@ -44,7 +44,7 @@ type PortfolioItemTag {
   id: ID!
   portfolio_item_id: ID!
   tag_name: String!
-  created_at: Date!
+  createdAt: Date!
   portfolio_item: PortfolioItem!
 }
 
@@ -52,7 +52,7 @@ type PortfolioItemTechnology {
   id: ID!
   portfolio_item_id: ID!
   technology_name: String!
-  created_at: Date!
+  createdAt: Date!
   portfolio_item: PortfolioItem!
 }
 
@@ -61,7 +61,7 @@ type PortfolioItemTeamMember {
   portfolio_item_id: ID!
   team_member_id: ID!
   role: String
-  created_at: Date!
+  createdAt: Date!
   portfolio_item: PortfolioItem!
   team_member: TeamMember!
 }

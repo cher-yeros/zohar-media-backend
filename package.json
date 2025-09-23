@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "start:dev": "SET NODE_ENV=development& nodemon src/index.ts",
-    "start:prod": "SET NODE_ENV=production& nodemon src/index.ts",
+    "start": "SET NODE_OPTIONS=--no-deprecation& node dist/index.js",
+    "start:dev": "SET NODE_ENV=development& SET NODE_OPTIONS=--no-deprecation& nodemon src/index.ts",
+    "start:prod": "SET NODE_ENV=production& SET NODE_OPTIONS=--no-deprecation& nodemon src/index.ts",
     "generate": "ts-node src/utils/schemagen2.ts && graphql-codegen && ts-node src/utils/codegen.ts",
     "generate:type": "graphql-codegen && ts-node src/utils/codegen.ts",
     "db:migrate": "SET NODE_ENV=development& ts-node src/utils/db.migration.ts",

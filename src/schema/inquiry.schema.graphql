@@ -10,7 +10,7 @@ type Inquiry {
   assigned_to: ID
   response: String
   response_date: Date
-  created_at: Date!
+  createdAt: Date!
   updated_at: Date!
   assigned_team_member: TeamMember
 }

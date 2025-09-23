@@ -33,7 +33,7 @@ const testimonialResolvers = {
           include: [{ model: PortfolioItem, as: "portfolio_item" }],
           limit,
           offset,
-          order: [["created_at", "DESC"]],
+          order: [["createdAt", "DESC"]],
         });
 
         return {

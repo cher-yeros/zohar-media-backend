@@ -77,7 +77,7 @@ const userResolvers = {
             role: user.role,
             avatar_url: user.avatar_url,
             is_active: user.is_active,
-            created_at: user.createdAt,
+            createdAt: user.createdAt,
           },
         };
       } catch (error) {
@@ -133,7 +133,7 @@ const userResolvers = {
             role: user.role,
             avatar_url: user.avatar_url,
             is_active: user.is_active,
-            updated_at: user.updatedAt,
+            updatedAt: user.updatedAt,
           },
         };
       } catch (error) {

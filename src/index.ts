@@ -22,8 +22,7 @@ import gatewaySchema from "./resolvers";
 import sequelize from "./utils/db.connection";
 
 import fileUpload from "express-fileupload";
-import { accessSync, existsSync, mkdirSync } from "fs";
-import { constants } from "fs/promises";
+import { accessSync, existsSync, mkdirSync, constants } from "fs";
 import cron from "node-cron";
 import path, { join } from "path";
 import { v4 } from "uuid";
@@ -223,8 +222,12 @@ app.post("/api/upload-file/:folder", async (req: any, res: Response) => {
 
       const address =
         process.env.NODE_ENV === "production"
-          ? `https://api2.jpstvethiopia.com/static/${req.params.folder}/${fileName}`
-          : `http://localhost:4000/static/${req.params.folder}/${fileName}`;
+          ? `${process.env.API_URL || "https://api.zoharmedia.com"}/static/${
+              req.params.folder
+            }/${fileName}`
+          : `http://localhost:${process.env.PORT || 4000}/static/${
+              req.params.folder
+            }/${fileName}`;
 
       return res.json({ fileName: address });
     });
@@ -239,20 +242,28 @@ app.get("/static/:folder/:fileName", (req: Request, res: Response) => {
   const filePath = join(staticFilePath, folder, fileName);
 
   try {
+    // Check if file exists
     accessSync(filePath, constants.F_OK);
-  } catch (error) {
-    console.log(error);
-  }
 
-  // Send the file
-  res.status(200).sendFile(filePath, (err) => {
-    if (err) {
-      console.log("server error");
-      console.log(err);
-      // Handle errors (e.g., file not found)
-      // res.status(500).send(err.message);
-    }
-  });
+    // Send the file
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error("Error sending file:", err);
+        if (!res.headersSent) {
+          res.status(404).json({
+            success: false,
+            message: "File not found",
+          });
+        }
+      }
+    });
+  } catch (error) {
+    console.error("File access error:", error);
+    res.status(404).json({
+      success: false,
+      message: "File not found",
+    });
+  }
 });
 
 // Cron job removed - no longer needed for Zohar Media backend

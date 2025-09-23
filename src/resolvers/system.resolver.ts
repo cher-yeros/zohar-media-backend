@@ -48,7 +48,7 @@ const systemResolvers = {
           where,
           limit,
           offset,
-          order: [["created_at", "DESC"]],
+          order: [["createdAt", "DESC"]],
         });
 
         return {

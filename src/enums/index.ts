@@ -1,7 +1,7 @@
 export enum UserRole {
-  ADMIN = "admin",
-  MANAGER = "manager",
-  EDITOR = "editor",
+  ADMIN = "ADMIN",
+  MANAGER = "MANAGER",
+  EDITOR = "EDITOR",
 }
 
 export enum TeamMemberStatus {

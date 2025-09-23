@@ -12,7 +12,7 @@ export interface Scalars {
 export interface ActivityLogType {
   __typename?: "ActivityLog";
   action: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   description?: Scalars["String"]["output"];
   entity_id?: Scalars["ID"]["output"];
   entity_type: Scalars["String"]["output"];
@@ -37,7 +37,7 @@ export interface ActivityLogsResponseType {
 
 export interface AnalyticsDataType {
   __typename?: "AnalyticsData";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   date: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   inquiries_this_month: Scalars["Int"]["output"];
@@ -69,7 +69,7 @@ export interface BusinessStatisticsType {
   auto_update: Scalars["Boolean"]["output"];
   average_project_value: Scalars["Float"]["output"];
   completed_projects: Scalars["Int"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   happy_clients: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   is_public: Scalars["Boolean"]["output"];
@@ -95,7 +95,7 @@ export interface InquiryType {
   __typename?: "Inquiry";
   assigned_team_member?: TeamMemberType;
   assigned_to?: Scalars["ID"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   email: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   inquiry_date: Scalars["Date"]["output"];
@@ -134,7 +134,7 @@ export interface LoginResponseType {
 
 export interface MediaItemType {
   __typename?: "MediaItem";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   dimensions?: Scalars["String"]["output"];
   duration?: Scalars["String"]["output"];
   file_size?: Scalars["String"]["output"];
@@ -157,7 +157,7 @@ export interface MediaItemResponseType {
 
 export interface MediaItemTagType {
   __typename?: "MediaItemTag";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   media_item: MediaItemType;
   media_item_id: Scalars["ID"]["output"];
@@ -402,7 +402,7 @@ export interface MutationupdateUserArgsType {
 export interface PortfolioCategoryType {
   __typename?: "PortfolioCategory";
   color: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   description?: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
@@ -422,7 +422,7 @@ export interface PortfolioItemType {
   category?: PortfolioCategoryType;
   category_id?: Scalars["ID"]["output"];
   client_name?: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   description: Scalars["String"]["output"];
   featured: Scalars["Boolean"]["output"];
   id: Scalars["ID"]["output"];
@@ -443,7 +443,7 @@ export interface PortfolioItemType {
 export interface PortfolioItemImageType {
   __typename?: "PortfolioItemImage";
   alt_text?: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   image_url: Scalars["String"]["output"];
   portfolio_item: PortfolioItemType;
@@ -468,7 +468,7 @@ export type PortfolioItemStatusType = "COMPLETED" | "DRAFT" | "IN_PROGRESS";
 
 export interface PortfolioItemTagType {
   __typename?: "PortfolioItemTag";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   portfolio_item: PortfolioItemType;
   portfolio_item_id: Scalars["ID"]["output"];
@@ -477,7 +477,7 @@ export interface PortfolioItemTagType {
 
 export interface PortfolioItemTeamMemberType {
   __typename?: "PortfolioItemTeamMember";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   portfolio_item: PortfolioItemType;
   portfolio_item_id: Scalars["ID"]["output"];
@@ -493,7 +493,7 @@ export type PortfolioItemTeamMemberInputType = {
 
 export interface PortfolioItemTechnologyType {
   __typename?: "PortfolioItemTechnology";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   portfolio_item: PortfolioItemType;
   portfolio_item_id: Scalars["ID"]["output"];
@@ -588,7 +588,7 @@ export interface SystemSettingsType {
   business_description?: Scalars["String"]["output"];
   business_name: Scalars["String"]["output"];
   contact_email?: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   industry?: Scalars["String"]["output"];
   theme: ThemeType;
@@ -608,7 +608,7 @@ export interface TeamMemberType {
   assigned_inquiries: Array<InquiryType>;
   avatar_url?: Scalars["String"]["output"];
   bio?: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   email: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   join_date: Scalars["Date"]["output"];
@@ -631,7 +631,7 @@ export interface TeamMemberResponseType {
 
 export interface TeamMemberSkillType {
   __typename?: "TeamMemberSkill";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   skill_name: Scalars["String"]["output"];
   team_member: TeamMemberType;
@@ -640,7 +640,7 @@ export interface TeamMemberSkillType {
 
 export interface TeamMemberSocialLinkType {
   __typename?: "TeamMemberSocialLink";
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   id: Scalars["ID"]["output"];
   platform: Scalars["String"]["output"];
   team_member: TeamMemberType;
@@ -654,7 +654,7 @@ export interface TestimonialType {
   __typename?: "Testimonial";
   avatar_url?: Scalars["String"]["output"];
   company?: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   featured: Scalars["Boolean"]["output"];
   id: Scalars["ID"]["output"];
   message: Scalars["String"]["output"];
@@ -688,7 +688,7 @@ export interface UserType {
   __typename?: "User";
   activity_logs?: Array<ActivityLogType>;
   avatar_url?: Scalars["String"]["output"];
-  created_at: Scalars["Date"]["output"];
+  createdAt: Scalars["Date"]["output"];
   email: Scalars["String"]["output"];
   first_name: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];

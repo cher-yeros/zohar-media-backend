@@ -9,7 +9,7 @@ type AnalyticsData {
   inquiries_this_month: Int!
   inquiry_trend: Float!
   media_total_views: Int!
-  created_at: Date!
+  createdAt: Date!
   updated_at: Date!
 }
 
@@ -22,7 +22,7 @@ type BusinessStatistics {
   average_project_value: Float!
   is_public: Boolean!
   auto_update: Boolean!
-  created_at: Date!
+  createdAt: Date!
   updated_at: Date!
 }
 

@@ -9,7 +9,7 @@ type Testimonial {
   featured: Boolean!
   avatar_url: String
   portfolio_item_id: ID
-  created_at: Date!
+  createdAt: Date!
   updated_at: Date!
   portfolio_item: PortfolioItem
 }

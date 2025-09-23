@@ -6,7 +6,7 @@ type SystemSettings {
   website_url: String
   contact_email: String
   theme: Theme!
-  created_at: Date!
+  createdAt: Date!
   updated_at: Date!
 }
 
@@ -18,7 +18,7 @@ type ActivityLog {
   entity_id: ID
   description: String
   metadata: JSON
-  created_at: Date!
+  createdAt: Date!
   user: User
 }
 
