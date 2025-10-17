@@ -222,7 +222,7 @@ app.post("/api/upload-file/:folder", async (req: any, res: Response) => {
 
       const address =
         process.env.NODE_ENV === "production"
-          ? `${process.env.API_URL || "https://api.zoharmedia.com"}/static/${
+          ? `${process.env.API_URL || "https://api.zoharmedia.net"}/static/${
               req.params.folder
             }/${fileName}`
           : `http://localhost:${process.env.PORT || 4000}/static/${

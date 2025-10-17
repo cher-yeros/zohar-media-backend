@@ -10,7 +10,7 @@ async function seed() {
     const admin = {
       first_name: "Biruk",
       last_name: "Nega",
-      email: "biruk.nega@zoharmedia.com",
+      email: "biruk.nega@zoharmedia.net",
       password_hash: await bcrypt.hash("admin123", 12), // Default password
       role: UserRole.ADMIN, // This will now be "ADMIN"
       is_active: true,
