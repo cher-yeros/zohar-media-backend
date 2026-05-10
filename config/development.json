@@ -1,9 +1,9 @@
 {
   "db": {
-    "host": "localhost",
-    "name": "zohar_media",
-    "user": "root",
-    "password": "Yerosen1892!",
+    "host": "91.204.209.22",
+    "name": "shevadxp_zohar",
+    "user": "shevadxp_zohar_u",
+    "password": "9QO+{]7#nkF-im9[",
     "dialect": "mysql",
     "port": 3306
   },

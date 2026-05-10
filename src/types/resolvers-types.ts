@@ -85,6 +85,24 @@ export interface BusinessStatisticsResponseType {
   success: Scalars["Boolean"]["output"];
 }
 
+export interface GalleryPhotoType {
+  __typename?: "GalleryPhoto";
+  alt_text?: Scalars["String"]["output"];
+  createdAt: Scalars["Date"]["output"];
+  id: Scalars["ID"]["output"];
+  image_url: Scalars["String"]["output"];
+  is_published: Scalars["Boolean"]["output"];
+  sort_order: Scalars["Int"]["output"];
+  updated_at: Scalars["Date"]["output"];
+}
+
+export interface GalleryPhotoResponseType {
+  __typename?: "GalleryPhotoResponse";
+  galleryPhoto?: GalleryPhotoType;
+  message: Scalars["String"]["output"];
+  success: Scalars["Boolean"]["output"];
+}
+
 export interface InquiriesResponseType {
   __typename?: "InquiriesResponse";
   items: Array<InquiryType>;
@@ -180,6 +198,13 @@ export interface MutationcreateActivityLogArgsType {
   metadata?: Scalars["JSON"]["input"];
 }
 
+export interface MutationcreateGalleryPhotoArgsType {
+  alt_text?: Scalars["String"]["input"];
+  image_url: Scalars["String"]["input"];
+  is_published?: Scalars["Boolean"]["input"];
+  sort_order?: Scalars["Int"]["input"];
+}
+
 export interface MutationcreateInquiryArgsType {
   email: Scalars["String"]["input"];
   message: Scalars["String"]["input"];
@@ -254,6 +279,10 @@ export interface MutationcreateUserArgsType {
   role?: UserRoleType;
 }
 
+export interface MutationdeleteGalleryPhotoArgsType {
+  id: Scalars["ID"]["input"];
+}
+
 export interface MutationdeleteInquiryArgsType {
   id: Scalars["ID"]["input"];
 }
@@ -307,6 +336,14 @@ export interface MutationupdateBusinessStatisticsArgsType {
   is_public?: Scalars["Boolean"]["input"];
   perspective_clients?: Scalars["Int"]["input"];
   total_revenue?: Scalars["Float"]["input"];
+}
+
+export interface MutationupdateGalleryPhotoArgsType {
+  alt_text?: Scalars["String"]["input"];
+  id: Scalars["ID"]["input"];
+  image_url?: Scalars["String"]["input"];
+  is_published?: Scalars["Boolean"]["input"];
+  sort_order?: Scalars["Int"]["input"];
 }
 
 export interface MutationupdateInquiryArgsType {
@@ -696,7 +733,7 @@ export interface UserType {
   last_login_at?: Scalars["Date"]["output"];
   last_name: Scalars["String"]["output"];
   role: UserRoleType;
-  updated_at: Scalars["Date"]["output"];
+  updatedAt: Scalars["Date"]["output"];
 }
 
 export interface UserResponseType {

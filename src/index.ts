@@ -84,7 +84,7 @@ const serverCleanup = useServer(
       return { ctx, msg, args, pubsub, user };
     },
   },
-  wsServer
+  wsServer,
 );
 
 (async () => {
@@ -125,7 +125,9 @@ const serverCleanup = useServer(
               req.body.operationName === "IntrospectionQuery" ||
               req.body.operationName === "CreateUser" ||
               req.body.operationName === "LoginUser" ||
-              req.body.operationName === "CreateInquiry"
+              req.body.operationName === "CreateInquiry" ||
+              req.body.operationName === "PublicGalleryPhotos" ||
+              req.body.operationName === "GetPublicGalleryPhotos"
             )
           ) {
             user = authentication(token);
@@ -133,14 +135,16 @@ const serverCleanup = useServer(
 
           return { req, res, user, pubsub };
         },
-      })
+      }),
     );
 
     new Promise<void>((resolve) =>
-      httpServer.listen({ port: process.env.PORT }, resolve)
+      httpServer.listen({ port: process.env.PORT }, resolve),
     ).then(async () => {
       console.log(
-        `\n🚀  Server ready at http://localhost:${process.env.PORT}/graphql`
+        `\n🚀  Server ready at http://localhost:${
+          process.env.PORT || 4000
+        }/graphql`,
       );
       sequelize;
     });

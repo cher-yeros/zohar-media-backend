@@ -1,0 +1,45 @@
+type GalleryPhoto {
+  id: ID!
+  image_url: String!
+  alt_text: String
+  sort_order: Int!
+  is_published: Boolean!
+  createdAt: Date!
+  updated_at: Date!
+}
+
+type GalleryPhotoResponse {
+  success: Boolean!
+  message: String!
+  galleryPhoto: GalleryPhoto
+}
+
+extend type Query {
+  """
+  Published photos for the public site (homepage gallery).
+  """
+  publicGalleryPhotos: [GalleryPhoto!]!
+  """
+  All photos including drafts; requires authentication.
+  """
+  galleryPhotosAdmin: [GalleryPhoto!]!
+}
+
+extend type Mutation {
+  createGalleryPhoto(
+    image_url: String!
+    alt_text: String
+    sort_order: Int
+    is_published: Boolean
+  ): GalleryPhotoResponse!
+
+  updateGalleryPhoto(
+    id: ID!
+    image_url: String
+    alt_text: String
+    sort_order: Int
+    is_published: Boolean
+  ): GalleryPhotoResponse!
+
+  deleteGalleryPhoto(id: ID!): GalleryPhotoResponse!
+}

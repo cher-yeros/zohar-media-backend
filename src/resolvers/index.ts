@@ -13,6 +13,7 @@ import testimonialResolvers from "./testimonial.resolver";
 import mediaResolvers from "./media.resolver";
 import analyticsResolvers from "./analytics.resolver";
 import systemResolvers from "./system.resolver";
+import galleryResolvers from "./gallery.resolver";
 
 const dateScalar = {
   Date: new GraphQLScalarType({
@@ -60,7 +61,8 @@ const gatewaySchema = addResolversToSchema({
     testimonialResolvers,
     mediaResolvers,
     analyticsResolvers,
-    systemResolvers
+    systemResolvers,
+    galleryResolvers,
   ),
 });
 
