@@ -1,9 +1,23 @@
 import { MyContext } from "../index";
+import { requireAuth } from "../utils/graphql-auth";
 import Inquiry from "../models/inquiry.model";
 import TeamMember from "../models/team_member.model";
+import BusinessStatistics from "../models/business_statistics.model";
 import { InquiryStatus, InquiryType } from "../enums";
+import { getOrCreateAnalyticsForToday } from "../utils/analytics-day";
+import {
+  inquiryStatusFromGraphQL,
+  inquiryStatusToGraphQL,
+  inquiryTypeFromGraphQL,
+  inquiryTypeToGraphQL,
+} from "../utils/inquiry-enum-map";
 
 const inquiryResolvers = {
+  Inquiry: {
+    status: (parent: { status?: string }) =>
+      inquiryStatusToGraphQL(parent.status),
+    type: (parent: { type?: string }) => inquiryTypeToGraphQL(parent.type),
+  },
   Query: {
     inquiries: async (
       _: any,
@@ -14,18 +28,19 @@ const inquiryResolvers = {
         limit = 10,
         offset = 0,
       }: {
-        status?: InquiryStatus;
-        type?: InquiryType;
+        status?: string;
+        type?: string;
         assigned_to?: string;
         limit?: number;
         offset?: number;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const where: any = {};
-        if (status) where.status = status;
-        if (type) where.type = type;
+        if (status) where.status = inquiryStatusFromGraphQL(status);
+        if (type) where.type = inquiryTypeFromGraphQL(type);
         if (assigned_to) where.assigned_to = assigned_to;
 
         const inquiries = await Inquiry.findAndCountAll({
@@ -45,6 +60,7 @@ const inquiryResolvers = {
       }
     },
     inquiry: async (_: any, { id }: { id: string }, context: MyContext) => {
+      requireAuth(context);
       try {
         const inquiry = await Inquiry.findByPk(id, {
           include: [{ model: TeamMember, as: "assigned_team_member" }],
@@ -66,17 +82,22 @@ const inquiryResolvers = {
         email,
         subject,
         message,
-        type = InquiryType.GENERAL,
+        type: typeArg,
       }: {
         name: string;
         email: string;
         subject: string;
         message: string;
-        type?: InquiryType;
+        type?: string;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
       try {
+        const type =
+          typeArg !== undefined && typeArg !== null
+            ? inquiryTypeFromGraphQL(String(typeArg))
+            : InquiryType.GENERAL;
+
         const inquiry = await Inquiry.create({
           name,
           email,
@@ -85,6 +106,36 @@ const inquiryResolvers = {
           type,
         });
 
+        try {
+          const analyticsRow = await getOrCreateAnalyticsForToday();
+          await analyticsRow.increment({
+            inquiries_total: 1,
+            inquiries_this_month: 1,
+          });
+        } catch (e) {
+          console.error("createInquiry: analytics bump failed", e);
+        }
+
+        try {
+          let stats = await BusinessStatistics.findOne();
+          if (!stats) {
+            stats = await BusinessStatistics.create({
+              completed_projects: 0,
+              happy_clients: 0,
+              perspective_clients: 0,
+              total_revenue: 0,
+              average_project_value: 0,
+              is_public: true,
+              auto_update: true,
+            });
+          }
+          if (stats.auto_update) {
+            await stats.increment({ perspective_clients: 1 });
+          }
+        } catch (e) {
+          console.error("createInquiry: business stats bump failed", e);
+        }
+
         return {
           success: true,
           message: "Inquiry submitted successfully",
@@ -92,7 +143,7 @@ const inquiryResolvers = {
         };
       } catch (error) {
         throw new Error(
-          error instanceof Error ? error.message : "Failed to create inquiry"
+          error instanceof Error ? error.message : "Failed to create inquiry",
         );
       }
     },
@@ -105,12 +156,13 @@ const inquiryResolvers = {
         response,
       }: {
         id: string;
-        status?: InquiryStatus;
+        status?: string;
         assigned_to?: string;
         response?: string;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const inquiry = await Inquiry.findByPk(id);
         if (!inquiry) {
@@ -118,7 +170,9 @@ const inquiryResolvers = {
         }
 
         const updateData: any = {};
-        if (status) updateData.status = status;
+        if (status !== undefined && status !== null && status !== "") {
+          updateData.status = inquiryStatusFromGraphQL(String(status));
+        }
         if (assigned_to) updateData.assigned_to = assigned_to;
         if (response) {
           updateData.response = response;
@@ -138,15 +192,16 @@ const inquiryResolvers = {
         };
       } catch (error) {
         throw new Error(
-          error instanceof Error ? error.message : "Failed to update inquiry"
+          error instanceof Error ? error.message : "Failed to update inquiry",
         );
       }
     },
     deleteInquiry: async (
       _: any,
       { id }: { id: string },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const inquiry = await Inquiry.findByPk(id);
         if (!inquiry) {
@@ -160,7 +215,7 @@ const inquiryResolvers = {
         };
       } catch (error) {
         throw new Error(
-          error instanceof Error ? error.message : "Failed to delete inquiry"
+          error instanceof Error ? error.message : "Failed to delete inquiry",
         );
       }
     },

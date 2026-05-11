@@ -1,4 +1,5 @@
 import { MyContext } from "../index";
+import { requireAuth } from "../utils/graphql-auth";
 import PortfolioItem from "../models/portfolio_item.model";
 import PortfolioCategory from "../models/portfolio_category.model";
 import PortfolioItemImage from "../models/portfolio_item_image.model";
@@ -13,15 +14,14 @@ const GQL_TO_DB_STATUS: Record<string, PortfolioItemStatus> = {
   DRAFT: PortfolioItemStatus.DRAFT,
 };
 
-const DB_TO_GQL_STATUS: Record<string, "COMPLETED" | "IN_PROGRESS" | "DRAFT"> = {
-  [PortfolioItemStatus.COMPLETED]: "COMPLETED",
-  [PortfolioItemStatus.IN_PROGRESS]: "IN_PROGRESS",
-  [PortfolioItemStatus.DRAFT]: "DRAFT",
-};
+const DB_TO_GQL_STATUS: Record<string, "COMPLETED" | "IN_PROGRESS" | "DRAFT"> =
+  {
+    [PortfolioItemStatus.COMPLETED]: "COMPLETED",
+    [PortfolioItemStatus.IN_PROGRESS]: "IN_PROGRESS",
+    [PortfolioItemStatus.DRAFT]: "DRAFT",
+  };
 
-function toDbStatus(
-  status?: unknown,
-): PortfolioItemStatus | undefined {
+function toDbStatus(status?: unknown): PortfolioItemStatus | undefined {
   if (typeof status !== "string") return undefined;
   // Accept both GraphQL enum ("COMPLETED") and legacy DB values ("completed")
   return (
@@ -45,7 +45,7 @@ const portfolioResolvers = {
     portfolioCategory: async (
       _: any,
       { id }: { id: string },
-      context: MyContext
+      context: MyContext,
     ) => {
       try {
         const category = await PortfolioCategory.findByPk(id);
@@ -72,13 +72,18 @@ const portfolioResolvers = {
         limit?: number;
         offset?: number;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
       try {
         const where: any = {};
         if (category_id) where.category_id = category_id;
         const dbStatus = toDbStatus(status);
-        if (dbStatus) where.status = dbStatus;
+        const staff = context.user?.id;
+        if (!staff) {
+          where.status = PortfolioItemStatus.COMPLETED;
+        } else if (dbStatus) {
+          where.status = dbStatus;
+        }
         if (featured !== undefined) where.featured = featured;
 
         const portfolioItems = await PortfolioItem.findAndCountAll({
@@ -106,7 +111,7 @@ const portfolioResolvers = {
     portfolioItem: async (
       _: any,
       { id }: { id: string },
-      context: MyContext
+      context: MyContext,
     ) => {
       try {
         const portfolioItem = await PortfolioItem.findByPk(id, {
@@ -119,6 +124,12 @@ const portfolioResolvers = {
           ],
         });
         if (!portfolioItem) {
+          throw new Error("Portfolio item not found");
+        }
+        if (
+          !context.user?.id &&
+          portfolioItem.status !== PortfolioItemStatus.COMPLETED
+        ) {
           throw new Error("Portfolio item not found");
         }
         return portfolioItem;
@@ -135,8 +146,9 @@ const portfolioResolvers = {
         description,
         color,
       }: { name: string; description?: string; color: string },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const category = await PortfolioCategory.create({
           name,
@@ -153,7 +165,7 @@ const portfolioResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to create portfolio category"
+            : "Failed to create portfolio category",
         );
       }
     },
@@ -165,8 +177,9 @@ const portfolioResolvers = {
         description,
         color,
       }: { id: string; name?: string; description?: string; color?: string },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const category = await PortfolioCategory.findByPk(id);
         if (!category) {
@@ -189,15 +202,16 @@ const portfolioResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to update portfolio category"
+            : "Failed to update portfolio category",
         );
       }
     },
     deletePortfolioCategory: async (
       _: any,
       { id }: { id: string },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const category = await PortfolioCategory.findByPk(id);
         if (!category) {
@@ -213,7 +227,7 @@ const portfolioResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to delete portfolio category"
+            : "Failed to delete portfolio category",
         );
       }
     },
@@ -254,8 +268,9 @@ const portfolioResolvers = {
         technologies?: string[];
         team_members?: { team_member_id: string; role?: string }[];
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const dbStatus = toDbStatus(status) ?? PortfolioItemStatus.COMPLETED;
         const portfolioItem = await PortfolioItem.create({
@@ -280,8 +295,8 @@ const portfolioResolvers = {
                 image_url: image.image_url,
                 alt_text: image.alt_text,
                 sort_order: image.sort_order || 0,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -292,8 +307,8 @@ const portfolioResolvers = {
               PortfolioItemTag.create({
                 portfolio_item_id: portfolioItem.id,
                 tag_name: tag,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -304,8 +319,8 @@ const portfolioResolvers = {
               PortfolioItemTechnology.create({
                 portfolio_item_id: portfolioItem.id,
                 technology_name: technology,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -317,8 +332,8 @@ const portfolioResolvers = {
                 portfolio_item_id: portfolioItem.id,
                 team_member_id: member.team_member_id,
                 role: member.role,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -341,7 +356,7 @@ const portfolioResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to create portfolio item"
+            : "Failed to create portfolio item",
         );
       }
     },
@@ -384,8 +399,9 @@ const portfolioResolvers = {
         technologies?: string[];
         team_members?: { team_member_id: string; role?: string }[];
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const portfolioItem = await PortfolioItem.findByPk(id);
         if (!portfolioItem) {
@@ -427,8 +443,8 @@ const portfolioResolvers = {
                 image_url: image.image_url,
                 alt_text: image.alt_text,
                 sort_order: image.sort_order || 0,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -440,8 +456,8 @@ const portfolioResolvers = {
               PortfolioItemTag.create({
                 portfolio_item_id: id,
                 tag_name: tag,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -455,8 +471,8 @@ const portfolioResolvers = {
               PortfolioItemTechnology.create({
                 portfolio_item_id: id,
                 technology_name: technology,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -471,8 +487,8 @@ const portfolioResolvers = {
                 portfolio_item_id: id,
                 team_member_id: member.team_member_id,
                 role: member.role,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -495,15 +511,16 @@ const portfolioResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to update portfolio item"
+            : "Failed to update portfolio item",
         );
       }
     },
     deletePortfolioItem: async (
       _: any,
       { id }: { id: string },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const portfolioItem = await PortfolioItem.findByPk(id);
         if (!portfolioItem) {
@@ -519,7 +536,7 @@ const portfolioResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to delete portfolio item"
+            : "Failed to delete portfolio item",
         );
       }
     },
@@ -529,6 +546,21 @@ const portfolioResolvers = {
       const raw = parent?.status;
       if (typeof raw !== "string") return "COMPLETED";
       return DB_TO_GQL_STATUS[raw] ?? "COMPLETED";
+    },
+  },
+  PortfolioCategory: {
+    portfolio_items: async (parent: any) => {
+      const loaded = parent?.portfolio_items;
+      if (Array.isArray(loaded)) return loaded;
+
+      const categoryId = parent?.id;
+      if (!categoryId) return [];
+
+      const items = await PortfolioItem.findAll({
+        where: { category_id: categoryId },
+        order: [["createdAt", "DESC"]],
+      });
+      return items ?? [];
     },
   },
 };

@@ -1,10 +1,39 @@
 import { MyContext } from "../index";
+import { requireAuth } from "../utils/graphql-auth";
 import TeamMember from "../models/team_member.model";
 import TeamMemberSkill from "../models/team_member_skill.model";
 import TeamMemberSocialLink from "../models/team_member_social_link.model";
 import { TeamMemberStatus } from "../enums";
 
+/** GraphQL enum names vs Sequelize ENUM ("active" / "inactive") */
+function gqlTeamStatusToDb(value: unknown): TeamMemberStatus | undefined {
+  if (value == null) return undefined;
+  if (value === "ACTIVE" || value === TeamMemberStatus.ACTIVE)
+    return TeamMemberStatus.ACTIVE;
+  if (value === "INACTIVE" || value === TeamMemberStatus.INACTIVE)
+    return TeamMemberStatus.INACTIVE;
+  return undefined;
+}
+
+function dbTeamStatusToGql(status: string): "ACTIVE" | "INACTIVE" {
+  if (status === TeamMemberStatus.ACTIVE || status === "active")
+    return "ACTIVE";
+  if (status === TeamMemberStatus.INACTIVE || status === "inactive")
+    return "INACTIVE";
+  return "ACTIVE";
+}
+
 const teamResolvers = {
+  TeamMember: {
+    status: (parent: { status: string }) => dbTeamStatusToGql(parent.status),
+    /** Contact fields omitted for anonymous API consumers (public site). */
+    email: (parent: { email?: string }, _: unknown, context: MyContext) =>
+      context.user?.id ? parent.email ?? "" : "",
+    phone: (parent: { phone?: string }, _: unknown, context: MyContext) =>
+      context.user?.id ? parent.phone : null,
+    bio: (parent: { bio?: string }, _: unknown, context: MyContext) =>
+      context.user?.id ? parent.bio : null,
+  },
   Query: {
     teamMembers: async (_: any, __: any, context: MyContext) => {
       try {
@@ -47,7 +76,7 @@ const teamResolvers = {
         avatar_url,
         bio,
         join_date,
-        status = TeamMemberStatus.ACTIVE,
+        status: statusArg,
         skills = [],
         social_links = [],
       }: {
@@ -58,17 +87,21 @@ const teamResolvers = {
         avatar_url?: string;
         bio?: string;
         join_date: string;
-        status?: TeamMemberStatus;
+        status?: unknown;
         skills?: string[];
         social_links?: { platform: string; url: string }[];
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const existingMember = await TeamMember.findOne({ where: { email } });
         if (existingMember) {
           throw new Error("Team member with this email already exists");
         }
+
+        const dbStatus =
+          gqlTeamStatusToDb(statusArg) ?? TeamMemberStatus.ACTIVE;
 
         const teamMember = await TeamMember.create({
           name,
@@ -78,7 +111,7 @@ const teamResolvers = {
           avatar_url,
           bio,
           join_date: new Date(join_date),
-          status,
+          status: dbStatus,
         });
 
         // Add skills
@@ -88,8 +121,8 @@ const teamResolvers = {
               TeamMemberSkill.create({
                 team_member_id: teamMember.id,
                 skill_name: skill,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -101,8 +134,8 @@ const teamResolvers = {
                 team_member_id: teamMember.id,
                 platform: link.platform,
                 url: link.url,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -122,7 +155,7 @@ const teamResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to create team member"
+            : "Failed to create team member",
         );
       }
     },
@@ -137,7 +170,7 @@ const teamResolvers = {
         avatar_url,
         bio,
         join_date,
-        status,
+        status: statusArg,
         skills = [],
         social_links = [],
       }: {
@@ -149,17 +182,23 @@ const teamResolvers = {
         avatar_url?: string;
         bio?: string;
         join_date?: string;
-        status?: TeamMemberStatus;
+        status?: unknown;
         skills?: string[];
         social_links?: { platform: string; url: string }[];
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const teamMember = await TeamMember.findByPk(id);
         if (!teamMember) {
           throw new Error("Team member not found");
         }
+
+        const nextStatus =
+          statusArg !== undefined && statusArg !== null
+            ? gqlTeamStatusToDb(statusArg) ?? teamMember.status
+            : teamMember.status;
 
         await teamMember.update({
           name: name || teamMember.name,
@@ -170,7 +209,7 @@ const teamResolvers = {
             avatar_url !== undefined ? avatar_url : teamMember.avatar_url,
           bio: bio !== undefined ? bio : teamMember.bio,
           join_date: join_date ? new Date(join_date) : teamMember.join_date,
-          status: status || teamMember.status,
+          status: nextStatus,
         });
 
         // Update skills
@@ -181,8 +220,8 @@ const teamResolvers = {
               TeamMemberSkill.create({
                 team_member_id: id,
                 skill_name: skill,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -195,8 +234,8 @@ const teamResolvers = {
                 team_member_id: id,
                 platform: link.platform,
                 url: link.url,
-              })
-            )
+              }),
+            ),
           );
         }
 
@@ -216,15 +255,16 @@ const teamResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to update team member"
+            : "Failed to update team member",
         );
       }
     },
     deleteTeamMember: async (
       _: any,
       { id }: { id: string },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const teamMember = await TeamMember.findByPk(id);
         if (!teamMember) {
@@ -240,7 +280,7 @@ const teamResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to delete team member"
+            : "Failed to delete team member",
         );
       }
     },

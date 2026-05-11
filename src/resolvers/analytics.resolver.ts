@@ -1,6 +1,8 @@
 import { MyContext } from "../index";
+import { requireAuth } from "../utils/graphql-auth";
 import AnalyticsData from "../models/analytics_data.model";
 import BusinessStatistics from "../models/business_statistics.model";
+import { getOrCreateAnalyticsForToday } from "../utils/analytics-day";
 
 const analyticsResolvers = {
   Query: {
@@ -17,8 +19,9 @@ const analyticsResolvers = {
         limit?: number;
         offset?: number;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const where: any = {};
         if (start_date && end_date) {
@@ -49,7 +52,6 @@ const analyticsResolvers = {
       try {
         const statistics = await BusinessStatistics.findOne();
         if (!statistics) {
-          // Create default statistics if none exist
           const defaultStats = await BusinessStatistics.create({
             completed_projects: 0,
             happy_clients: 0,
@@ -59,7 +61,26 @@ const analyticsResolvers = {
             is_public: true,
             auto_update: true,
           });
+          if (!context.user?.id) {
+            const p = defaultStats.get({ plain: true }) as Record<
+              string,
+              unknown
+            >;
+            return {
+              ...p,
+              total_revenue: 0,
+              average_project_value: 0,
+            };
+          }
           return defaultStats;
+        }
+        if (!context.user?.id) {
+          const p = statistics.get({ plain: true }) as Record<string, unknown>;
+          return {
+            ...p,
+            total_revenue: 0,
+            average_project_value: 0,
+          };
         }
         return statistics;
       } catch (error) {
@@ -91,8 +112,9 @@ const analyticsResolvers = {
         inquiry_trend?: number;
         media_total_views?: number;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const [analyticsData, created] = await AnalyticsData.findOrCreate({
           where: { date: new Date(date) },
@@ -154,7 +176,7 @@ const analyticsResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to update analytics data"
+            : "Failed to update analytics data",
         );
       }
     },
@@ -177,8 +199,9 @@ const analyticsResolvers = {
         is_public?: boolean;
         auto_update?: boolean;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const [statistics, created] = await BusinessStatistics.findOrCreate({
           where: {},
@@ -230,7 +253,28 @@ const analyticsResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to update business statistics"
+            : "Failed to update business statistics",
+        );
+      }
+    },
+
+    recordPortfolioPageVisit: async (
+      _: unknown,
+      __: unknown,
+      _context: MyContext,
+    ) => {
+      try {
+        const row = await getOrCreateAnalyticsForToday();
+        await row.increment({ visitors_today: 1 });
+        return {
+          success: true,
+          message: "Visit recorded",
+        };
+      } catch (error) {
+        throw new Error(
+          error instanceof Error
+            ? error.message
+            : "Failed to record page visit",
         );
       }
     },

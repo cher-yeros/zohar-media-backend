@@ -43,6 +43,11 @@ type BusinessStatisticsResponse {
   statistics: BusinessStatistics
 }
 
+type PublicAnalyticsPulseResponse {
+  success: Boolean!
+  message: String!
+}
+
 extend type Query {
   analyticsData(
     start_date: String
@@ -75,4 +80,9 @@ extend type Mutation {
     is_public: Boolean
     auto_update: Boolean
   ): BusinessStatisticsResponse!
+
+  """
+  Public portfolio: increment today's visitor count by 1 (no client-supplied numbers).
+  """
+  recordPortfolioPageVisit: PublicAnalyticsPulseResponse!
 }

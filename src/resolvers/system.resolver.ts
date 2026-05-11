@@ -1,11 +1,18 @@
 import { MyContext } from "../index";
+import { requireAuth } from "../utils/graphql-auth";
 import SystemSettings from "../models/system_settings.model";
 import ActivityLog from "../models/activity_log.model";
 import { Theme } from "../enums";
+import { themeFromGraphQL, themeToGraphQL } from "../utils/theme-map";
 
 const systemResolvers = {
+  SystemSettings: {
+    theme: (parent: { theme?: string }) =>
+      themeToGraphQL(parent.theme ?? Theme.LIGHT),
+  },
   Query: {
     systemSettings: async (_: any, __: any, context: MyContext) => {
+      requireAuth(context);
       try {
         let settings = await SystemSettings.findOne();
         if (!settings) {
@@ -37,8 +44,9 @@ const systemResolvers = {
         limit?: number;
         offset?: number;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const where: any = {};
         if (user_id) where.user_id = user_id;
@@ -76,10 +84,11 @@ const systemResolvers = {
         industry?: string;
         website_url?: string;
         contact_email?: string;
-        theme?: Theme;
+        theme?: string;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const [settings, created] = await SystemSettings.findOrCreate({
           where: {},
@@ -109,7 +118,7 @@ const systemResolvers = {
             contact_email !== undefined
               ? contact_email
               : settings.contact_email,
-          theme: theme !== undefined ? theme : settings.theme,
+          theme: theme !== undefined ? themeFromGraphQL(theme) : settings.theme,
         });
 
         // Log the activity
@@ -132,7 +141,7 @@ const systemResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to update system settings"
+            : "Failed to update system settings",
         );
       }
     },
@@ -151,8 +160,9 @@ const systemResolvers = {
         description?: string;
         metadata?: object;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const activityLog = await ActivityLog.create({
           user_id: context.user?.id,
@@ -172,7 +182,7 @@ const systemResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to create activity log"
+            : "Failed to create activity log",
         );
       }
     },

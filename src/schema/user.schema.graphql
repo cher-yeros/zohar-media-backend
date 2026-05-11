@@ -42,6 +42,11 @@ type LoginResponse {
   user: User
 }
 
+type PasswordChangeResponse {
+  success: Boolean!
+  message: String!
+}
+
 extend type Query {
   users: [User!]!
   user(id: ID!): User
@@ -70,4 +75,9 @@ extend type Mutation {
   deleteUser(id: ID!): UserResponse!
 
   loginUser(email: String!, password: String!): LoginResponse!
+
+  changePassword(
+    currentPassword: String!
+    newPassword: String!
+  ): PasswordChangeResponse!
 }

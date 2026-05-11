@@ -5,34 +5,35 @@ import express from "express";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import { ApolloServerPluginLandingPageDisabled } from "@apollo/server/plugin/disabled";
 import cors from "cors";
 import http from "http";
-import { Secret } from "jsonwebtoken";
 
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { configDotenv } from "dotenv";
 import { Request, Response } from "express";
-import { GraphQLError } from "graphql";
 import { PubSub } from "graphql-subscriptions";
 import { useServer } from "graphql-ws/lib/use/ws";
-import jwt from "jsonwebtoken";
 import { WebSocketServer } from "ws";
-import { CustomJwtPayload } from "./middleware/auth";
 import gatewaySchema from "./resolvers";
 import sequelize from "./utils/db.connection";
+import {
+  resolveUserFromAuthorizationHeader,
+  verifyJwtUser,
+} from "./utils/graphql-auth";
 
+import config from "config";
 import fileUpload from "express-fileupload";
-import { accessSync, existsSync, mkdirSync, constants } from "fs";
-import cron from "node-cron";
+import { accessSync, constants, existsSync, mkdirSync } from "fs";
 import path, { join } from "path";
 import { v4 } from "uuid";
-// Removed old model imports
-// Payment router removed - no longer needed for Zohar Media backend
-// Email service removed - no longer needed for Zohar Media backend
 import { UserAccount } from "./types";
-// import crypto from "crypto";
-// console.log(crypto.randomBytes(32).toString("hex"));
+
 configDotenv();
+
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+const GRAPHQL_BODY_LIMIT = IS_PRODUCTION ? "2mb" : "10mb";
+
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -41,22 +42,20 @@ const staticFilePath = join(__dirname, "../public");
 app.use(express.static(staticFilePath));
 app.use(fileUpload());
 
-// expressfil
-
 export interface MyContext {
   req: Request;
   res: Response;
   token?: string;
-  user: UserAccount;
+  user?: UserAccount;
 }
 
-var corsOptions = {
+const corsOptions = {
   origin: [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://jpstvethiopia.com",
-    "https://www.jpstvethiopia.com",
-    "https://admin.jpstvethiopia.com",
+    "https://zoharmedia.net",
+    "https://www.zoharmedia.net",
+    "https://admin.zoharmedia.net",
   ],
   credentials: true,
 };
@@ -66,11 +65,13 @@ const wsServer = new WebSocketServer({
   path: "/graphql",
 });
 
-const getDynamicContext = async (ctx: any) => {
-  //   console.log(ctx.connectionParams);
-  const token = ctx.connectionParams?.authorization?.split(" ")[1];
-  const user = authentication(token);
-  return user;
+const getSubscriptionUser = async (
+  rawAuth: unknown,
+): Promise<UserAccount | undefined> => {
+  if (typeof rawAuth !== "string" || rawAuth.trim().length === 0) {
+    return undefined;
+  }
+  return resolveUserFromAuthorizationHeader(rawAuth);
 };
 
 const pubsub = new PubSub();
@@ -79,8 +80,8 @@ const serverCleanup = useServer(
   {
     schema: gatewaySchema,
     context: async (ctx, msg, args) => {
-      // console.log(ctx);
-      const user = await getDynamicContext(ctx);
+      const authorizationHeader = ctx.connectionParams?.authorization;
+      const user = await getSubscriptionUser(authorizationHeader);
       return { ctx, msg, args, pubsub, user };
     },
   },
@@ -88,12 +89,15 @@ const serverCleanup = useServer(
 );
 
 (async () => {
+  const landingPlugin = IS_PRODUCTION
+    ? ApolloServerPluginLandingPageDisabled()
+    : ApolloServerPluginLandingPageLocalDefault({ footer: false });
+
   const server = new ApolloServer<MyContext>({
     schema: gatewaySchema,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
-      ApolloServerPluginLandingPageLocalDefault({ footer: false }),
-      // ApolloServerPluginLandingPageDisabled()
+      landingPlugin,
       {
         async serverWillStart() {
           return {
@@ -104,8 +108,7 @@ const serverCleanup = useServer(
         },
       },
     ],
-    introspection: true,
-    // introspection: process.env.NODE_ENV === "development" ? true : false,
+    introspection: !IS_PRODUCTION,
   });
 
   server.start().then(() => {
@@ -114,24 +117,13 @@ const serverCleanup = useServer(
       [
         cors<cors.CorsRequest>(corsOptions),
         cookieParser(),
-        json({ limit: "50mb" }),
+        json({ limit: GRAPHQL_BODY_LIMIT }),
       ],
       expressMiddleware(server, {
         context: async ({ req, res }: { req: Request; res: Response }) => {
-          const token = req.headers.authorization?.split(" ")[1];
-          let user;
-          if (
-            !(
-              req.body.operationName === "IntrospectionQuery" ||
-              req.body.operationName === "CreateUser" ||
-              req.body.operationName === "LoginUser" ||
-              req.body.operationName === "CreateInquiry" ||
-              req.body.operationName === "PublicGalleryPhotos" ||
-              req.body.operationName === "GetPublicGalleryPhotos"
-            )
-          ) {
-            user = authentication(token);
-          }
+          const user = resolveUserFromAuthorizationHeader(
+            req.headers.authorization,
+          );
 
           return { req, res, user, pubsub };
         },
@@ -157,66 +149,97 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-function authentication(token: any) {
-  const secret = process.env.JWT_SECRET as Secret;
-
-  if (!token) {
-    throw new GraphQLError("Token not found!", {
-      extensions: {
-        code: "UNAUTHENTICATED",
-        http: { status: 401 },
-      },
-    });
-  }
-
-  let decoded: any = {};
-  let user: any = {};
-
-  if (!token) {
-    return user;
-  }
-  try {
-    decoded = jwt.verify(token, secret) as CustomJwtPayload;
-    user = (jwt.verify(token, secret) as CustomJwtPayload).user;
-  } catch (error) {
-    throw new GraphQLError("Invalid Token or User is not authenticated", {
-      extensions: {
-        code: "UNAUTHENTICATED",
-        http: { status: 401 },
-      },
-    });
-  }
-
-  if (!user) {
-    throw new GraphQLError("Invalid Token or User is not authenticated", {
-      extensions: {
-        code: "UNAUTHENTICATED",
-        http: { status: 401 },
-      },
-    });
-  }
-  return user;
-}
 app.use(cors(corsOptions));
 
-// Routes - Payment routes removed for Zohar Media backend
+const PUBLIC_ROOT = path.resolve(process.cwd(), "public");
 
-app.post("/api/upload-file/:folder", async (req: any, res: Response) => {
+const UPLOAD_EXT_BY_MIME: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/pjpeg": "jpg",
+  "image/png": "png",
+  "image/gif": "gif",
+  "image/webp": "webp",
+  "video/mp4": "mp4",
+  "video/webm": "webm",
+  "video/quicktime": "mov",
+};
+const UPLOAD_MAX_BYTES = 50 * 1024 * 1024;
+
+function assertSafePathSegment(segment: string, label: string) {
+  if (!segment || segment.includes("..") || /[/\\]/.test(segment)) {
+    throw new Error(`Invalid ${label}`);
+  }
+}
+
+function uploadAuth(req: Request, res: Response, next: () => void) {
+  const header = req.headers.authorization;
   try {
-    if (!req?.files?.picture) {
+    if (!header?.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const token = header.slice("Bearer ".length).trim();
+    verifyJwtUser(token);
+    next();
+  } catch {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+}
+
+function publicFileUrl(req: Request, folder: string, fileName: string): string {
+  let configured: string | undefined;
+  try {
+    configured = config.get("uploads.publicBaseUrl") as string;
+  } catch {
+    configured = undefined;
+  }
+
+  const base = (configured ?? "").trim().replace(/\/$/, "");
+  if (base.length > 0) {
+    return `${base}/static/${folder}/${fileName}`;
+  }
+
+  const proto = req.protocol;
+  const host = req.get("host") ?? `localhost:${process.env.PORT || 4000}`;
+  return `${proto}://${host}/static/${folder}/${fileName}`;
+}
+
+app.post("/api/upload-file/:folder", uploadAuth, (req: any, res: Response) => {
+  try {
+    const folderParam = req.params.folder;
+    assertSafePathSegment(folderParam, "folder");
+
+    if (!req.files || !("picture" in req.files) || !req.files.picture) {
       return res.status(400).json({ message: "Please Upload Picture" });
     }
 
-    const folderPath = join("public", req.params.folder);
+    const picture = req.files
+      .picture as import("express-fileupload").UploadedFile;
 
-    // Ensure the folder exists
+    const extFromMime = UPLOAD_EXT_BY_MIME[picture.mimetype];
+    if (!extFromMime) {
+      return res.status(400).json({
+        message:
+          "Unsupported media type. Allowed types: JPG, PNG, GIF, WEBP, MP4, WEBM, MOV (QuickTime).",
+      });
+    }
+
+    if (picture.size > UPLOAD_MAX_BYTES) {
+      return res.status(400).json({
+        message: `File too large (${Math.round(
+          UPLOAD_MAX_BYTES / (1024 * 1024),
+        )}MB max)`,
+      });
+    }
+
+    const folderPath = path.join(PUBLIC_ROOT, folderParam);
+
     if (!existsSync(folderPath)) {
       mkdirSync(folderPath, { recursive: true });
     }
 
-    let fileName = v4() + "." + req.files?.picture.mimetype.split("/")[1];
+    const fileName = `${v4()}.${extFromMime}`;
 
-    req.files?.picture.mv(path.join(folderPath, fileName), function (err: any) {
+    picture.mv(path.join(folderPath, fileName), function (err: any) {
       if (err) {
         return res.status(400).json({
           success: false,
@@ -224,33 +247,33 @@ app.post("/api/upload-file/:folder", async (req: any, res: Response) => {
         });
       }
 
-      const address =
-        process.env.NODE_ENV === "production"
-          ? `${process.env.API_URL || "https://api.zoharmedia.net"}/static/${
-              req.params.folder
-            }/${fileName}`
-          : `http://localhost:${process.env.PORT || 4000}/static/${
-              req.params.folder
-            }/${fileName}`;
+      const address = publicFileUrl(req, folderParam, fileName);
 
       return res.json({ fileName: address });
     });
   } catch (error) {
-    return res.status(400).json({ message: "Unable to Upload Content" });
+    const message =
+      error instanceof Error ? error.message : "Unable to Upload Content";
+    return res.status(400).json({ message });
   }
 });
 
 app.get("/static/:folder/:fileName", (req: Request, res: Response) => {
   const { fileName, folder } = req.params;
 
-  const filePath = join(staticFilePath, folder, fileName);
+  try {
+    assertSafePathSegment(folder, "folder");
+    assertSafePathSegment(fileName, "fileName");
+  } catch {
+    return res.status(400).send("Bad request");
+  }
+
+  const filePath = path.join(PUBLIC_ROOT, folder, fileName);
 
   try {
-    // Check if file exists
     accessSync(filePath, constants.F_OK);
 
-    // Send the file
-    res.sendFile(filePath, (err) => {
+    res.status(200).sendFile(path.resolve(filePath), (err) => {
       if (err) {
         console.error("Error sending file:", err);
         if (!res.headersSent) {
@@ -269,5 +292,3 @@ app.get("/static/:folder/:fileName", (req: Request, res: Response) => {
     });
   }
 });
-
-// Cron job removed - no longer needed for Zohar Media backend

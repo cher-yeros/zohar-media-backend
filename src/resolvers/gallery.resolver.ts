@@ -1,4 +1,5 @@
 import { MyContext } from "../index";
+import { requireAuth } from "../utils/graphql-auth";
 import GalleryPhoto from "../models/gallery_photo.model";
 
 const galleryResolvers = {
@@ -16,11 +17,8 @@ const galleryResolvers = {
       });
       return rows;
     },
-    galleryPhotosAdmin: async (
-      _: unknown,
-      __: unknown,
-      _context: MyContext,
-    ) => {
+    galleryPhotosAdmin: async (_: unknown, __: unknown, context: MyContext) => {
+      requireAuth(context);
       const rows = await GalleryPhoto.findAll({
         order: [
           ["sort_order", "ASC"],
@@ -44,8 +42,9 @@ const galleryResolvers = {
         sort_order?: number;
         is_published?: boolean;
       },
-      _context: MyContext,
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const photo = await GalleryPhoto.create({
           image_url,
@@ -81,8 +80,9 @@ const galleryResolvers = {
         sort_order?: number | null;
         is_published?: boolean;
       },
-      _context: MyContext,
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const photo = await GalleryPhoto.findByPk(id);
         if (!photo) {
@@ -115,8 +115,9 @@ const galleryResolvers = {
     deleteGalleryPhoto: async (
       _: unknown,
       { id }: { id: string },
-      _context: MyContext,
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const photo = await GalleryPhoto.findByPk(id);
         if (!photo) {

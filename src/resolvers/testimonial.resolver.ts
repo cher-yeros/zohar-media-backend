@@ -1,9 +1,15 @@
 import { MyContext } from "../index";
+import { requireAuth } from "../utils/graphql-auth";
 import Testimonial from "../models/testimonial.model";
 import PortfolioItem from "../models/portfolio_item.model";
 import { TestimonialStatus } from "../enums";
 
 const testimonialResolvers = {
+  TestimonialStatus: {
+    PENDING: TestimonialStatus.PENDING,
+    APPROVED: TestimonialStatus.APPROVED,
+    REJECTED: TestimonialStatus.REJECTED,
+  },
   Query: {
     testimonials: async (
       _: any,
@@ -20,11 +26,15 @@ const testimonialResolvers = {
         limit?: number;
         offset?: number;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
       try {
         const where: any = {};
-        if (status) where.status = status;
+        if (!context.user?.id) {
+          where.status = TestimonialStatus.APPROVED;
+        } else if (status) {
+          where.status = status;
+        }
         if (featured !== undefined) where.featured = featured;
         if (portfolio_item_id) where.portfolio_item_id = portfolio_item_id;
 
@@ -50,6 +60,12 @@ const testimonialResolvers = {
           include: [{ model: PortfolioItem, as: "portfolio_item" }],
         });
         if (!testimonial) {
+          throw new Error("Testimonial not found");
+        }
+        if (
+          !context.user?.id &&
+          testimonial.status !== TestimonialStatus.APPROVED
+        ) {
           throw new Error("Testimonial not found");
         }
         return testimonial;
@@ -78,7 +94,7 @@ const testimonialResolvers = {
         portfolio_item_id?: string;
         avatar_url?: string;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
       try {
         const testimonial = await Testimonial.create({
@@ -100,7 +116,7 @@ const testimonialResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to create testimonial"
+            : "Failed to create testimonial",
         );
       }
     },
@@ -129,8 +145,9 @@ const testimonialResolvers = {
         portfolio_item_id?: string;
         avatar_url?: string;
       },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const testimonial = await Testimonial.findByPk(id);
         if (!testimonial) {
@@ -168,15 +185,16 @@ const testimonialResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to update testimonial"
+            : "Failed to update testimonial",
         );
       }
     },
     deleteTestimonial: async (
       _: any,
       { id }: { id: string },
-      context: MyContext
+      context: MyContext,
     ) => {
+      requireAuth(context);
       try {
         const testimonial = await Testimonial.findByPk(id);
         if (!testimonial) {
@@ -192,7 +210,7 @@ const testimonialResolvers = {
         throw new Error(
           error instanceof Error
             ? error.message
-            : "Failed to delete testimonial"
+            : "Failed to delete testimonial",
         );
       }
     },
