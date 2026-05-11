@@ -3,6 +3,7 @@ import sequelize from "../db.connection";
 import bcrypt from "bcryptjs";
 import { UserRole } from "../../enums";
 import { seedGalleryPhotos } from "./gallery.seed";
+import { seedPortfolioDefaults } from "./portfolio.seed";
 
 sequelize;
 
@@ -38,6 +39,7 @@ async function seed() {
   try {
     await seedAdmin();
     await seedGalleryPhotos();
+    await seedPortfolioDefaults();
   } catch (error) {
     console.error("Error running seeders:", error);
   }

@@ -7,6 +7,31 @@ import PortfolioItemTechnology from "../models/portfolio_item_technology.model";
 import PortfolioItemTeamMember from "../models/portfolio_item_team_member.model";
 import { PortfolioItemStatus } from "../enums";
 
+const GQL_TO_DB_STATUS: Record<string, PortfolioItemStatus> = {
+  COMPLETED: PortfolioItemStatus.COMPLETED,
+  IN_PROGRESS: PortfolioItemStatus.IN_PROGRESS,
+  DRAFT: PortfolioItemStatus.DRAFT,
+};
+
+const DB_TO_GQL_STATUS: Record<string, "COMPLETED" | "IN_PROGRESS" | "DRAFT"> = {
+  [PortfolioItemStatus.COMPLETED]: "COMPLETED",
+  [PortfolioItemStatus.IN_PROGRESS]: "IN_PROGRESS",
+  [PortfolioItemStatus.DRAFT]: "DRAFT",
+};
+
+function toDbStatus(
+  status?: unknown,
+): PortfolioItemStatus | undefined {
+  if (typeof status !== "string") return undefined;
+  // Accept both GraphQL enum ("COMPLETED") and legacy DB values ("completed")
+  return (
+    GQL_TO_DB_STATUS[status] ||
+    (Object.values(PortfolioItemStatus).includes(status as PortfolioItemStatus)
+      ? (status as PortfolioItemStatus)
+      : undefined)
+  );
+}
+
 const portfolioResolvers = {
   Query: {
     portfolioCategories: async (_: any, __: any, context: MyContext) => {
@@ -42,7 +67,7 @@ const portfolioResolvers = {
         offset = 0,
       }: {
         category_id?: string;
-        status?: PortfolioItemStatus;
+        status?: any;
         featured?: boolean;
         limit?: number;
         offset?: number;
@@ -52,7 +77,8 @@ const portfolioResolvers = {
       try {
         const where: any = {};
         if (category_id) where.category_id = category_id;
-        if (status) where.status = status;
+        const dbStatus = toDbStatus(status);
+        if (dbStatus) where.status = dbStatus;
         if (featured !== undefined) where.featured = featured;
 
         const portfolioItems = await PortfolioItem.findAndCountAll({
@@ -215,7 +241,7 @@ const portfolioResolvers = {
         thumbnail_url?: string;
         client_name?: string;
         project_date: string;
-        status?: PortfolioItemStatus;
+        status?: any;
         featured?: boolean;
         project_url?: string;
         testimonial?: string;
@@ -231,6 +257,7 @@ const portfolioResolvers = {
       context: MyContext
     ) => {
       try {
+        const dbStatus = toDbStatus(status) ?? PortfolioItemStatus.COMPLETED;
         const portfolioItem = await PortfolioItem.create({
           title,
           description,
@@ -238,7 +265,7 @@ const portfolioResolvers = {
           thumbnail_url,
           client_name,
           project_date: new Date(project_date),
-          status,
+          status: dbStatus,
           featured,
           project_url,
           testimonial,
@@ -344,7 +371,7 @@ const portfolioResolvers = {
         thumbnail_url?: string;
         client_name?: string;
         project_date?: string;
-        status?: PortfolioItemStatus;
+        status?: any;
         featured?: boolean;
         project_url?: string;
         testimonial?: string;
@@ -365,6 +392,7 @@ const portfolioResolvers = {
           throw new Error("Portfolio item not found");
         }
 
+        const dbStatus = toDbStatus(status);
         await portfolioItem.update({
           title: title || portfolioItem.title,
           description: description || portfolioItem.description,
@@ -379,7 +407,7 @@ const portfolioResolvers = {
           project_date: project_date
             ? new Date(project_date)
             : portfolioItem.project_date,
-          status: status || portfolioItem.status,
+          status: dbStatus || portfolioItem.status,
           featured: featured !== undefined ? featured : portfolioItem.featured,
           project_url:
             project_url !== undefined ? project_url : portfolioItem.project_url,
@@ -494,6 +522,13 @@ const portfolioResolvers = {
             : "Failed to delete portfolio item"
         );
       }
+    },
+  },
+  PortfolioItem: {
+    status: (parent: any) => {
+      const raw = parent?.status;
+      if (typeof raw !== "string") return "COMPLETED";
+      return DB_TO_GQL_STATUS[raw] ?? "COMPLETED";
     },
   },
 };

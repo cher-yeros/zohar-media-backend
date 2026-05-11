@@ -33,7 +33,7 @@ jobs:
           passphrase: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
 
           source: "." # Source files to deploy
-          target: "/home/jpstvedg/api2.jpstvethiopia.com" # Target directory on cPanel
+          target: "/home/zoharmic/api.zoharmedia.net" # Target directory on cPanel
 
       - name: Restart Node.js App (Passenger)
         uses: appleboy/ssh-action@v0.1.3
@@ -43,7 +43,7 @@ jobs:
           key: ${{ secrets.CPANEL_SSH_KEY }}
           passphrase: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
           script: |
-            cd /home/jpstvedg/api2.jpstvethiopia.com
+            cd /home/zoharmic/api.zoharmedia.net
             mkdir -p tmp
             touch tmp/restart.txt
 
@@ -55,7 +55,7 @@ jobs:
       #     key: ${{ secrets.CPANEL_SSH_KEY }}
       #     passphrase: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
       #     script: |
-      # source /home/jpstvedg/nodevenv/backend/20/bin/activate
-      # cd /home/jpstvedg/api2.jpstvethiopia.com
+      # source /home/zoharmic/nodevenv/backend/20/bin/activate
+      # cd /home/zoharmic/api.zoharmedia.net
       # npm install
       # pm2 restart all # Use pm2 or the cPanel Node.js manager
